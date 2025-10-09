@@ -1,0 +1,9 @@
+{
+  "SPACE_ID": "4fejn84m8z5w",
+  "ENVIRONMENT": "master",
+  "PREVIEW_TOKEN": "8R6kV7olel_4nuNpRsgYRXP1RwZ5Vax_3-nnS58zorA",
+  "CONTENT_TYPE": "translation",
+  "KEY_FIELD": "key",
+  "VALUE_FIELD": "value",
+  "NODE_NAME_PATTERN": "^jams_"
+}

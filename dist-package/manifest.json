@@ -1,0 +1,19 @@
+{
+  "name": "TranslatorWiz",
+  "id": "1558089998326222257",
+  "api": "1.0.0",
+  "main": "code.js",
+  "capabilities": [],
+  "enableProposedApi": false,
+  "documentAccess": "dynamic-page",
+  "editorType": [
+    "figma"
+  ],
+  "ui": "ui.html",
+  "networkAccess": {
+    "allowedDomains": [
+      "https://preview.contentful.com",
+      "https://cdn.contentful.com"
+    ]
+  }
+}

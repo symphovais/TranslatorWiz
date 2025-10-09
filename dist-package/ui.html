@@ -1,0 +1,1090 @@
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  :root {
+    /* Default light theme colors */
+    --figma-bg: #f5f5f5;
+    --figma-bg-secondary: #ffffff;
+    --figma-text: #000000;
+    --figma-text-secondary: #333333;
+    --figma-text-tertiary: #666666;
+    --figma-border: #e0e0e0;
+    --figma-gradient-1: #667eea;
+    --figma-gradient-2: #764ba2;
+    --figma-hover-overlay: rgba(0, 0, 0, 0.06);
+    --figma-icon-bg: rgba(255, 255, 255, 0.2);
+    --figma-icon-bg-hover: rgba(255, 255, 255, 0.3);
+  }
+
+  /* Dark theme */
+  body.figma-dark {
+    --figma-bg: #2c2c2c;
+    --figma-bg-secondary: #1e1e1e;
+    --figma-text: #ffffff;
+    --figma-text-secondary: #cccccc;
+    --figma-text-tertiary: #999999;
+    --figma-border: #3c3c3c;
+    --figma-hover-overlay: rgba(255, 255, 255, 0.06);
+    --figma-icon-bg: rgba(255, 255, 255, 0.1);
+    --figma-icon-bg-hover: rgba(255, 255, 255, 0.2);
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  
+  @keyframes slideIn {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  @keyframes success {
+    0% { transform: scale(0.8); opacity: 0; }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--figma-gradient-1) 0%, var(--figma-gradient-2) 100%);
+    color: var(--figma-text-secondary);
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  
+  .container {
+    animation: fadeIn 0.4s ease-out;
+  }
+  
+  h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: white;
+    text-align: center;
+    letter-spacing: -0.5px;
+  }
+  
+  .subtitle {
+    text-align: center;
+    font-size: 11px;
+    color: rgba(255,255,255,0.8);
+    margin-bottom: 16px;
+  }
+  
+  .section {
+    background: var(--figma-bg-secondary);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: transform 0.2s, box-shadow 0.2s, background 0.3s ease;
+  }
+  
+  .section:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+  }
+  
+  .stats {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  
+  .stat-card {
+    flex: 1;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+    animation: fadeIn 0.5s ease-out;
+  }
+  
+  .stat-number {
+    font-size: 24px;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 4px;
+  }
+  
+  .stat-label {
+    font-size: 10px;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--figma-text-secondary);
+    transition: color 0.3s ease;
+  }
+  
+  select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid var(--figma-border);
+    border-radius: 8px;
+    font-size: 14px;
+    background: var(--figma-bg-secondary);
+    color: var(--figma-text);
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  
+  select:focus {
+    outline: none;
+    border-color: var(--figma-gradient-1);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+  
+  select:disabled {
+    background: var(--figma-bg);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  
+  button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+  
+  button:active::before {
+    width: 300px;
+    height: 300px;
+  }
+  
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .button-group {
+    display: flex;
+    gap: 8px;
+  }
+  
+  #apply-translation {
+    background: linear-gradient(135deg, #00c853 0%, #00a844 100%);
+    color: white;
+    flex: 1;
+  }
+  
+  #apply-translation:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 200, 83, 0.4);
+  }
+  
+  #cancel {
+    background: var(--figma-bg);
+    color: var(--figma-text-tertiary);
+    flex: 0 0 auto;
+    padding: 10px 16px;
+    transition: all 0.3s ease;
+  }
+  
+  #cancel:hover {
+    background: var(--figma-border);
+  }
+  
+  .status-container {
+    position: relative;
+    min-height: 40px;
+  }
+  
+  #status {
+    padding: 12px 14px;
+    font-size: 12px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    animation: slideIn 0.3s ease-out;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  #status.info {
+    background: #e3f2fd;
+    color: #1565c0;
+    border-left: 4px solid #1565c0;
+  }
+  
+  #status.success {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border-left: 4px solid #2e7d32;
+    animation: success 0.4s ease-out;
+  }
+  
+  #status.error {
+    background: #ffebee;
+    color: #c62828;
+    border-left: 4px solid #c62828;
+  }
+  
+  #status.loading {
+    background: #fff3e0;
+    color: #e65100;
+    border-left: 4px solid #e65100;
+  }
+  
+  #status:empty {
+    display: none;
+  }
+  
+  .spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(0,0,0,0.1);
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+  
+  .hidden {
+    display: none !important;
+  }
+  
+  .locale-option {
+    padding: 8px;
+  }
+  
+  .refresh-icon {
+    display: inline-block;
+    transition: transform 0.3s;
+  }
+  
+  button:hover .refresh-icon {
+    transform: rotate(180deg);
+  }
+  
+  /* Settings Screen */
+  .view {
+    display: none;
+  }
+  
+  .view.active {
+    display: block;
+  }
+  
+  .settings-icon {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: var(--figma-icon-bg);
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    padding: 0;
+  }
+  
+  .settings-icon:hover {
+    background: var(--figma-icon-bg-hover);
+    transform: rotate(45deg);
+  }
+  
+  textarea {
+    width: 100%;
+    min-height: 200px;
+    padding: 12px;
+    border: 2px solid var(--figma-border);
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    resize: vertical;
+    background: var(--figma-bg);
+    color: var(--figma-text);
+    transition: all 0.3s ease;
+  }
+  
+  textarea:focus {
+    outline: none;
+    border-color: var(--figma-gradient-1);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+  
+  .config-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  
+  .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+  
+  .btn-secondary {
+    background: var(--figma-bg);
+    color: var(--figma-text-tertiary);
+    transition: all 0.3s ease;
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    background: var(--figma-border);
+  }
+  
+  .btn-test {
+    background: linear-gradient(135deg, #00c853 0%, #00a844 100%);
+    color: white;
+  }
+
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid var(--figma-border);
+    border-radius: 8px;
+    font-size: 14px;
+    background: var(--figma-bg-secondary);
+    color: var(--figma-text);
+    transition: all 0.2s;
+    margin-bottom: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  }
+
+  input[type="text"]:focus,
+  input[type="password"]:focus {
+    outline: none;
+    border-color: var(--figma-gradient-1);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+
+  input[type="password"] {
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+  }
+
+  .config-field {
+    margin-bottom: 16px;
+  }
+
+  .config-field label {
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .preflight-container {
+    background: var(--figma-bg);
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 12px;
+    display: none;
+    transition: background 0.3s ease;
+  }
+
+  .preflight-container.active {
+    display: block;
+  }
+
+  .preflight-step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    margin-bottom: 8px;
+    background: var(--figma-bg-secondary);
+    border-radius: 6px;
+    border: 2px solid var(--figma-border);
+    transition: all 0.3s;
+  }
+
+  .preflight-step.checking {
+    border-color: #ff9800;
+    background: #fff3e0;
+  }
+
+  .preflight-step.success {
+    border-color: #4caf50;
+    background: #e8f5e9;
+    animation: success 0.4s ease-out;
+  }
+
+  .preflight-step.error {
+    border-color: #f44336;
+    background: #ffebee;
+  }
+
+  .preflight-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .preflight-text {
+    flex: 1;
+    font-size: 13px;
+    color: var(--figma-text-secondary);
+    transition: color 0.3s ease;
+  }
+
+  .preflight-step .spinner {
+    width: 16px;
+    height: 16px;
+  }
+</style>
+
+<button class="settings-icon" id="settings-toggle" title="Settings">⚙️</button>
+
+<!-- Main View -->
+<div class="container view active" id="main-view">
+  <h2>✨ TranslatorWiz</h2>
+  <div class="subtitle">Contentful-powered translation magic</div>
+
+  <div class="stats">
+    <div class="stat-card">
+      <span class="stat-number" id="node-count">-</span>
+      <span class="stat-label">Text Nodes</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-number" id="locale-count">-</span>
+      <span class="stat-label">Languages</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <label>🌍 Select Language</label>
+    <select id="locale" disabled>
+      <option value="">Loading locales...</option>
+    </select>
+  </div>
+
+  <div class="section">
+    <div class="button-group">
+      <button id="apply-translation" disabled>
+        <span>Apply Translation</span>
+      </button>
+      <button id="cancel">Close</button>
+    </div>
+  </div>
+
+  <div class="status-container">
+    <div id="status"></div>
+  </div>
+</div>
+
+<!-- Settings View -->
+<div class="container view" id="settings-view">
+  <h2>⚙️ Settings</h2>
+  <div class="subtitle">Configure your Contentful connection</div>
+
+  <div class="section">
+    <div class="config-field">
+      <label>Space ID</label>
+      <input type="text" id="space-id" placeholder="Enter your Contentful Space ID" />
+    </div>
+
+    <div class="config-field">
+      <label>Environment</label>
+      <input type="text" id="environment" placeholder="e.g., master" />
+    </div>
+
+    <div class="config-field">
+      <label>🔒 Preview Token (Hidden)</label>
+      <input type="password" id="preview-token" placeholder="Enter your preview token" />
+    </div>
+
+    <div class="config-field">
+      <label>Content Type</label>
+      <input type="text" id="content-type" placeholder="e.g., translation" />
+    </div>
+
+    <div class="config-field">
+      <label>Key Field</label>
+      <input type="text" id="key-field" placeholder="e.g., key" />
+    </div>
+
+    <div class="config-field">
+      <label>Value Field</label>
+      <input type="text" id="value-field" placeholder="e.g., value" />
+    </div>
+
+    <div class="config-field">
+      <label>Node Name Pattern (Regex)</label>
+      <input type="text" id="node-pattern" placeholder="e.g., ^jams_" />
+    </div>
+    
+    <div class="config-actions">
+      <button class="btn-primary" id="save-config">💾 Save & Validate</button>
+      <button class="btn-secondary" id="reset-config">Reset to Default</button>
+  </div>
+
+    <div class="preflight-container" id="preflight-container">
+      <div class="preflight-step" id="preflight-validate">
+        <div class="preflight-icon">⏳</div>
+        <div class="preflight-text">Validating configuration...</div>
+      </div>
+      <div class="preflight-step" id="preflight-locales">
+        <div class="preflight-icon">⏳</div>
+        <div class="preflight-text">Testing connection & fetching locales...</div>
+      </div>
+      <div class="preflight-step" id="preflight-content">
+        <div class="preflight-icon">⏳</div>
+        <div class="preflight-text">Verifying content type...</div>
+      </div>
+      <div class="preflight-step" id="preflight-save">
+        <div class="preflight-icon">⏳</div>
+        <div class="preflight-text">Saving configuration...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <button class="btn-secondary" id="back-to-main" style="width: 100%;">← Back to Translator</button>
+  </div>
+
+  <div class="status-container">
+    <div id="settings-status"></div>
+  </div>
+</div>
+
+<script>
+let config = null;
+let isLoading = false;
+const defaultConfig = {
+  SPACE_ID: "4fejn84m8z5w",
+  ENVIRONMENT: "master",
+  PREVIEW_TOKEN: "8R6kV7olel_4nuNpRsgYRXP1RwZ5Vax_3-nnS58zorA",
+  CONTENT_TYPE: "translation",
+  KEY_FIELD: "key",
+  VALUE_FIELD: "value",
+  NODE_NAME_PATTERN: "^jams_"
+};
+
+// Detect and apply Figma theme
+function applyFigmaTheme() {
+  // Figma provides --figma-color-bg when themeColors is enabled
+  const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--figma-color-bg').trim();
+  
+  if (bgColor) {
+    // Parse the RGB value to determine if it's dark or light
+    const rgb = bgColor.match(/\d+/g);
+    if (rgb && rgb.length >= 3) {
+      const r = parseInt(rgb[0]);
+      const g = parseInt(rgb[1]);
+      const b = parseInt(rgb[2]);
+      
+      // Calculate relative luminance
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      
+      // If dark theme (luminance < 0.5), apply dark class
+      if (luminance < 0.5) {
+        document.body.classList.add('figma-dark');
+      } else {
+        document.body.classList.remove('figma-dark');
+      }
+    }
+  }
+}
+
+// Apply theme on load
+applyFigmaTheme();
+
+// Watch for theme changes
+const observer = new MutationObserver(applyFigmaTheme);
+observer.observe(document.documentElement, { 
+  attributes: true, 
+  attributeFilter: ['style'] 
+});
+
+// Request config and start auto-load on startup
+parent.postMessage({ pluginMessage: { type: 'init' } }, '*');
+
+// View switching
+document.getElementById('settings-toggle').onclick = () => {
+  switchView('settings');
+};
+
+document.getElementById('back-to-main').onclick = () => {
+  switchView('main');
+};
+
+function switchView(viewName) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(`${viewName}-view`).classList.add('active');
+  
+  if (viewName === 'settings') {
+    loadConfigIntoEditor();
+  } else {
+    // Hide preflight container when leaving settings
+    const preflightContainer = document.getElementById('preflight-container');
+    if (preflightContainer) {
+      preflightContainer.classList.remove('active');
+      resetPreflightSteps();
+    }
+  }
+}
+
+// Settings functionality
+function loadConfigIntoEditor() {
+  const configToLoad = config || defaultConfig;
+  
+  document.getElementById('space-id').value = configToLoad.SPACE_ID || '';
+  document.getElementById('environment').value = configToLoad.ENVIRONMENT || '';
+  document.getElementById('preview-token').value = configToLoad.PREVIEW_TOKEN || '';
+  document.getElementById('content-type').value = configToLoad.CONTENT_TYPE || '';
+  document.getElementById('key-field').value = configToLoad.KEY_FIELD || '';
+  document.getElementById('value-field').value = configToLoad.VALUE_FIELD || '';
+  document.getElementById('node-pattern').value = configToLoad.NODE_NAME_PATTERN || '';
+}
+
+function getConfigFromFields() {
+  return {
+    SPACE_ID: document.getElementById('space-id').value.trim(),
+    ENVIRONMENT: document.getElementById('environment').value.trim(),
+    PREVIEW_TOKEN: document.getElementById('preview-token').value.trim(),
+    CONTENT_TYPE: document.getElementById('content-type').value.trim(),
+    KEY_FIELD: document.getElementById('key-field').value.trim(),
+    VALUE_FIELD: document.getElementById('value-field').value.trim(),
+    NODE_NAME_PATTERN: document.getElementById('node-pattern').value.trim()
+  };
+}
+
+document.getElementById('save-config').onclick = async () => {
+  const newConfig = getConfigFromFields();
+  
+  // Start preflight checks
+  const preflightContainer = document.getElementById('preflight-container');
+  preflightContainer.classList.add('active');
+  
+  // Smooth scroll to preflight checks
+  setTimeout(() => {
+    preflightContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 100);
+  
+  // Disable the save button
+  document.getElementById('save-config').disabled = true;
+  
+  // Run preflight checks step by step
+  await runPreflightChecks(newConfig);
+};
+
+document.getElementById('reset-config').onclick = () => {
+  loadConfigIntoEditor();
+  setSettingsStatus('✨ Reset to default values', 'info');
+  
+  // Hide preflight if visible
+  document.getElementById('preflight-container').classList.remove('active');
+  resetPreflightSteps();
+};
+
+async function runPreflightChecks(newConfig) {
+  const steps = [
+    { id: 'preflight-validate', check: () => validateConfig(newConfig), delay: 800 },
+    { id: 'preflight-locales', check: () => testLocales(newConfig), delay: 1500 },
+    { id: 'preflight-content', check: () => checkContentType(newConfig), delay: 1000 },
+    { id: 'preflight-save', check: () => saveConfig(newConfig), delay: 600 }
+  ];
+  
+  for (const step of steps) {
+    const element = document.getElementById(step.id);
+    
+    // Mark as checking
+    element.classList.remove('success', 'error');
+    element.classList.add('checking');
+    const icon = element.querySelector('.preflight-icon');
+    while (icon.firstChild) {
+      icon.removeChild(icon.firstChild);
+    }
+    const spinner = document.createElement('span');
+    spinner.className = 'spinner';
+    icon.appendChild(spinner);
+    
+    // Wait a bit so user can see the step
+    await new Promise(resolve => setTimeout(resolve, step.delay));
+    
+    try {
+      const result = await step.check();
+      
+      if (result.success) {
+        element.classList.remove('checking');
+        element.classList.add('success');
+        element.querySelector('.preflight-icon').textContent = '✓';
+        
+        if (result.message) {
+          element.querySelector('.preflight-text').textContent = result.message;
+        }
+      } else {
+        throw new Error(result.error || 'Check failed');
+      }
+    } catch (error) {
+      element.classList.remove('checking');
+      element.classList.add('error');
+      element.querySelector('.preflight-icon').textContent = '✗';
+      element.querySelector('.preflight-text').textContent = error.message;
+      
+      setSettingsStatus('❌ Preflight check failed: ' + error.message, 'error');
+      document.getElementById('save-config').disabled = false;
+      return;
+    }
+  }
+  
+  // All checks passed!
+  setSettingsStatus('✅ Configuration saved successfully!', 'success');
+  document.getElementById('save-config').disabled = false;
+  
+  setTimeout(() => {
+    switchView('main');
+    resetPreflightSteps();
+  }, 1500);
+}
+
+function resetPreflightSteps() {
+  const steps = ['preflight-validate', 'preflight-locales', 'preflight-content', 'preflight-save'];
+  steps.forEach(id => {
+    const element = document.getElementById(id);
+    element.classList.remove('checking', 'success', 'error');
+    element.querySelector('.preflight-icon').textContent = '⏳';
+  });
+  
+  // Reset text
+  document.getElementById('preflight-validate').querySelector('.preflight-text').textContent = 'Validating configuration...';
+  document.getElementById('preflight-locales').querySelector('.preflight-text').textContent = 'Testing connection & fetching locales...';
+  document.getElementById('preflight-content').querySelector('.preflight-text').textContent = 'Verifying content type...';
+  document.getElementById('preflight-save').querySelector('.preflight-text').textContent = 'Saving configuration...';
+}
+
+function validateConfig(cfg) {
+  return new Promise((resolve) => {
+    // Check all required fields
+    const required = ['SPACE_ID', 'ENVIRONMENT', 'PREVIEW_TOKEN', 'CONTENT_TYPE', 'KEY_FIELD', 'VALUE_FIELD', 'NODE_NAME_PATTERN'];
+    const missing = required.filter(field => !cfg[field]);
+    
+    if (missing.length > 0) {
+      resolve({ success: false, error: `Missing fields: ${missing.join(', ')}` });
+      return;
+    }
+    
+    // Validate regex pattern
+    try {
+      new RegExp(cfg.NODE_NAME_PATTERN);
+  } catch (e) {
+      resolve({ success: false, error: 'Invalid regex pattern' });
+      return;
+    }
+    
+    resolve({ success: true, message: 'All fields validated ✓' });
+  });
+}
+
+function testLocales(cfg) {
+  return new Promise((resolve) => {
+    let isResolved = false;
+    
+    const messageHandler = (event) => {
+      if (!isResolved && event.data?.pluginMessage?.type === 'preflight-locales-result') {
+        isResolved = true;
+        window.removeEventListener('message', messageHandler);
+        resolve(event.data.pluginMessage.result);
+      }
+    };
+    
+    window.addEventListener('message', messageHandler);
+    
+    // Send test request - fetching locales validates credentials, space, and environment all at once
+    parent.postMessage({ pluginMessage: { type: 'preflight-test-locales', config: cfg } }, '*');
+    
+    // Timeout after 10 seconds
+    setTimeout(() => {
+      if (!isResolved) {
+        isResolved = true;
+        window.removeEventListener('message', messageHandler);
+        resolve({ success: false, error: 'Locales fetch timeout' });
+      }
+    }, 10000);
+  });
+}
+
+function checkContentType(cfg) {
+  return new Promise((resolve) => {
+    let isResolved = false;
+    
+    const messageHandler = (event) => {
+      if (!isResolved && event.data?.pluginMessage?.type === 'preflight-content-result') {
+        isResolved = true;
+        window.removeEventListener('message', messageHandler);
+        resolve(event.data.pluginMessage.result);
+      }
+    };
+    
+    window.addEventListener('message', messageHandler);
+    parent.postMessage({ pluginMessage: { type: 'preflight-check-content', config: cfg } }, '*');
+    
+    setTimeout(() => {
+      if (!isResolved) {
+        isResolved = true;
+        window.removeEventListener('message', messageHandler);
+        resolve({ success: false, error: 'Content type check timeout' });
+      }
+    }, 10000);
+  });
+}
+
+function saveConfig(cfg) {
+  return new Promise((resolve) => {
+    let isResolved = false;
+    
+    const messageHandler = (event) => {
+      if (isResolved) return;
+      
+      if (event.data?.pluginMessage?.type === 'config-saved') {
+        isResolved = true;
+        window.removeEventListener('message', messageHandler);
+        config = event.data.pluginMessage.config;
+        resolve({ success: true, message: 'Configuration saved successfully ✓' });
+      } else if (event.data?.pluginMessage?.type === 'config-save-failed') {
+        isResolved = true;
+        window.removeEventListener('message', messageHandler);
+        resolve({ success: false, error: event.data.pluginMessage.message });
+      }
+    };
+    
+    window.addEventListener('message', messageHandler);
+    parent.postMessage({ pluginMessage: { type: 'save-config', config: cfg } }, '*');
+    
+    setTimeout(() => {
+      if (!isResolved) {
+        isResolved = true;
+        window.removeEventListener('message', messageHandler);
+        resolve({ success: false, error: 'Save timeout' });
+      }
+    }, 5000);
+  });
+}
+
+function setSettingsStatus(text, type = 'info') {
+  const status = document.getElementById('settings-status');
+  status.className = type;
+  
+  // Clear previous content
+  while (status.firstChild) {
+    status.removeChild(status.firstChild);
+  }
+  
+  if (type === 'loading') {
+    const spinner = document.createElement('span');
+    spinner.className = 'spinner';
+    const textSpan = document.createElement('span');
+    textSpan.textContent = text;
+    status.appendChild(spinner);
+    status.appendChild(textSpan);
+  } else {
+    status.textContent = text;
+  }
+}
+
+document.getElementById('apply-translation').onclick = () => {
+  const localeSelect = document.getElementById('locale');
+  const locale = localeSelect.value;
+  if (!locale) {
+    setStatus('Please select a language first', 'error');
+    return;
+  }
+  if (!config) {
+    setStatus('Configuration not loaded', 'error');
+    return;
+  }
+  
+  setStatus('Applying translations...', 'loading');
+  disableUI(true);
+  parent.postMessage({ pluginMessage: { type: 'apply-translation', config, locale } }, '*');
+}
+
+document.getElementById('cancel').onclick = () => {
+  parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*');
+}
+
+document.getElementById('locale').onchange = () => {
+  const btn = document.getElementById('apply-translation');
+  btn.disabled = false;
+}
+
+window.onmessage = (event) => {
+  // Security: validate message source and structure
+  if (!event || !event.data || !event.data.pluginMessage) return;
+  
+  const msg = event.data.pluginMessage;
+  if (!msg || typeof msg !== 'object' || !msg.type) return;
+  
+  if (msg.type === 'config-loaded') {
+    // Validate config structure
+    if (!msg.config || typeof msg.config !== 'object') {
+      setStatus('Invalid configuration received', 'error');
+      return;
+    }
+    config = msg.config;
+    setStatus('Initializing...', 'loading');
+    // Auto-load locales
+    parent.postMessage({ pluginMessage: { type: 'load-locales', config } }, '*');
+  }
+  
+  if (msg.type === 'node-count') {
+    const count = parseInt(msg.count, 10);
+    if (!isNaN(count) && count >= 0) {
+      updateNodeCount(count);
+    }
+  }
+  
+  if (msg.type === 'locales-loaded') {
+    const select = document.getElementById('locale');
+    select.innerHTML = '<option value="">Choose a language...</option>';
+    select.disabled = false;
+    
+    if (Array.isArray(msg.locales)) {
+      for (const loc of msg.locales) {
+        if (loc && loc.code && loc.name) {
+          const opt = document.createElement('option');
+          opt.value = sanitizeString(loc.code);
+          opt.textContent = `${sanitizeString(loc.name)} (${sanitizeString(loc.code)})`;
+          select.appendChild(opt);
+        }
+      }
+      updateLocaleCount(msg.locales.length);
+      setStatus(`🎉 Ready! ${msg.locales.length} language(s) available`, 'success');
+      disableUI(false);
+    } else {
+      setStatus('Invalid locales data received', 'error');
+    }
+  }
+  
+  if (msg.type === 'translation-applied') {
+    const count = parseInt(msg.count, 10);
+    if (!isNaN(count) && count >= 0) {
+      setStatus(`✨ Success! Updated ${count} text node(s)`, 'success');
+      disableUI(false);
+      
+      // Celebrate with a brief delay then show ready state
+      setTimeout(() => {
+        setStatus(`Ready to translate`, 'info');
+      }, 2000);
+    }
+  }
+  
+  if (msg.type === 'error') {
+    const errorMsg = sanitizeString(msg.message || 'Unknown error occurred');
+    setStatus('⚠️ ' + errorMsg, 'error');
+    disableUI(false);
+  }
+  
+  // Settings responses
+  if (msg.type === 'config-saved') {
+    config = msg.config;
+    setSettingsStatus('✅ Config saved successfully!', 'success');
+    setTimeout(() => {
+      switchView('main');
+      // Auto-reload locales with new config
+      parent.postMessage({ pluginMessage: { type: 'load-locales', config } }, '*');
+    }, 1500);
+  }
+  
+  if (msg.type === 'config-save-failed') {
+    setSettingsStatus('❌ Save failed: ' + sanitizeString(msg.message), 'error');
+  }
+}
+
+function sanitizeString(str) {
+  if (typeof str !== 'string') return '';
+  // Remove any HTML tags and limit length
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML.substring(0, 500);
+}
+
+function setStatus(text, type = 'info') {
+  const status = document.getElementById('status');
+  status.className = type;
+  
+  // Clear previous content
+  while (status.firstChild) {
+    status.removeChild(status.firstChild);
+  }
+  
+  if (type === 'loading') {
+    const spinner = document.createElement('span');
+    spinner.className = 'spinner';
+    const textSpan = document.createElement('span');
+    textSpan.textContent = text;
+    status.appendChild(spinner);
+    status.appendChild(textSpan);
+  } else {
+    status.textContent = text;
+  }
+}
+
+function updateNodeCount(count) {
+  const el = document.getElementById('node-count');
+  el.textContent = count;
+  el.style.animation = 'none';
+  setTimeout(() => el.style.animation = 'success 0.4s ease-out', 10);
+}
+
+function updateLocaleCount(count) {
+  const el = document.getElementById('locale-count');
+  el.textContent = count;
+  el.style.animation = 'none';
+  setTimeout(() => el.style.animation = 'success 0.4s ease-out', 10);
+}
+
+function disableUI(disabled) {
+  const btn = document.getElementById('apply-translation');
+  const select = document.getElementById('locale');
+  
+  if (disabled) {
+    btn.disabled = true;
+  } else {
+    btn.disabled = !select.value;
+  }
+}
+
+</script>

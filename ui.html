@@ -1,0 +1,1908 @@
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  :root {
+    /* Default light theme colors */
+    --figma-bg: #f5f5f5;
+    --figma-bg-secondary: #ffffff;
+    --figma-text: #000000;
+    --figma-text-secondary: #333333;
+    --figma-text-tertiary: #666666;
+    --figma-border: #e0e0e0;
+    --figma-gradient-1: #667eea;
+    --figma-gradient-2: #764ba2;
+    --figma-hover-overlay: rgba(0, 0, 0, 0.06);
+    --figma-icon-bg: rgba(255, 255, 255, 0.2);
+    --figma-icon-bg-hover: rgba(255, 255, 255, 0.3);
+  }
+
+  /* Dark theme */
+  body.figma-dark {
+    --figma-bg: #2c2c2c;
+    --figma-bg-secondary: #1e1e1e;
+    --figma-text: #ffffff;
+    --figma-text-secondary: #cccccc;
+    --figma-text-tertiary: #999999;
+    --figma-border: #3c3c3c;
+    --figma-hover-overlay: rgba(255, 255, 255, 0.06);
+    --figma-icon-bg: rgba(255, 255, 255, 0.1);
+    --figma-icon-bg-hover: rgba(255, 255, 255, 0.2);
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  
+  @keyframes slideIn {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  @keyframes success {
+    0% { transform: scale(0.8); opacity: 0; }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    padding: 16px;
+    background: var(--figma-bg);
+    color: var(--figma-text);
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  
+  .container {
+    animation: fadeIn 0.4s ease-out;
+  }
+  
+  h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--figma-text);
+    text-align: center;
+    letter-spacing: -0.5px;
+  }
+  
+  .subtitle {
+    text-align: center;
+    font-size: 11px;
+    color: var(--figma-text-tertiary);
+    margin-bottom: 16px;
+  }
+  
+  .section {
+    background: var(--figma-bg-secondary);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+    border: 1px solid var(--figma-border);
+    transition: background 0.2s ease;
+  }
+  
+  .stats {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  
+  .stat-card {
+    flex: 1;
+    background: var(--figma-bg-secondary);
+    border: 1px solid var(--figma-border);
+    color: var(--figma-text);
+    padding: 12px;
+    border-radius: 6px;
+    text-align: center;
+  }
+  
+  .stat-number {
+    font-size: 24px;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 4px;
+  }
+  
+  .stat-label {
+    font-size: 10px;
+    color: var(--figma-text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--figma-text-secondary);
+    transition: color 0.3s ease;
+  }
+  
+  select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid var(--figma-border);
+    border-radius: 8px;
+    font-size: 14px;
+    background: var(--figma-bg-secondary);
+    color: var(--figma-text);
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  
+  select:focus {
+    outline: none;
+    border-color: #18a0fb;
+    box-shadow: 0 0 0 2px rgba(24, 160, 251, 0.2);
+  }
+  
+  select:disabled {
+    background: var(--figma-bg);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  
+  button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  
+  button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  
+  .button-group {
+    display: flex;
+    gap: 8px;
+  }
+  
+  #apply-translation {
+    background: #18a0fb;
+    color: white;
+    flex: 1;
+  }
+  
+  #apply-translation:hover:not(:disabled) {
+    background: #0d8de0;
+  }
+  
+  #cancel {
+    background: var(--figma-bg);
+    color: var(--figma-text-tertiary);
+    flex: 0 0 auto;
+    padding: 10px 16px;
+    transition: all 0.3s ease;
+  }
+  
+  #cancel:hover {
+    background: var(--figma-border);
+  }
+  
+  .status-container {
+    position: relative;
+    min-height: 40px;
+  }
+  
+  #status {
+    padding: 12px 14px;
+    font-size: 12px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    animation: slideIn 0.3s ease-out;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  #status.info {
+    background: var(--figma-bg-secondary);
+    color: var(--figma-text);
+    border-left: 4px solid #18a0fb;
+  }
+  
+  #status.success {
+    background: var(--figma-bg-secondary);
+    color: var(--figma-text);
+    border-left: 4px solid #0fa958;
+    animation: success 0.4s ease-out;
+  }
+  
+  #status.error {
+    background: var(--figma-bg-secondary);
+    color: var(--figma-text);
+    border-left: 4px solid #f24822;
+  }
+  
+  #status.loading {
+    background: var(--figma-bg-secondary);
+    color: var(--figma-text);
+    border-left: 4px solid #18a0fb;
+  }
+  
+  #status:empty {
+    display: none;
+  }
+  
+  .spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(0,0,0,0.1);
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+  
+  .hidden {
+    display: none !important;
+  }
+  
+  .locale-option {
+    padding: 8px;
+  }
+  
+  .refresh-icon {
+    display: inline-block;
+    transition: transform 0.3s;
+  }
+  
+  button:hover .refresh-icon {
+    transform: rotate(180deg);
+  }
+  
+  /* Settings Screen */
+  .view {
+    display: none;
+  }
+  
+  .view.active {
+    display: block;
+  }
+  
+  .settings-icon {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: transparent;
+    color: var(--figma-text-tertiary);
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    padding: 0;
+  }
+  
+  .settings-icon:hover {
+    background: var(--figma-hover-overlay);
+    color: var(--figma-text);
+  }
+  
+  textarea {
+    width: 100%;
+    min-height: 200px;
+    padding: 12px;
+    border: 2px solid var(--figma-border);
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    resize: vertical;
+    background: var(--figma-bg);
+    color: var(--figma-text);
+    transition: all 0.3s ease;
+  }
+  
+  textarea:focus {
+    outline: none;
+    border-color: #18a0fb;
+    box-shadow: 0 0 0 2px rgba(24, 160, 251, 0.2);
+  }
+  
+  .config-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  
+  .btn-primary {
+    background: #18a0fb;
+    color: white;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: #0d8de0;
+  }
+  
+  .btn-secondary {
+    background: var(--figma-bg);
+    color: var(--figma-text);
+    border: 1px solid var(--figma-border);
+    transition: all 0.2s ease;
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    background: var(--figma-hover-overlay);
+  }
+  
+  .btn-test {
+    background: #18a0fb;
+    color: white;
+  }
+
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid var(--figma-border);
+    border-radius: 8px;
+    font-size: 14px;
+    background: var(--figma-bg-secondary);
+    color: var(--figma-text);
+    transition: all 0.2s;
+    margin-bottom: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  }
+
+  input[type="text"]:focus,
+  input[type="password"]:focus {
+    outline: none;
+    border-color: #18a0fb;
+    box-shadow: 0 0 0 2px rgba(24, 160, 251, 0.2);
+  }
+
+  input[type="password"] {
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+  }
+
+  .config-field {
+    margin-bottom: 16px;
+  }
+
+  .config-field label {
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .preflight-container {
+    background: var(--figma-bg);
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 12px;
+    display: none;
+    transition: background 0.3s ease;
+  }
+
+  .preflight-container.active {
+    display: block;
+  }
+
+  .preflight-step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    margin-bottom: 8px;
+    background: var(--figma-bg-secondary);
+    border-radius: 6px;
+    border: 2px solid var(--figma-border);
+    transition: all 0.3s;
+  }
+
+  .preflight-step.checking {
+    border-color: #18a0fb;
+    background: var(--figma-bg-secondary);
+  }
+
+  .preflight-step.success {
+    border-color: #0fa958;
+    background: var(--figma-bg-secondary);
+    animation: success 0.4s ease-out;
+  }
+
+  .preflight-step.error {
+    border-color: #f24822;
+    background: var(--figma-bg-secondary);
+  }
+
+  .preflight-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .preflight-text {
+    flex: 1;
+    font-size: 13px;
+    color: var(--figma-text-secondary);
+    transition: color 0.3s ease;
+  }
+
+  .preflight-step .spinner {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Mode Toggle */
+  .mode-toggle {
+    display: flex;
+    gap: 8px;
+    padding: 12px 16px 0;
+    background: transparent;
+  }
+
+  .mode-btn {
+    flex: 1;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .mode-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .mode-btn.active {
+    background: white;
+    color: var(--figma-gradient-1);
+    border-color: white;
+  }
+
+  /* Content Preview Styles */
+  .mapping-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .btn-small {
+    padding: 6px 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-small:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+  }
+
+  .mapping-item {
+    background: var(--figma-bg);
+    border: 2px solid var(--figma-border);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+  }
+
+  .mapping-item:hover {
+    border-color: var(--figma-gradient-1);
+  }
+
+  .mapping-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .mapping-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .mapping-row select {
+    flex: 1;
+    padding: 8px;
+    font-size: 12px;
+  }
+
+  .mapping-row label {
+    font-size: 11px;
+    margin-bottom: 4px;
+    color: var(--figma-text-tertiary);
+  }
+
+  .mapping-field {
+    flex: 1;
+  }
+
+  .btn-remove {
+    padding: 8px 12px;
+    background: #ff5252;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-remove:hover {
+    background: #ff1744;
+    transform: translateY(-1px);
+  }
+
+  .record-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .record-info {
+    font-size: 12px;
+    color: var(--figma-text-tertiary);
+    font-weight: 600;
+  }
+
+  .record-controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .btn-nav {
+    flex: 1;
+    padding: 10px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-nav:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  }
+
+  .btn-nav:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .record-data {
+    background: var(--figma-bg);
+    border-radius: 8px;
+    padding: 12px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .record-field {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    margin-bottom: 6px;
+    background: var(--figma-bg-secondary);
+    border-radius: 6px;
+    font-size: 12px;
+  }
+
+  .record-field:last-child {
+    margin-bottom: 0;
+  }
+
+  .field-name {
+    font-weight: 600;
+    color: var(--figma-text-secondary);
+  }
+
+  .field-value {
+    color: var(--figma-text-tertiary);
+    max-width: 60%;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #00c853 0%, #00a844 100%);
+    color: white;
+    flex: 1;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 200, 83, 0.4);
+  }
+
+  .content-type-badge {
+    display: inline-block;
+    background: var(--figma-gradient-1);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .content-type-group {
+    background: var(--figma-bg);
+    border: 2px solid var(--figma-gradient-1);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 12px;
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .content-type-group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--figma-border);
+  }
+
+  .content-type-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: var(--figma-text-secondary);
+  }
+
+  .btn-remove-group {
+    padding: 6px 10px;
+    background: #ff5252;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-remove-group:hover {
+    background: #ff1744;
+    transform: translateY(-1px);
+  }
+
+  .add-field-btn {
+    width: 100%;
+    margin-top: 8px;
+    padding: 8px;
+    background: transparent;
+    border: 2px dashed var(--figma-border);
+    color: var(--figma-text-tertiary);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .add-field-btn:hover {
+    border-color: var(--figma-gradient-1);
+    color: var(--figma-gradient-1);
+    background: rgba(102, 126, 234, 0.05);
+  }
+</style>
+
+<button class="settings-icon" id="settings-toggle" title="Settings">⚙️</button>
+
+<!-- Mode Toggle -->
+<div class="mode-toggle" style="display: none;">
+  <button class="mode-btn active" data-mode="translation">🌍 Translation</button>
+  <button class="mode-btn" data-mode="preview">📋 Content Preview</button>
+</div>
+
+<!-- Main View -->
+<div class="container view active" id="main-view">
+  <h2>✨ TranslatorWiz</h2>
+  <div class="subtitle">Contentful-powered translation magic</div>
+
+  <div class="stats">
+    <div class="stat-card">
+      <span class="stat-number" id="node-count">-</span>
+      <span class="stat-label">Text Nodes</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-number" id="locale-count">-</span>
+      <span class="stat-label">Languages</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <label>🌍 Select Language</label>
+    <select id="locale" disabled>
+      <option value="">Loading locales...</option>
+    </select>
+  </div>
+
+  <div class="section">
+    <div class="button-group">
+      <button id="apply-translation" disabled>
+        <span>Apply Translation</span>
+      </button>
+      <button id="cancel">Close</button>
+    </div>
+  </div>
+
+  <div class="status-container">
+    <div id="status"></div>
+  </div>
+</div>
+
+<!-- Content Preview View -->
+<div class="container view" id="preview-view">
+  <h2>📋 Content Preview</h2>
+  <div class="subtitle">Map and preview Contentful records</div>
+
+  <div class="section">
+    <label>📦 Select Content Type</label>
+    <select id="content-type-select" disabled>
+      <option value="">Loading content types...</option>
+    </select>
+    <button id="add-content-type" class="btn-small" style="margin-top: 8px; width: 100%;" disabled>+ Add Another Content Type</button>
+  </div>
+
+  <div class="section hidden" id="mapping-section">
+    <div class="mapping-header">
+      <label>🔗 Field Mappings</label>
+      <button id="clear-mappings" class="btn-secondary" style="padding: 6px 12px; font-size: 12px;">Clear All</button>
+    </div>
+    
+    <div id="content-type-groups">
+      <!-- Content type groups will be added here -->
+    </div>
+
+    <div class="button-group" style="margin-top: 12px;">
+      <button id="apply-mappings" class="btn-primary" disabled>Apply & Load Records</button>
+    </div>
+  </div>
+
+  <div class="section hidden" id="record-navigation">
+    <div class="record-header">
+      <label>📄 Record Preview</label>
+      <div class="record-info">
+        <span id="record-counter">Record 1 of 0</span>
+      </div>
+    </div>
+    
+    <div class="record-controls">
+      <button id="prev-record" class="btn-nav" disabled>← Previous</button>
+      <button id="next-record" class="btn-nav" disabled>Next →</button>
+    </div>
+    
+    <div id="record-data" class="record-data">
+      <!-- Current record data will be displayed here -->
+    </div>
+  </div>
+
+  <div class="status-container">
+    <div id="preview-status"></div>
+  </div>
+</div>
+
+<!-- Settings View -->
+<div class="container view" id="settings-view">
+  <h2>⚙️ Settings</h2>
+  <div class="subtitle">Configure your Contentful connection</div>
+
+  <div class="section">
+    <div class="config-field">
+      <label>Space ID</label>
+      <input type="text" id="space-id" placeholder="Enter your Contentful Space ID" />
+    </div>
+
+    <div class="config-field">
+      <label>Environment</label>
+      <input type="text" id="environment" placeholder="e.g., master" />
+    </div>
+
+    <div class="config-field">
+      <label>🔒 Preview Token (Hidden)</label>
+      <input type="password" id="preview-token" placeholder="Enter your preview token" />
+    </div>
+
+    <div class="config-field">
+      <label>Content Type</label>
+      <input type="text" id="content-type" placeholder="e.g., translation" />
+    </div>
+
+    <div class="config-field">
+      <label>Key Field</label>
+      <input type="text" id="key-field" placeholder="e.g., key" />
+    </div>
+
+    <div class="config-field">
+      <label>Value Field</label>
+      <input type="text" id="value-field" placeholder="e.g., value" />
+    </div>
+
+    <div class="config-field">
+      <label>Node Name Pattern (Regex)</label>
+      <input type="text" id="node-pattern" placeholder="e.g., ^jams_" />
+    </div>
+    
+    <div class="config-actions">
+      <button class="btn-primary" id="save-config">💾 Save & Validate</button>
+      <button class="btn-secondary" id="reset-config">Reset to Default</button>
+  </div>
+
+    <div class="preflight-container" id="preflight-container">
+      <div class="preflight-step" id="preflight-validate">
+        <div class="preflight-icon">⏳</div>
+        <div class="preflight-text">Validating configuration...</div>
+      </div>
+      <div class="preflight-step" id="preflight-locales">
+        <div class="preflight-icon">⏳</div>
+        <div class="preflight-text">Testing connection & fetching locales...</div>
+      </div>
+      <div class="preflight-step" id="preflight-content">
+        <div class="preflight-icon">⏳</div>
+        <div class="preflight-text">Verifying content type...</div>
+      </div>
+      <div class="preflight-step" id="preflight-save">
+        <div class="preflight-icon">⏳</div>
+        <div class="preflight-text">Saving configuration...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <button class="btn-secondary" id="back-to-main" style="width: 100%;">← Back to Translator</button>
+  </div>
+
+  <div class="status-container">
+    <div id="settings-status"></div>
+  </div>
+</div>
+
+<script>
+let config = null;
+let isLoading = false;
+const defaultConfig = {
+  SPACE_ID: "4fejn84m8z5w",
+  ENVIRONMENT: "master",
+  PREVIEW_TOKEN: "8R6kV7olel_4nuNpRsgYRXP1RwZ5Vax_3-nnS58zorA",
+  CONTENT_TYPE: "translation",
+  KEY_FIELD: "key",
+  VALUE_FIELD: "value",
+  NODE_NAME_PATTERN: "^jams_"
+};
+
+// Detect and apply Figma theme
+function applyFigmaTheme() {
+  // Figma provides --figma-color-bg when themeColors is enabled
+  const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--figma-color-bg').trim();
+  
+  if (bgColor) {
+    // Parse the RGB value to determine if it's dark or light
+    const rgb = bgColor.match(/\d+/g);
+    if (rgb && rgb.length >= 3) {
+      const r = parseInt(rgb[0]);
+      const g = parseInt(rgb[1]);
+      const b = parseInt(rgb[2]);
+      
+      // Calculate relative luminance
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      
+      // If dark theme (luminance < 0.5), apply dark class
+      if (luminance < 0.5) {
+        document.body.classList.add('figma-dark');
+      } else {
+        document.body.classList.remove('figma-dark');
+      }
+    }
+  }
+}
+
+// Apply theme on load
+applyFigmaTheme();
+
+// Watch for theme changes
+const observer = new MutationObserver(applyFigmaTheme);
+observer.observe(document.documentElement, { 
+  attributes: true, 
+  attributeFilter: ['style'] 
+});
+
+// Request config and start auto-load on startup
+parent.postMessage({ pluginMessage: { type: 'init' } }, '*');
+
+// View switching
+document.getElementById('settings-toggle').onclick = () => {
+  switchView('settings');
+};
+
+document.getElementById('back-to-main').onclick = () => {
+  switchView('main');
+};
+
+function switchView(viewName) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(`${viewName}-view`).classList.add('active');
+  
+  if (viewName === 'settings') {
+    loadConfigIntoEditor();
+  } else {
+    // Hide preflight container when leaving settings
+    const preflightContainer = document.getElementById('preflight-container');
+    if (preflightContainer) {
+      preflightContainer.classList.remove('active');
+      resetPreflightSteps();
+    }
+  }
+}
+
+// Settings functionality
+function loadConfigIntoEditor() {
+  const configToLoad = config || defaultConfig;
+  
+  document.getElementById('space-id').value = configToLoad.SPACE_ID || '';
+  document.getElementById('environment').value = configToLoad.ENVIRONMENT || '';
+  document.getElementById('preview-token').value = configToLoad.PREVIEW_TOKEN || '';
+  document.getElementById('content-type').value = configToLoad.CONTENT_TYPE || '';
+  document.getElementById('key-field').value = configToLoad.KEY_FIELD || '';
+  document.getElementById('value-field').value = configToLoad.VALUE_FIELD || '';
+  document.getElementById('node-pattern').value = configToLoad.NODE_NAME_PATTERN || '';
+}
+
+function getConfigFromFields() {
+  return {
+    SPACE_ID: document.getElementById('space-id').value.trim(),
+    ENVIRONMENT: document.getElementById('environment').value.trim(),
+    PREVIEW_TOKEN: document.getElementById('preview-token').value.trim(),
+    CONTENT_TYPE: document.getElementById('content-type').value.trim(),
+    KEY_FIELD: document.getElementById('key-field').value.trim(),
+    VALUE_FIELD: document.getElementById('value-field').value.trim(),
+    NODE_NAME_PATTERN: document.getElementById('node-pattern').value.trim()
+  };
+}
+
+document.getElementById('save-config').onclick = async () => {
+  const newConfig = getConfigFromFields();
+  
+  // Start preflight checks
+  const preflightContainer = document.getElementById('preflight-container');
+  preflightContainer.classList.add('active');
+  
+  // Smooth scroll to preflight checks
+  setTimeout(() => {
+    preflightContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 100);
+  
+  // Disable the save button
+  document.getElementById('save-config').disabled = true;
+  
+  // Run preflight checks step by step
+  await runPreflightChecks(newConfig);
+};
+
+document.getElementById('reset-config').onclick = () => {
+  loadConfigIntoEditor();
+  setSettingsStatus('✨ Reset to default values', 'info');
+  
+  // Hide preflight if visible
+  document.getElementById('preflight-container').classList.remove('active');
+  resetPreflightSteps();
+};
+
+async function runPreflightChecks(newConfig) {
+  const steps = [
+    { id: 'preflight-validate', check: () => validateConfig(newConfig), delay: 800 },
+    { id: 'preflight-locales', check: () => testLocales(newConfig), delay: 1500 },
+    { id: 'preflight-content', check: () => checkContentType(newConfig), delay: 1000 },
+    { id: 'preflight-save', check: () => saveConfig(newConfig), delay: 600 }
+  ];
+  
+  for (const step of steps) {
+    const element = document.getElementById(step.id);
+    
+    // Mark as checking
+    element.classList.remove('success', 'error');
+    element.classList.add('checking');
+    const icon = element.querySelector('.preflight-icon');
+    while (icon.firstChild) {
+      icon.removeChild(icon.firstChild);
+    }
+    const spinner = document.createElement('span');
+    spinner.className = 'spinner';
+    icon.appendChild(spinner);
+    
+    // Wait a bit so user can see the step
+    await new Promise(resolve => setTimeout(resolve, step.delay));
+    
+    try {
+      const result = await step.check();
+      
+      if (result.success) {
+        element.classList.remove('checking');
+        element.classList.add('success');
+        element.querySelector('.preflight-icon').textContent = '✓';
+        
+        if (result.message) {
+          element.querySelector('.preflight-text').textContent = result.message;
+        }
+      } else {
+        throw new Error(result.error || 'Check failed');
+      }
+    } catch (error) {
+      element.classList.remove('checking');
+      element.classList.add('error');
+      element.querySelector('.preflight-icon').textContent = '✗';
+      element.querySelector('.preflight-text').textContent = error.message;
+      
+      setSettingsStatus('❌ Preflight check failed: ' + error.message, 'error');
+      document.getElementById('save-config').disabled = false;
+      return;
+    }
+  }
+  
+  // All checks passed!
+  setSettingsStatus('✅ Configuration saved successfully!', 'success');
+  document.getElementById('save-config').disabled = false;
+  
+  setTimeout(() => {
+    switchView('main');
+    resetPreflightSteps();
+  }, 1500);
+}
+
+function resetPreflightSteps() {
+  const steps = ['preflight-validate', 'preflight-locales', 'preflight-content', 'preflight-save'];
+  steps.forEach(id => {
+    const element = document.getElementById(id);
+    element.classList.remove('checking', 'success', 'error');
+    element.querySelector('.preflight-icon').textContent = '⏳';
+  });
+  
+  // Reset text
+  document.getElementById('preflight-validate').querySelector('.preflight-text').textContent = 'Validating configuration...';
+  document.getElementById('preflight-locales').querySelector('.preflight-text').textContent = 'Testing connection & fetching locales...';
+  document.getElementById('preflight-content').querySelector('.preflight-text').textContent = 'Verifying content type...';
+  document.getElementById('preflight-save').querySelector('.preflight-text').textContent = 'Saving configuration...';
+}
+
+function validateConfig(cfg) {
+  return new Promise((resolve) => {
+    // Check all required fields
+    const required = ['SPACE_ID', 'ENVIRONMENT', 'PREVIEW_TOKEN', 'CONTENT_TYPE', 'KEY_FIELD', 'VALUE_FIELD', 'NODE_NAME_PATTERN'];
+    const missing = required.filter(field => !cfg[field]);
+    
+    if (missing.length > 0) {
+      resolve({ success: false, error: `Missing fields: ${missing.join(', ')}` });
+      return;
+    }
+    
+    // Validate regex pattern
+    try {
+      new RegExp(cfg.NODE_NAME_PATTERN);
+  } catch (e) {
+      resolve({ success: false, error: 'Invalid regex pattern' });
+      return;
+    }
+    
+    resolve({ success: true, message: 'All fields validated ✓' });
+  });
+}
+
+function testLocales(cfg) {
+  return new Promise((resolve) => {
+    let isResolved = false;
+    
+    const messageHandler = (event) => {
+      if (!isResolved && event.data?.pluginMessage?.type === 'preflight-locales-result') {
+        isResolved = true;
+        window.removeEventListener('message', messageHandler);
+        resolve(event.data.pluginMessage.result);
+      }
+    };
+    
+    window.addEventListener('message', messageHandler);
+    
+    // Send test request - fetching locales validates credentials, space, and environment all at once
+    parent.postMessage({ pluginMessage: { type: 'preflight-test-locales', config: cfg } }, '*');
+    
+    // Timeout after 10 seconds
+    setTimeout(() => {
+      if (!isResolved) {
+        isResolved = true;
+        window.removeEventListener('message', messageHandler);
+        resolve({ success: false, error: 'Locales fetch timeout' });
+      }
+    }, 10000);
+  });
+}
+
+function checkContentType(cfg) {
+  return new Promise((resolve) => {
+    let isResolved = false;
+    
+    const messageHandler = (event) => {
+      if (!isResolved && event.data?.pluginMessage?.type === 'preflight-content-result') {
+        isResolved = true;
+        window.removeEventListener('message', messageHandler);
+        resolve(event.data.pluginMessage.result);
+      }
+    };
+    
+    window.addEventListener('message', messageHandler);
+    parent.postMessage({ pluginMessage: { type: 'preflight-check-content', config: cfg } }, '*');
+    
+    setTimeout(() => {
+      if (!isResolved) {
+        isResolved = true;
+        window.removeEventListener('message', messageHandler);
+        resolve({ success: false, error: 'Content type check timeout' });
+      }
+    }, 10000);
+  });
+}
+
+function saveConfig(cfg) {
+  return new Promise((resolve) => {
+    let isResolved = false;
+    
+    const messageHandler = (event) => {
+      if (isResolved) return;
+      
+      if (event.data?.pluginMessage?.type === 'config-saved') {
+        isResolved = true;
+        window.removeEventListener('message', messageHandler);
+        config = event.data.pluginMessage.config;
+        resolve({ success: true, message: 'Configuration saved successfully ✓' });
+      } else if (event.data?.pluginMessage?.type === 'config-save-failed') {
+        isResolved = true;
+        window.removeEventListener('message', messageHandler);
+        resolve({ success: false, error: event.data.pluginMessage.message });
+      }
+    };
+    
+    window.addEventListener('message', messageHandler);
+    parent.postMessage({ pluginMessage: { type: 'save-config', config: cfg } }, '*');
+    
+    setTimeout(() => {
+      if (!isResolved) {
+        isResolved = true;
+        window.removeEventListener('message', messageHandler);
+        resolve({ success: false, error: 'Save timeout' });
+      }
+    }, 5000);
+  });
+}
+
+function setSettingsStatus(text, type = 'info') {
+  const status = document.getElementById('settings-status');
+  status.className = type;
+  
+  // Clear previous content
+  while (status.firstChild) {
+    status.removeChild(status.firstChild);
+  }
+  
+  if (type === 'loading') {
+    const spinner = document.createElement('span');
+    spinner.className = 'spinner';
+    const textSpan = document.createElement('span');
+    textSpan.textContent = text;
+    status.appendChild(spinner);
+    status.appendChild(textSpan);
+  } else {
+    status.textContent = text;
+  }
+}
+
+document.getElementById('apply-translation').onclick = () => {
+  const localeSelect = document.getElementById('locale');
+  const locale = localeSelect.value;
+  if (!locale) {
+    setStatus('Please select a language first', 'error');
+    return;
+  }
+  if (!config) {
+    setStatus('Configuration not loaded', 'error');
+    return;
+  }
+  
+  setStatus('Applying translations...', 'loading');
+  disableUI(true);
+  parent.postMessage({ pluginMessage: { type: 'apply-translation', config, locale } }, '*');
+}
+
+document.getElementById('cancel').onclick = () => {
+  parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*');
+}
+
+document.getElementById('locale').onchange = () => {
+  const btn = document.getElementById('apply-translation');
+  btn.disabled = false;
+}
+
+window.onmessage = (event) => {
+  // Security: validate message source and structure
+  if (!event || !event.data || !event.data.pluginMessage) return;
+  
+  const msg = event.data.pluginMessage;
+  if (!msg || typeof msg !== 'object' || !msg.type) return;
+  
+  if (msg.type === 'config-loaded') {
+    // Validate config structure
+    if (!msg.config || typeof msg.config !== 'object') {
+      setStatus('Invalid configuration received', 'error');
+      return;
+    }
+    config = msg.config;
+    setStatus('Initializing...', 'loading');
+    // Auto-load locales
+    parent.postMessage({ pluginMessage: { type: 'load-locales', config } }, '*');
+  }
+  
+  if (msg.type === 'node-count') {
+    const count = parseInt(msg.count, 10);
+    if (!isNaN(count) && count >= 0) {
+      updateNodeCount(count);
+    }
+  }
+  
+  if (msg.type === 'locales-loaded') {
+    const select = document.getElementById('locale');
+    select.innerHTML = '<option value="">Choose a language...</option>';
+    select.disabled = false;
+    
+    if (Array.isArray(msg.locales)) {
+      for (const loc of msg.locales) {
+        if (loc && loc.code && loc.name) {
+          const opt = document.createElement('option');
+          opt.value = sanitizeString(loc.code);
+          opt.textContent = `${sanitizeString(loc.name)} (${sanitizeString(loc.code)})`;
+          select.appendChild(opt);
+        }
+      }
+      updateLocaleCount(msg.locales.length);
+      setStatus(`🎉 Ready! ${msg.locales.length} language(s) available`, 'success');
+      disableUI(false);
+    } else {
+      setStatus('Invalid locales data received', 'error');
+    }
+  }
+  
+  if (msg.type === 'translation-applied') {
+    const count = parseInt(msg.count, 10);
+    if (!isNaN(count) && count >= 0) {
+      setStatus(`✨ Success! Updated ${count} text node(s)`, 'success');
+      disableUI(false);
+      
+      // Celebrate with a brief delay then show ready state
+      setTimeout(() => {
+        setStatus(`Ready to translate`, 'info');
+      }, 2000);
+    }
+  }
+  
+  if (msg.type === 'error') {
+    const errorMsg = sanitizeString(msg.message || 'Unknown error occurred');
+    setStatus('⚠️ ' + errorMsg, 'error');
+    disableUI(false);
+  }
+  
+  // Settings responses
+  if (msg.type === 'config-saved') {
+    config = msg.config;
+    setSettingsStatus('✅ Config saved successfully!', 'success');
+    setTimeout(() => {
+      switchView('main');
+      // Auto-reload locales with new config
+      parent.postMessage({ pluginMessage: { type: 'load-locales', config } }, '*');
+    }, 1500);
+  }
+  
+  if (msg.type === 'config-save-failed') {
+    setSettingsStatus('❌ Save failed: ' + sanitizeString(msg.message), 'error');
+  }
+}
+
+function sanitizeString(str) {
+  if (typeof str !== 'string') return '';
+  // Remove any HTML tags and limit length
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML.substring(0, 500);
+}
+
+function setStatus(text, type = 'info') {
+  const status = document.getElementById('status');
+  status.className = type;
+  
+  // Clear previous content
+  while (status.firstChild) {
+    status.removeChild(status.firstChild);
+  }
+  
+  if (type === 'loading') {
+    const spinner = document.createElement('span');
+    spinner.className = 'spinner';
+    const textSpan = document.createElement('span');
+    textSpan.textContent = text;
+    status.appendChild(spinner);
+    status.appendChild(textSpan);
+  } else {
+    status.textContent = text;
+  }
+}
+
+function updateNodeCount(count) {
+  const el = document.getElementById('node-count');
+  el.textContent = count;
+  el.style.animation = 'none';
+  setTimeout(() => el.style.animation = 'success 0.4s ease-out', 10);
+}
+
+function updateLocaleCount(count) {
+  const el = document.getElementById('locale-count');
+  el.textContent = count;
+  el.style.animation = 'none';
+  setTimeout(() => el.style.animation = 'success 0.4s ease-out', 10);
+}
+
+function disableUI(disabled) {
+  const btn = document.getElementById('apply-translation');
+  const select = document.getElementById('locale');
+  
+  if (disabled) {
+    btn.disabled = true;
+  } else {
+    btn.disabled = !select.value;
+  }
+}
+
+// ========== Content Preview Mode ==========
+
+let currentMode = 'translation';
+let contentTypes = [];
+let selectedContentType = null;
+let contentTypeFields = [];
+let contentTypeGroups = []; // Array of {contentType, fields, mappings}
+let records = [];
+let currentRecordIndex = 0;
+
+// Mode switching
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const mode = btn.getAttribute('data-mode');
+    switchMode(mode);
+  });
+});
+
+function switchMode(mode) {
+  currentMode = mode;
+  
+  // Update mode buttons
+  document.querySelectorAll('.mode-btn').forEach(btn => {
+    if (btn.getAttribute('data-mode') === mode) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+  
+  // Show/hide views
+  if (mode === 'translation') {
+    document.getElementById('main-view').classList.add('active');
+    document.getElementById('preview-view').classList.remove('active');
+  } else if (mode === 'preview') {
+    document.getElementById('main-view').classList.remove('active');
+    document.getElementById('preview-view').classList.add('active');
+    
+    // Load content types if not loaded
+    if (contentTypes.length === 0) {
+      loadContentTypes();
+    }
+  }
+}
+
+function loadContentTypes() {
+  if (!config) {
+    setPreviewStatus('Configuration not loaded', 'error');
+    return;
+  }
+  
+  setPreviewStatus('Loading content types...', 'loading');
+  parent.postMessage({ pluginMessage: { type: 'load-content-types', config } }, '*');
+}
+
+function setPreviewStatus(text, type = 'info') {
+  const status = document.getElementById('preview-status');
+  status.className = type;
+  
+  while (status.firstChild) {
+    status.removeChild(status.firstChild);
+  }
+  
+  if (type === 'loading') {
+    const spinner = document.createElement('span');
+    spinner.className = 'spinner';
+    const textSpan = document.createElement('span');
+    textSpan.textContent = text;
+    status.appendChild(spinner);
+    status.appendChild(textSpan);
+  } else {
+    status.textContent = text;
+  }
+}
+
+// Content type selection
+document.getElementById('content-type-select').addEventListener('change', (e) => {
+  const contentTypeId = e.target.value;
+  if (!contentTypeId) return;
+  
+  selectedContentType = contentTypes.find(ct => ct.sys.id === contentTypeId);
+  if (selectedContentType) {
+    addContentTypeGroup(selectedContentType);
+    // Reset selector
+    e.target.value = '';
+  }
+});
+
+// Add another content type
+document.getElementById('add-content-type').addEventListener('click', () => {
+  const select = document.getElementById('content-type-select');
+  if (select.value) {
+    const contentType = contentTypes.find(ct => ct.sys.id === select.value);
+    if (contentType) {
+      addContentTypeGroup(contentType);
+      select.value = '';
+    }
+  }
+});
+
+function addContentTypeGroup(contentType) {
+  // Check if already added
+  if (contentTypeGroups.some(g => g.contentType.sys.id === contentType.sys.id)) {
+    setPreviewStatus(`Content type "${contentType.name}" already added`, 'error');
+    return;
+  }
+  
+  const groupId = Date.now();
+  const group = {
+    id: groupId,
+    contentType: contentType,
+    fields: contentType.fields || [],
+    mappings: []
+  };
+  
+  contentTypeGroups.push(group);
+  
+  // Show mapping section
+  document.getElementById('mapping-section').classList.remove('hidden');
+  
+  // Hide record navigation
+  document.getElementById('record-navigation').classList.add('hidden');
+  
+  // Create group UI
+  const groupDiv = document.createElement('div');
+  groupDiv.className = 'content-type-group';
+  groupDiv.setAttribute('data-group-id', groupId);
+  
+  groupDiv.innerHTML = `
+    <div class="content-type-group-header">
+      <div class="content-type-title">
+        <span class="content-type-badge">${sanitizeString(contentType.name)}</span>
+        <span style="font-size: 11px; color: var(--figma-text-tertiary);">${group.fields.length} fields</span>
+      </div>
+      <button class="btn-remove-group" onclick="removeContentTypeGroup(${groupId})">Remove</button>
+    </div>
+    <div class="mappings-container" data-group-id="${groupId}">
+      <!-- Mappings will be added here -->
+    </div>
+    <button class="add-field-btn" onclick="addMappingToGroup(${groupId})">+ Add Field Mapping</button>
+  `;
+  
+  document.getElementById('content-type-groups').appendChild(groupDiv);
+  
+  setPreviewStatus(`Content type "${contentType.name}" added with ${group.fields.length} fields`, 'success');
+  updateApplyButton();
+  
+  // Enable "Add Another" button
+  document.getElementById('add-content-type').disabled = false;
+}
+
+// Add mapping to specific group
+function addMappingToGroup(groupId) {
+  const group = contentTypeGroups.find(g => g.id === groupId);
+  if (!group) return;
+  
+  const mappingId = Date.now();
+  const mappingDiv = document.createElement('div');
+  mappingDiv.className = 'mapping-item';
+  mappingDiv.setAttribute('data-mapping-id', mappingId);
+  mappingDiv.setAttribute('data-group-id', groupId);
+  
+  mappingDiv.innerHTML = `
+    <div class="mapping-row">
+      <div class="mapping-field">
+        <label>Content Field</label>
+        <select class="field-select">
+          <option value="">Select field...</option>
+          ${group.fields.map(f => `<option value="${sanitizeString(f.id)}">${sanitizeString(f.name)} (${sanitizeString(f.id)})</option>`).join('')}
+        </select>
+      </div>
+      <div class="mapping-field">
+        <label>Text Node</label>
+        <select class="node-select">
+          <option value="">Select node...</option>
+        </select>
+      </div>
+      <button class="btn-remove" onclick="removeMappingRow(${mappingId}, ${groupId})">Remove</button>
+    </div>
+  `;
+  
+  const container = document.querySelector(`.mappings-container[data-group-id="${groupId}"]`);
+  if (container) {
+    container.appendChild(mappingDiv);
+  }
+  
+  // Request text nodes from Figma
+  parent.postMessage({ pluginMessage: { type: 'get-text-nodes' } }, '*');
+  
+  updateApplyButton();
+}
+
+function removeMappingRow(mappingId, groupId) {
+  const mappingDiv = document.querySelector(`[data-mapping-id="${mappingId}"]`);
+  if (mappingDiv) {
+    mappingDiv.remove();
+  }
+  updateApplyButton();
+}
+
+function removeContentTypeGroup(groupId) {
+  const groupDiv = document.querySelector(`[data-group-id="${groupId}"].content-type-group`);
+  if (groupDiv) {
+    groupDiv.remove();
+  }
+  
+  contentTypeGroups = contentTypeGroups.filter(g => g.id !== groupId);
+  
+  if (contentTypeGroups.length === 0) {
+    document.getElementById('mapping-section').classList.add('hidden');
+    document.getElementById('record-navigation').classList.add('hidden');
+    document.getElementById('add-content-type').disabled = true;
+  }
+  
+  updateApplyButton();
+  setPreviewStatus('Content type removed', 'info');
+}
+
+function updateApplyButton() {
+  const mappingItems = document.querySelectorAll('.mapping-item');
+  document.getElementById('apply-mappings').disabled = mappingItems.length === 0;
+}
+
+// Clear all mappings
+document.getElementById('clear-mappings').addEventListener('click', () => {
+  contentTypeGroups = [];
+  document.getElementById('content-type-groups').innerHTML = '';
+  document.getElementById('mapping-section').classList.add('hidden');
+  document.getElementById('record-navigation').classList.add('hidden');
+  document.getElementById('add-content-type').disabled = true;
+  updateApplyButton();
+  setPreviewStatus('All mappings cleared', 'info');
+});
+
+// Apply mappings and load records from all content types
+document.getElementById('apply-mappings').addEventListener('click', () => {
+  if (contentTypeGroups.length === 0) {
+    setPreviewStatus('No content types configured', 'error');
+    return;
+  }
+  
+  // Collect all mappings from all groups with content type info
+  const allMappings = [];
+  const contentTypesToLoad = [];
+  
+  contentTypeGroups.forEach(group => {
+    const groupMappings = [];
+    const container = document.querySelector(`.mappings-container[data-group-id="${group.id}"]`);
+    
+    if (container) {
+      container.querySelectorAll('.mapping-item').forEach(item => {
+        const fieldSelect = item.querySelector('.field-select');
+        const nodeSelect = item.querySelector('.node-select');
+        
+        if (fieldSelect.value && nodeSelect.value) {
+          groupMappings.push({
+            field: fieldSelect.value,
+            node: nodeSelect.value,
+            contentTypeId: group.contentType.sys.id
+          });
+        }
+      });
+    }
+    
+    if (groupMappings.length > 0) {
+      allMappings.push(...groupMappings);
+      if (!contentTypesToLoad.includes(group.contentType.sys.id)) {
+        contentTypesToLoad.push(group.contentType.sys.id);
+      }
+    }
+  });
+  
+  if (allMappings.length === 0) {
+    setPreviewStatus('Please configure at least one mapping', 'error');
+    return;
+  }
+  
+  setPreviewStatus('Loading records from multiple content types...', 'loading');
+  
+  // Load records from all content types
+  parent.postMessage({ 
+    pluginMessage: { 
+      type: 'load-multiple-records', 
+      config, 
+      contentTypes: contentTypesToLoad,
+      mappings: allMappings
+    } 
+  }, '*');
+});
+
+// Record navigation
+document.getElementById('prev-record').addEventListener('click', () => {
+  if (currentRecordIndex > 0) {
+    currentRecordIndex--;
+    displayCurrentRecord();
+    applyRecordToNodes();
+  }
+});
+
+document.getElementById('next-record').addEventListener('click', () => {
+  if (currentRecordIndex < records.length - 1) {
+    currentRecordIndex++;
+    displayCurrentRecord();
+    applyRecordToNodes();
+  }
+});
+
+function displayCurrentRecord() {
+  if (records.length === 0) return;
+  
+  const record = records[currentRecordIndex];
+  const recordDataDiv = document.getElementById('record-data');
+  recordDataDiv.innerHTML = '';
+  
+  // Update counter
+  document.getElementById('record-counter').textContent = `Record ${currentRecordIndex + 1} of ${records.length}`;
+  
+  // Display record fields
+  const fields = record.fields || {};
+  Object.keys(fields).forEach(fieldKey => {
+    const fieldDiv = document.createElement('div');
+    fieldDiv.className = 'record-field';
+    
+    const fieldName = document.createElement('span');
+    fieldName.className = 'field-name';
+    fieldName.textContent = fieldKey;
+    
+    const fieldValue = document.createElement('span');
+    fieldValue.className = 'field-value';
+    fieldValue.textContent = sanitizeString(String(fields[fieldKey] || ''));
+    fieldValue.title = String(fields[fieldKey] || '');
+    
+    fieldDiv.appendChild(fieldName);
+    fieldDiv.appendChild(fieldValue);
+    recordDataDiv.appendChild(fieldDiv);
+  });
+  
+  // Update navigation buttons
+  document.getElementById('prev-record').disabled = currentRecordIndex === 0;
+  document.getElementById('next-record').disabled = currentRecordIndex === records.length - 1;
+}
+
+function applyRecordToNodes() {
+  if (records.length === 0 || !records[currentRecordIndex]) return;
+  
+  const record = records[currentRecordIndex];
+  const fields = record.fields || {};
+  
+  // Collect all mappings from all groups with content type info
+  const allMappings = [];
+  
+  contentTypeGroups.forEach(group => {
+    const container = document.querySelector(`.mappings-container[data-group-id="${group.id}"]`);
+    
+    if (container) {
+      container.querySelectorAll('.mapping-item').forEach(item => {
+        const fieldSelect = item.querySelector('.field-select');
+        const nodeSelect = item.querySelector('.node-select');
+        
+        if (fieldSelect.value && nodeSelect.value) {
+          allMappings.push({
+            field: fieldSelect.value,
+            node: nodeSelect.value,
+            contentTypeId: group.contentType.sys.id
+          });
+        }
+      });
+    }
+  });
+  
+  // Send to Figma to update nodes
+  parent.postMessage({
+    pluginMessage: {
+      type: 'apply-record-to-nodes',
+      mappings: allMappings,
+      recordFields: fields
+    }
+  }, '*');
+}
+
+function createCombinedRecords(recordsByType) {
+  // Create combined records by taking all combinations
+  // For simplicity, we'll create records by taking index-aligned entries from each content type
+  const contentTypeIds = Object.keys(recordsByType);
+  
+  if (contentTypeIds.length === 0) return [];
+  
+  // Find the max number of records across all content types
+  let maxRecords = 0;
+  contentTypeIds.forEach(ctId => {
+    const count = recordsByType[ctId]?.length || 0;
+    if (count > maxRecords) maxRecords = count;
+  });
+  
+  // Create combined records
+  const combined = [];
+  for (let i = 0; i < maxRecords; i++) {
+    const combinedFields = {};
+    
+    contentTypeIds.forEach(ctId => {
+      const records = recordsByType[ctId] || [];
+      const record = records[i] || records[0]; // Use first record if we run out
+      
+      if (record && record.fields) {
+        // Merge fields, prefixing with content type ID to avoid collisions
+        Object.keys(record.fields).forEach(fieldKey => {
+          // Store both prefixed and unprefixed for flexibility
+          combinedFields[`${ctId}.${fieldKey}`] = record.fields[fieldKey];
+          // If no collision, also store without prefix
+          if (!combinedFields[fieldKey]) {
+            combinedFields[fieldKey] = record.fields[fieldKey];
+          }
+        });
+      }
+    });
+    
+    combined.push({
+      sys: { id: `combined_${i}` },
+      fields: combinedFields
+    });
+  }
+  
+  return combined;
+}
+
+// Message handler additions for content preview
+const originalOnMessage = window.onmessage;
+window.onmessage = (event) => {
+  // Call original handler first
+  if (originalOnMessage) {
+    originalOnMessage(event);
+  }
+  
+  if (!event || !event.data || !event.data.pluginMessage) return;
+  const msg = event.data.pluginMessage;
+  
+  if (msg.type === 'content-types-loaded') {
+    contentTypes = msg.contentTypes || [];
+    const select = document.getElementById('content-type-select');
+    select.innerHTML = '<option value="">Select content type...</option>';
+    
+    contentTypes.forEach(ct => {
+      const opt = document.createElement('option');
+      opt.value = ct.sys.id;
+      opt.textContent = `${ct.name} (${ct.sys.id})`;
+      select.appendChild(opt);
+    });
+    
+    select.disabled = false;
+    setPreviewStatus(`${contentTypes.length} content type(s) available`, 'success');
+  }
+  
+  if (msg.type === 'text-nodes-loaded') {
+    const nodes = msg.nodes || [];
+    
+    // Update all node selects
+    document.querySelectorAll('.node-select').forEach(select => {
+      const currentValue = select.value;
+      select.innerHTML = '<option value="">Select node...</option>';
+      
+      nodes.forEach(node => {
+        const opt = document.createElement('option');
+        opt.value = node.id;
+        opt.textContent = `${node.name} (${node.characters.substring(0, 20)}...)`;
+        if (node.id === currentValue) {
+          opt.selected = true;
+        }
+        select.appendChild(opt);
+      });
+    });
+  }
+  
+  if (msg.type === 'records-loaded') {
+    records = msg.records || [];
+    currentRecordIndex = 0;
+    
+    if (records.length > 0) {
+      document.getElementById('record-navigation').classList.remove('hidden');
+      displayCurrentRecord();
+      applyRecordToNodes();
+      setPreviewStatus(`${records.length} record(s) loaded`, 'success');
+    } else {
+      setPreviewStatus('No records found', 'error');
+    }
+  }
+  
+  if (msg.type === 'multiple-records-loaded') {
+    // msg.recordsByContentType is an object: { contentTypeId: [records] }
+    const recordsByType = msg.recordsByContentType || {};
+    
+    // For now, use the first record from each content type to create combinations
+    // This creates "combined" records for preview
+    records = createCombinedRecords(recordsByType);
+    currentRecordIndex = 0;
+    
+    if (records.length > 0) {
+      document.getElementById('record-navigation').classList.remove('hidden');
+      displayCurrentRecord();
+      applyRecordToNodes();
+      setPreviewStatus(`${records.length} combined record(s) loaded`, 'success');
+    } else {
+      setPreviewStatus('No records found', 'error');
+    }
+  }
+  
+  if (msg.type === 'record-applied') {
+    // Success feedback could go here
+  }
+};
+
+</script>
