@@ -286,30 +286,25 @@
   }
   
   .view.active {
-    display: block;
+    display: flex !important;
+  }
+  
+  .container {
+    max-height: 100vh;
   }
   
   .settings-icon {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    background: transparent;
-    color: var(--figma-text-tertiary);
-    width: 32px;
-    height: 32px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: var(--figma-bg);
+    color: var(--figma-text-secondary);
+    border: 1px solid var(--figma-border);
     cursor: pointer;
     transition: all 0.2s;
-    border: none;
-    padding: 0;
   }
   
   .settings-icon:hover {
     background: var(--figma-hover-overlay);
     color: var(--figma-text);
+    transform: scale(1.05);
   }
   
   textarea {
@@ -987,14 +982,13 @@
   }
 </style>
 
-<button class="settings-icon" id="settings-toggle" title="Settings">⚙️</button>
-
 <!-- Write Mode View (Default) -->
 <div class="container view active" id="write-view" style="height: 100vh; display: flex; flex-direction: column;">
   <div class="section" style="padding: 4px; position: relative;">
     <input type="text" id="search-input" placeholder="🔍 Search by key..." 
-           style="width: 100%; padding: 6px 8px 6px 40px; border: 1px solid var(--figma-border); border-radius: 4px; font-size: 12px; background: var(--figma-bg-secondary); color: var(--figma-text); box-sizing: border-box;" />
+           style="width: 100%; padding: 6px 40px 6px 40px; border: 1px solid var(--figma-border); border-radius: 4px; font-size: 12px; background: var(--figma-bg-secondary); color: var(--figma-text); box-sizing: border-box;" />
     <button class="btn-primary" id="btn-load-items" style="position: absolute; left: 6px; top: 4px; width: 28px; height: 28px; padding: 0; font-size: 16px; border-radius: 4px; display: flex; align-items: center; justify-content: center;">🔄</button>
+    <button class="settings-icon" id="settings-toggle-inline" title="Settings" style="position: absolute; right: 6px; top: 4px; width: 28px; height: 28px; padding: 0; font-size: 14px; border-radius: 4px; display: flex; align-items: center; justify-content: center;">⚙️</button>
 </div>
 
   <div class="section hidden" id="items-table-section" style="padding: 6px; flex: 1; display: flex; flex-direction: column;">
@@ -1013,7 +1007,7 @@
         </tbody>
       </table>
     </div>
-  </div>
+</div>
 
   <div class="status-container">
     <div id="write-status"></div>
@@ -1109,49 +1103,59 @@
 </div>
 
 <!-- Settings View -->
-<div class="container view" id="settings-view">
-  <h2>⚙️ Settings</h2>
-  <div class="subtitle">Configure your Contentful connection</div>
+<div class="container view" id="settings-view" style="height: 100vh; overflow-y: auto; display: flex; flex-direction: column; padding: 12px;">
+  <div style="margin-bottom: 16px;">
+    <h2 style="margin: 0 0 4px 0; font-size: 18px; font-weight: 600;">⚙️ Settings</h2>
+    <div class="subtitle" style="margin: 0;">Configure your Contentful connection</div>
+  </div>
 
-  <div class="section">
+  <div class="section" style="flex: 1; overflow-y: auto;">
+    <div style="display: grid; gap: 16px;">
     <div class="config-field">
-      <label>Space ID</label>
-      <input type="text" id="space-id" placeholder="Enter your Contentful Space ID" />
+        <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">🔑 Space ID <span style="color: #f44336;">*</span></label>
+        <input type="text" id="space-id" placeholder="Enter your Contentful Space ID" style="width: 100%; box-sizing: border-box;" />
     </div>
 
     <div class="config-field">
-      <label>Environment</label>
-      <input type="text" id="environment" placeholder="e.g., master" />
+        <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">🔒 CMA Token <span style="color: #f44336;">*</span></label>
+        <input type="password" id="cma-token" placeholder="Enter your CMA token" style="width: 100%; box-sizing: border-box;" />
+        <div style="font-size: 10px; color: var(--figma-text-tertiary); margin-top: 4px;">Content Management API token</div>
+    </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+    <div class="config-field">
+          <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">🌍 Environment</label>
+          <input type="text" id="environment" placeholder="master" style="width: 100%; box-sizing: border-box;" />
     </div>
 
     <div class="config-field">
-      <label>🔒 CMA Token (Content Management API)</label>
-      <input type="password" id="cma-token" placeholder="Enter your CMA token" />
+          <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">📦 Content Type</label>
+          <input type="text" id="content-type" placeholder="translation" style="width: 100%; box-sizing: border-box;" />
+        </div>
+    </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+    <div class="config-field">
+          <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">🔑 Key Field</label>
+          <input type="text" id="key-field" placeholder="key" style="width: 100%; box-sizing: border-box;" />
     </div>
 
     <div class="config-field">
-      <label>Content Type</label>
-      <input type="text" id="content-type" placeholder="e.g., translation" />
+          <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">💬 Value Field</label>
+          <input type="text" id="value-field" placeholder="value" style="width: 100%; box-sizing: border-box;" />
+        </div>
     </div>
 
     <div class="config-field">
-      <label>Key Field</label>
-      <input type="text" id="key-field" placeholder="e.g., key" />
-    </div>
-
-    <div class="config-field">
-      <label>Value Field</label>
-      <input type="text" id="value-field" placeholder="e.g., value" />
-    </div>
-
-    <div class="config-field">
-      <label>Node Name Pattern (Regex)</label>
-      <input type="text" id="node-pattern" placeholder="e.g., ^jams_" />
+        <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">🎯 Node Name Pattern (Regex)</label>
+        <input type="text" id="node-pattern" placeholder="^jams_" style="width: 100%; box-sizing: border-box;" />
+        <div style="font-size: 10px; color: var(--figma-text-tertiary); margin-top: 4px;">Only nodes matching this pattern will be loaded</div>
+      </div>
     </div>
     
-    <div class="config-actions">
-      <button class="btn-primary" id="save-config">💾 Save & Validate</button>
-      <button class="btn-secondary" id="reset-config">Reset to Default</button>
+    <div class="config-actions" style="margin-top: 16px; display: flex; gap: 8px;">
+      <button class="btn-primary" id="save-config" style="flex: 1;">💾 Save & Validate</button>
+      <button class="btn-secondary" id="reset-config" style="flex: 0 0 auto;">Reset to Default</button>
   </div>
 
     <div class="preflight-container" id="preflight-container">
@@ -1174,9 +1178,7 @@
     </div>
   </div>
 
-  <div class="section">
-    <button class="btn-secondary" id="back-to-main" style="width: 100%;">← Back to Translator</button>
-  </div>
+  <button class="btn-secondary" id="back-to-main" style="width: calc(100% - 24px); margin: 0 12px 12px 12px; flex-shrink: 0;">← Back to Translator</button>
 
   <div class="status-container">
     <div id="settings-status"></div>
@@ -1243,18 +1245,48 @@ observer.observe(document.documentElement, {
 // Request config and start auto-load on startup
 parent.postMessage({ pluginMessage: { type: 'init' } }, '*');
 
-// View switching
-document.getElementById('settings-toggle').onclick = () => {
-  switchView('settings');
-};
+// View switching - wait for DOM to be ready
+window.addEventListener('DOMContentLoaded', () => {
+  const settingsBtn = document.getElementById('settings-toggle-inline');
+  if (settingsBtn) {
+    settingsBtn.onclick = () => {
+      console.log('Settings button clicked');
+      switchView('settings');
+    };
+  } else {
+    console.error('Settings button not found!');
+  }
 
-document.getElementById('back-to-main').onclick = () => {
-  switchView('write');
-};
+  const backBtn = document.getElementById('back-to-main');
+  if (backBtn) {
+    backBtn.onclick = () => {
+      switchView('write');
+    };
+  }
+});
 
 function switchView(viewName) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.getElementById(`${viewName}-view`).classList.add('active');
+  console.log('switchView called with:', viewName);
+  
+  const targetView = document.getElementById(`${viewName}-view`);
+  console.log('Target view element:', targetView);
+  
+  if (!targetView) {
+    console.error(`View "${viewName}-view" not found!`);
+    return;
+  }
+  
+  // Remove active from all views
+  document.querySelectorAll('.view').forEach(v => {
+    console.log('Removing active from:', v.id, v.classList.contains('active'));
+    v.classList.remove('active');
+    v.style.display = 'none'; // Force hide
+  });
+  
+  // Activate target view
+  targetView.classList.add('active');
+  targetView.style.display = 'block'; // Force show
+  console.log('Activated view:', targetView.id, targetView.classList.contains('active'));
   
   if (viewName === 'settings') {
     loadConfigIntoEditor();
