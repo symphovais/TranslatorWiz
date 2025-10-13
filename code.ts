@@ -1,11 +1,11 @@
 // TranslatorWiz - Figma plugin for Contentful-based translations
 
-figma.showUI(__html__, { width: 400, height: 550, themeColors: true });
+figma.showUI(__html__, { width: 900, height: 500, themeColors: true });
 
 interface ContentfulConfig {
   SPACE_ID: string;
   ENVIRONMENT: string;
-  PREVIEW_TOKEN: string;
+  CMA_TOKEN: string;
   CONTENT_TYPE: string;
   KEY_FIELD: string;
   VALUE_FIELD: string;
@@ -39,9 +39,9 @@ const API_TIMEOUT = 10000;
 
 // Default config
 const defaultConfig: ContentfulConfig = {
-  SPACE_ID: "4fejn84m8z5w",
+  SPACE_ID: "",
   ENVIRONMENT: "master",
-  PREVIEW_TOKEN: "8R6kV7olel_4nuNpRsgYRXP1RwZ5Vax_3-nnS58zorA",
+  CMA_TOKEN: "",
   CONTENT_TYPE: "translation",
   KEY_FIELD: "key",
   VALUE_FIELD: "value",
@@ -79,8 +79,8 @@ function validateConfig(config: ContentfulConfig): string | null {
   if (!config.ENVIRONMENT || !config.ENVIRONMENT.trim()) {
     return 'ENVIRONMENT is required';
   }
-  if (!config.PREVIEW_TOKEN || !config.PREVIEW_TOKEN.trim()) {
-    return 'PREVIEW_TOKEN is required';
+  if (!config.CMA_TOKEN || !config.CMA_TOKEN.trim()) {
+    return 'CMA_TOKEN is required';
   }
   if (!config.CONTENT_TYPE || !config.CONTENT_TYPE.trim()) {
     return 'CONTENT_TYPE is required';
@@ -105,33 +105,45 @@ function validateConfig(config: ContentfulConfig): string | null {
   return null;
 }
 
+// Listen for selection changes in Figma
+figma.on('selectionchange', () => {
+  const selection = figma.currentPage.selection;
+  
+  if (selection.length === 1 && selection[0].type === 'TEXT') {
+    const textNode = selection[0] as TextNode;
+    figma.ui.postMessage({
+      type: 'text-node-selected',
+      nodeName: textNode.name,
+      nodeText: textNode.characters
+    });
+  }
+});
+
 figma.ui.onmessage = async (msg: { 
   type: string; 
   config?: ContentfulConfig; 
   locale?: string; 
-  count?: number;
-  contentType?: string;
+  count?: number; 
+  contentType?: string; 
   contentTypes?: string[];
   mappings?: FieldMapping[];
   recordFields?: any;
+  item?: any;
 }) => {
   try {
     if (msg.type === 'init') {
       // Load config from storage
       configData = await loadConfigFromStorage();
       
-      // Validate config before sending
-      const configError = validateConfig(configData);
-      if (configError) {
-        figma.ui.postMessage({ type: 'error', message: `Config error: ${configError}` });
-        return;
-      }
-      
+      // Always send config to UI (even if incomplete) so UI can show onboarding
       figma.ui.postMessage({ type: 'config-loaded', config: configData });
       
-      // Count translatable nodes and send to UI
-      const nodeCount = getTranslatableNodeCount(configData);
-      figma.ui.postMessage({ type: 'node-count', count: nodeCount });
+      // Count translatable nodes and send to UI (only if config is valid)
+      const configError = validateConfig(configData);
+      if (!configError) {
+        const nodeCount = getTranslatableNodeCount(configData);
+        figma.ui.postMessage({ type: 'node-count', count: nodeCount });
+      }
       return;
     }
 
@@ -205,10 +217,10 @@ figma.ui.onmessage = async (msg: {
         const spaceId = encodeURIComponent(msg.config.SPACE_ID);
         const environment = encodeURIComponent(msg.config.ENVIRONMENT);
         const contentType = encodeURIComponent(msg.config.CONTENT_TYPE);
-        const url = `https://preview.contentful.com/spaces/${spaceId}/environments/${environment}/content_types/${contentType}`;
+        const url = `https://api.contentful.com/spaces/${spaceId}/environments/${environment}/content_types/${contentType}`;
         const options = {
           headers: {
-            'Authorization': `Bearer ${msg.config.PREVIEW_TOKEN}`
+            'Authorization': `Bearer ${msg.config.CMA_TOKEN}`
           }
         };
         const response = await fetchWithTimeout(url, options, API_TIMEOUT);
@@ -396,6 +408,78 @@ figma.ui.onmessage = async (msg: {
       return;
     }
 
+    // Write mode handlers
+    if (msg.type === 'get-translatable-nodes') {
+      if (!msg.config) {
+        figma.ui.postMessage({ type: 'error', message: 'Configuration missing' });
+        return;
+      }
+      
+      try {
+        const pattern = new RegExp(msg.config.NODE_NAME_PATTERN);
+        const textNodes = figma.currentPage.findAll(
+          (n) => n.type === 'TEXT' && pattern.test(n.name)
+        ) as TextNode[];
+        
+        const nodes = textNodes.map(node => ({
+          id: node.id,
+          name: node.name,
+          characters: node.characters
+        }));
+        
+        figma.ui.postMessage({ type: 'translatable-nodes-loaded', nodes });
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        figma.ui.postMessage({ type: 'error', message: errorMessage });
+      }
+      return;
+    }
+
+    if (msg.type === 'get-all-contentful-items') {
+      if (!msg.config) {
+        figma.ui.postMessage({ type: 'error', message: 'Configuration missing' });
+        return;
+      }
+      
+      try {
+        const items = await fetchAllContentfulItems(msg.config);
+        figma.ui.postMessage({ type: 'contentful-items-loaded', items });
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        figma.ui.postMessage({ type: 'error', message: errorMessage });
+      }
+      return;
+    }
+
+    if (msg.type === 'save-contentful-item') {
+      if (!msg.config || !msg.item) {
+        figma.ui.postMessage({ type: 'error', message: 'Configuration or item missing' });
+        return;
+      }
+      
+      try {
+        const result = await saveItemToContentful(msg.config, msg.item);
+        figma.ui.postMessage({ 
+          type: 'item-saved', 
+          key: msg.item.key,
+          success: result.success,
+          error: result.error,
+          errorDetails: result.errorDetails
+        });
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        const errorDetails = error instanceof Error ? { exception: error.name, stack: error.stack } : { exception: String(error) };
+        figma.ui.postMessage({ 
+          type: 'item-saved', 
+          key: msg.item.key,
+          success: false,
+          error: errorMessage,
+          errorDetails
+        });
+      }
+      return;
+    }
+
     if (msg.type === 'cancel') {
       figma.closePlugin();
       return;
@@ -435,10 +519,10 @@ async function fetchWithTimeout(url: string, options?: any, timeout: number = AP
 async function fetchLocales(config: ContentfulConfig): Promise<Locale[]> {
   const spaceId = encodeURIComponent(config.SPACE_ID);
   const environment = encodeURIComponent(config.ENVIRONMENT);
-  const url = `https://preview.contentful.com/spaces/${spaceId}/environments/${environment}/locales`;
+  const url = `https://api.contentful.com/spaces/${spaceId}/environments/${environment}/locales`;
   const options = {
     headers: {
-      'Authorization': `Bearer ${config.PREVIEW_TOKEN}`
+      'Authorization': `Bearer ${config.CMA_TOKEN}`
     }
   };
   
@@ -486,10 +570,10 @@ async function fetchTranslations(config: ContentfulConfig, locale: string): Prom
   const contentType = encodeURIComponent(config.CONTENT_TYPE);
   const localeParam = encodeURIComponent(locale.trim());
   
-  const url = `https://preview.contentful.com/spaces/${spaceId}/environments/${environment}/entries?content_type=${contentType}&locale=${localeParam}`;
+  const url = `https://api.contentful.com/spaces/${spaceId}/environments/${environment}/entries?content_type=${contentType}&locale=${localeParam}`;
   const options = {
     headers: {
-      'Authorization': `Bearer ${config.PREVIEW_TOKEN}`
+      'Authorization': `Bearer ${config.CMA_TOKEN}`
     }
   };
   
@@ -606,10 +690,10 @@ async function applyTranslations(translations: Translation[], config: Contentful
 async function fetchContentTypes(config: ContentfulConfig): Promise<any[]> {
   const spaceId = encodeURIComponent(config.SPACE_ID);
   const environment = encodeURIComponent(config.ENVIRONMENT);
-  const url = `https://preview.contentful.com/spaces/${spaceId}/environments/${environment}/content_types`;
+  const url = `https://api.contentful.com/spaces/${spaceId}/environments/${environment}/content_types`;
   const options = {
     headers: {
-      'Authorization': `Bearer ${config.PREVIEW_TOKEN}`
+      'Authorization': `Bearer ${config.CMA_TOKEN}`
     }
   };
   
@@ -658,10 +742,10 @@ async function fetchRecords(config: ContentfulConfig, contentType: string): Prom
   const environment = encodeURIComponent(config.ENVIRONMENT);
   const contentTypeParam = encodeURIComponent(contentType);
   
-  const url = `https://preview.contentful.com/spaces/${spaceId}/environments/${environment}/entries?content_type=${contentTypeParam}&limit=100`;
+  const url = `https://api.contentful.com/spaces/${spaceId}/environments/${environment}/entries?content_type=${contentTypeParam}&limit=100`;
   const options = {
     headers: {
-      'Authorization': `Bearer ${config.PREVIEW_TOKEN}`
+      'Authorization': `Bearer ${config.CMA_TOKEN}`
     }
   };
   
@@ -745,5 +829,221 @@ async function applyRecordToNodes(mappings: FieldMapping[], recordFields: any): 
   
   if (errors.length > 0) {
     console.warn('Some mappings failed:', errors);
+  }
+}
+
+// ========== Write Mode Functions ==========
+
+async function fetchAllContentfulItems(config: ContentfulConfig): Promise<{ [key: string]: { value: string; id: string } }> {
+  const spaceId = encodeURIComponent(config.SPACE_ID);
+  const environment = encodeURIComponent(config.ENVIRONMENT);
+  const contentType = encodeURIComponent(config.CONTENT_TYPE);
+  
+  const url = `https://api.contentful.com/spaces/${spaceId}/environments/${environment}/entries?content_type=${contentType}&limit=1000`;
+  const options = {
+    headers: {
+      'Authorization': `Bearer ${config.CMA_TOKEN}`
+    }
+  };
+  
+  try {
+    const response = await fetchWithTimeout(url, options, API_TIMEOUT);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch Contentful items');
+    }
+    
+    const data = await response.json();
+    const items: { [key: string]: { value: string; id: string } } = {};
+    
+    if (data.items && Array.isArray(data.items)) {
+      for (const item of data.items) {
+        // Skip archived entries only (unpublished entries are OK)
+        const isArchived = item.sys.archivedVersion !== undefined;
+        
+        if (isArchived) {
+          console.log(`Skipping archived entry ${item.sys.id}`);
+          continue;
+        }
+        
+        const fields = item.fields || {};
+        // CMA API returns fields in localized format: { 'en-US': 'value' }
+        const keyField = fields[config.KEY_FIELD];
+        const valueField = fields[config.VALUE_FIELD];
+        
+        // Get the actual value from the locale (default to 'en-US' or first available locale)
+        let key: string | null = null;
+        let value: string | null = null;
+        
+        if (keyField && typeof keyField === 'object') {
+          key = keyField['en-US'] || keyField[Object.keys(keyField)[0]];
+        }
+        
+        if (valueField && typeof valueField === 'object') {
+          value = valueField['en-US'] || valueField[Object.keys(valueField)[0]];
+        }
+        
+        if (key && value) {
+          items[key] = {
+            value: value,
+            id: item.sys.id
+          };
+        }
+      }
+    }
+    
+    return items;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Failed to fetch Contentful items: ${error.message}`);
+    }
+    throw error;
+  }
+}
+
+async function saveItemToContentful(config: ContentfulConfig, item: any): Promise<{ success: boolean; error?: string; errorDetails?: any }> {
+  const spaceId = encodeURIComponent(config.SPACE_ID);
+  const environment = encodeURIComponent(config.ENVIRONMENT);
+  const contentType = config.CONTENT_TYPE;
+  
+  try {
+    if (item.isUpdate && item.entryId) {
+      // Update existing entry
+      const url = `https://api.contentful.com/spaces/${spaceId}/environments/${environment}/entries/${item.entryId}`;
+      
+      // First, get the current entry to get the version
+      const getResponse = await fetchWithTimeout(url, {
+        headers: {
+          'Authorization': `Bearer ${config.CMA_TOKEN}`
+        }
+      }, API_TIMEOUT);
+      
+      if (!getResponse.ok) {
+        const errorText = await getResponse.text();
+        console.error('[Contentful] Failed to fetch entry for update:', errorText);
+        return { 
+          success: false, 
+          error: `Could not fetch entry (${getResponse.status})`, 
+          errorDetails: { status: getResponse.status, response: errorText, operation: 'fetch', entryId: item.entryId }
+        };
+      }
+      
+      const currentEntry = await getResponse.json();
+      const version = currentEntry.sys.version;
+      
+      // Update the entry
+      const updateResponse = await fetchWithTimeout(url, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${config.CMA_TOKEN}`,
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+          'X-Contentful-Version': version.toString()
+        },
+        body: JSON.stringify({
+          fields: {
+            [config.KEY_FIELD]: { 'en-US': item.key },
+            [config.VALUE_FIELD]: { 'en-US': item.value }
+          }
+        })
+      }, API_TIMEOUT);
+      
+      if (!updateResponse.ok) {
+        const errorText = await updateResponse.text();
+        console.error('[Contentful] Update failed:', errorText);
+        return { 
+          success: false, 
+          error: `Update failed (${updateResponse.status})`, 
+          errorDetails: { status: updateResponse.status, response: errorText, operation: 'update', entryId: item.entryId, version }
+        };
+      }
+      
+      // Publish the updated entry
+      const updatedEntry = await updateResponse.json();
+      const publishUrl = `${url}/published`;
+      const publishResponse = await fetchWithTimeout(publishUrl, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${config.CMA_TOKEN}`,
+          'X-Contentful-Version': updatedEntry.sys.version.toString()
+        }
+      }, API_TIMEOUT);
+      
+      if (!publishResponse.ok) {
+        const errorText = await publishResponse.text();
+        console.error('[Contentful] Publish failed:', errorText);
+        return { 
+          success: false, 
+          error: `Publish failed (${publishResponse.status})`, 
+          errorDetails: { status: publishResponse.status, response: errorText, operation: 'publish', entryId: item.entryId }
+        };
+      }
+      
+      return { success: true };
+    } else {
+      // Create new entry
+      const url = `https://api.contentful.com/spaces/${spaceId}/environments/${environment}/entries`;
+      
+      const createResponse = await fetchWithTimeout(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${config.CMA_TOKEN}`,
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+          'X-Contentful-Content-Type': contentType
+        },
+        body: JSON.stringify({
+          fields: {
+            [config.KEY_FIELD]: { 'en-US': item.key },
+            [config.VALUE_FIELD]: { 'en-US': item.value }
+          }
+        })
+      }, API_TIMEOUT);
+      
+      if (!createResponse.ok) {
+        const errorText = await createResponse.text();
+        console.error('[Contentful] Create failed:', errorText);
+        return { 
+          success: false, 
+          error: `Create failed (${createResponse.status})`, 
+          errorDetails: { status: createResponse.status, response: errorText, operation: 'create', key: item.key }
+        };
+      }
+      
+      // Publish the new entry
+      const newEntry = await createResponse.json();
+      const publishUrl = `https://api.contentful.com/spaces/${spaceId}/environments/${environment}/entries/${newEntry.sys.id}/published`;
+      const publishResponse = await fetchWithTimeout(publishUrl, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${config.CMA_TOKEN}`,
+          'X-Contentful-Version': newEntry.sys.version.toString()
+        }
+      }, API_TIMEOUT);
+      
+      if (!publishResponse.ok) {
+        const errorText = await publishResponse.text();
+        console.error('[Contentful] Publish after create failed:', errorText);
+        return { 
+          success: false, 
+          error: `Created but publish failed (${publishResponse.status})`, 
+          errorDetails: { status: publishResponse.status, response: errorText, operation: 'publish-new', entryId: newEntry.sys.id }
+        };
+      }
+      
+      return { success: true };
+    }
+  } catch (error) {
+    console.error('[Contentful] Exception:', error);
+    if (error instanceof Error) {
+      return { 
+        success: false, 
+        error: error.message, 
+        errorDetails: { exception: error.name, stack: error.stack, operation: item.isUpdate ? 'update' : 'create' }
+      };
+    }
+    return { 
+      success: false, 
+      error: 'Unknown error occurred', 
+      errorDetails: { exception: String(error) }
+    };
   }
 }

@@ -12,8 +12,8 @@
   "ui": "ui.html",
   "networkAccess": {
     "allowedDomains": [
-      "https://preview.contentful.com",
-      "https://cdn.contentful.com"
-    ]
+      "https://api.contentful.com"
+    ],
+    "reasoning": "Access to Contentful Content Management API (CMA) for managing content"
   }
 }
