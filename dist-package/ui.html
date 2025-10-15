@@ -60,10 +60,11 @@
   
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-    padding: 16px;
-    background: linear-gradient(135deg, var(--figma-gradient-1) 0%, var(--figma-gradient-2) 100%);
-    color: var(--figma-text-secondary);
-    min-height: 100vh;
+    padding: 8px;
+    background: transparent;
+    color: var(--figma-text);
+    height: 100vh;
+    overflow: hidden;
     transition: background 0.3s ease, color 0.3s ease;
   }
   
@@ -75,7 +76,7 @@
     font-size: 20px;
     font-weight: 700;
     margin-bottom: 8px;
-    color: white;
+    color: var(--figma-text);
     text-align: center;
     letter-spacing: -0.5px;
   }
@@ -83,22 +84,23 @@
   .subtitle {
     text-align: center;
     font-size: 11px;
-    color: rgba(255,255,255,0.8);
+    color: var(--figma-text-tertiary);
     margin-bottom: 16px;
   }
   
   .section {
-    background: var(--figma-bg-secondary);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    transition: transform 0.2s, box-shadow 0.2s, background 0.3s ease;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    border-radius: 6px;
+    padding: 8px;
+    margin-bottom: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    transition: background 0.2s ease;
   }
   
-  .section:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+  body.figma-dark .section {
+    background: rgba(30, 30, 30, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
   
   .stats {
@@ -109,12 +111,12 @@
   
   .stat-card {
     flex: 1;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: var(--figma-bg-secondary);
+    border: 1px solid var(--figma-border);
+    color: var(--figma-text);
     padding: 12px;
-    border-radius: 8px;
+    border-radius: 6px;
     text-align: center;
-    animation: fadeIn 0.5s ease-out;
   }
   
   .stat-number {
@@ -126,7 +128,7 @@
   
   .stat-label {
     font-size: 10px;
-    opacity: 0.9;
+    color: var(--figma-text-tertiary);
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -154,8 +156,8 @@
   
   select:focus {
     outline: none;
-    border-color: var(--figma-gradient-1);
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #18a0fb;
+    box-shadow: 0 0 0 2px rgba(24, 160, 251, 0.2);
   }
   
   select:disabled {
@@ -167,35 +169,15 @@
   button {
     padding: 10px 18px;
     border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  button::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.3);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
-  }
-  
-  button:active::before {
-    width: 300px;
-    height: 300px;
+    transition: background 0.15s ease;
   }
   
   button:disabled {
-    opacity: 0.5;
+    opacity: 0.4;
     cursor: not-allowed;
   }
   
@@ -205,14 +187,13 @@
   }
   
   #apply-translation {
-    background: linear-gradient(135deg, #00c853 0%, #00a844 100%);
+    background: #18a0fb;
     color: white;
     flex: 1;
   }
   
   #apply-translation:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 200, 83, 0.4);
+    background: #0d8de0;
   }
   
   #cancel {
@@ -244,28 +225,28 @@
   }
   
   #status.info {
-    background: #e3f2fd;
-    color: #1565c0;
-    border-left: 4px solid #1565c0;
+    background: var(--figma-bg-secondary);
+    color: var(--figma-text);
+    border-left: 4px solid #18a0fb;
   }
   
   #status.success {
-    background: #e8f5e9;
-    color: #2e7d32;
-    border-left: 4px solid #2e7d32;
+    background: var(--figma-bg-secondary);
+    color: var(--figma-text);
+    border-left: 4px solid #0fa958;
     animation: success 0.4s ease-out;
   }
   
   #status.error {
-    background: #ffebee;
-    color: #c62828;
-    border-left: 4px solid #c62828;
+    background: var(--figma-bg-secondary);
+    color: var(--figma-text);
+    border-left: 4px solid #f24822;
   }
   
   #status.loading {
-    background: #fff3e0;
-    color: #e65100;
-    border-left: 4px solid #e65100;
+    background: var(--figma-bg-secondary);
+    color: var(--figma-text);
+    border-left: 4px solid #18a0fb;
   }
   
   #status:empty {
@@ -305,30 +286,25 @@
   }
   
   .view.active {
-    display: block;
+    display: flex !important;
+  }
+  
+  .container {
+    max-height: 100vh;
   }
   
   .settings-icon {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    background: var(--figma-icon-bg);
-    color: white;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: var(--figma-bg);
+    color: var(--figma-text-secondary);
+    border: 1px solid var(--figma-border);
     cursor: pointer;
     transition: all 0.2s;
-    border: none;
-    padding: 0;
   }
   
   .settings-icon:hover {
-    background: var(--figma-icon-bg-hover);
-    transform: rotate(45deg);
+    background: var(--figma-hover-overlay);
+    color: var(--figma-text);
+    transform: scale(1.05);
   }
   
   textarea {
@@ -347,8 +323,8 @@
   
   textarea:focus {
     outline: none;
-    border-color: var(--figma-gradient-1);
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #18a0fb;
+    box-shadow: 0 0 0 2px rgba(24, 160, 251, 0.2);
   }
   
   .config-actions {
@@ -358,22 +334,27 @@
   }
   
   .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #18a0fb;
     color: white;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: #0d8de0;
   }
   
   .btn-secondary {
     background: var(--figma-bg);
-    color: var(--figma-text-tertiary);
-    transition: all 0.3s ease;
+    color: var(--figma-text);
+    border: 1px solid var(--figma-border);
+    transition: all 0.2s ease;
   }
 
   .btn-secondary:hover:not(:disabled) {
-    background: var(--figma-border);
+    background: var(--figma-hover-overlay);
   }
   
   .btn-test {
-    background: linear-gradient(135deg, #00c853 0%, #00a844 100%);
+    background: #18a0fb;
     color: white;
   }
 
@@ -394,8 +375,8 @@
   input[type="text"]:focus,
   input[type="password"]:focus {
     outline: none;
-    border-color: var(--figma-gradient-1);
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #18a0fb;
+    box-shadow: 0 0 0 2px rgba(24, 160, 251, 0.2);
   }
 
   input[type="password"] {
@@ -438,19 +419,19 @@
   }
 
   .preflight-step.checking {
-    border-color: #ff9800;
-    background: #fff3e0;
+    border-color: #18a0fb;
+    background: var(--figma-bg-secondary);
   }
 
   .preflight-step.success {
-    border-color: #4caf50;
-    background: #e8f5e9;
+    border-color: #0fa958;
+    background: var(--figma-bg-secondary);
     animation: success 0.4s ease-out;
   }
 
   .preflight-step.error {
-    border-color: #f44336;
-    background: #ffebee;
+    border-color: #f24822;
+    background: var(--figma-bg-secondary);
   }
 
   .preflight-icon {
@@ -473,12 +454,568 @@
     width: 16px;
     height: 16px;
   }
+
+  /* Mode Toggle */
+  .mode-toggle {
+    display: flex;
+    gap: 8px;
+    padding: 12px 16px 0;
+    background: transparent;
+  }
+
+  .mode-btn {
+    flex: 1;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .mode-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .mode-btn.active {
+    background: white;
+    color: var(--figma-gradient-1);
+    border-color: white;
+  }
+
+  /* Content Preview Styles */
+  .mapping-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .btn-small {
+    padding: 6px 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-small:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+  }
+
+  .mapping-item {
+    background: var(--figma-bg);
+    border: 2px solid var(--figma-border);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+  }
+
+  .mapping-item:hover {
+    border-color: var(--figma-gradient-1);
+  }
+
+  .mapping-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .mapping-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .mapping-row select {
+    flex: 1;
+    padding: 8px;
+    font-size: 12px;
+  }
+
+  .mapping-row label {
+    font-size: 11px;
+    margin-bottom: 4px;
+    color: var(--figma-text-tertiary);
+  }
+
+  .mapping-field {
+    flex: 1;
+  }
+
+  .btn-remove {
+    padding: 8px 12px;
+    background: #ff5252;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-remove:hover {
+    background: #ff1744;
+    transform: translateY(-1px);
+  }
+
+  .record-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .record-info {
+    font-size: 12px;
+    color: var(--figma-text-tertiary);
+    font-weight: 600;
+  }
+
+  .record-controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .btn-nav {
+    flex: 1;
+    padding: 10px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-nav:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  }
+
+  .btn-nav:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .record-data {
+    background: var(--figma-bg);
+    border-radius: 8px;
+    padding: 12px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .record-field {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    margin-bottom: 6px;
+    background: var(--figma-bg-secondary);
+    border-radius: 6px;
+    font-size: 12px;
+  }
+
+  .record-field:last-child {
+    margin-bottom: 0;
+  }
+
+  .field-name {
+    font-weight: 600;
+    color: var(--figma-text-secondary);
+  }
+
+  .field-value {
+    color: var(--figma-text-tertiary);
+    max-width: 60%;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #00c853 0%, #00a844 100%);
+    color: white;
+    flex: 1;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 200, 83, 0.4);
+  }
+
+  .content-type-badge {
+    display: inline-block;
+    background: var(--figma-gradient-1);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .content-type-group {
+    background: var(--figma-bg);
+    border: 2px solid var(--figma-gradient-1);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 12px;
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .content-type-group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--figma-border);
+  }
+
+  .content-type-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: var(--figma-text-secondary);
+  }
+
+  .btn-remove-group {
+    padding: 6px 10px;
+    background: #ff5252;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-remove-group:hover {
+    background: #ff1744;
+    transform: translateY(-1px);
+  }
+
+  .add-field-btn {
+    width: 100%;
+    margin-top: 8px;
+    padding: 8px;
+    background: transparent;
+    border: 2px dashed var(--figma-border);
+    color: var(--figma-text-tertiary);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .add-field-btn:hover {
+    border-color: var(--figma-gradient-1);
+    color: var(--figma-gradient-1);
+    background: rgba(102, 126, 234, 0.05);
+  }
+
+  /* Write Mode Styles */
+  .write-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    font-size: 12px;
+  }
+
+  .write-table th {
+    background: var(--figma-bg);
+    padding: 6px 8px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 11px;
+    border-bottom: 2px solid var(--figma-border);
+    position: sticky;
+    top: 0;
+  }
+
+  .write-table td {
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--figma-border);
+    vertical-align: middle;
+    font-size: 11px;
+  }
+
+  .write-table tbody tr:hover {
+    background: var(--figma-hover-overlay);
+  }
+
+  .write-table tbody tr {
+    transition: background 0.15s ease;
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .status-badge.not-exists {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  .status-badge.out-of-sync {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  .status-badge.synced {
+    background: #d1fae5;
+    color: #065f46;
+  }
+
+  .status-badge.checking {
+    background: var(--figma-bg);
+    color: var(--figma-text-tertiary);
+  }
+
+  /* Error Modal */
+  .error-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .error-modal.show {
+    display: flex;
+  }
+
+  .error-modal-content {
+    background: var(--figma-bg);
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .error-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--figma-border);
+  }
+
+  .error-modal-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #f44336;
+  }
+
+  .error-modal-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--figma-text);
+    padding: 0;
+    width: 24px;
+    height: 24px;
+  }
+
+  .error-modal-close:hover {
+    opacity: 0.7;
+  }
+
+  .error-modal-body {
+    margin-bottom: 16px;
+  }
+
+  .error-message {
+    font-size: 14px;
+    color: var(--figma-text);
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+
+  .error-details {
+    background: var(--figma-bg-secondary);
+    border: 1px solid var(--figma-border);
+    border-radius: 4px;
+    padding: 12px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: var(--figma-text-secondary);
+    overflow-x: auto;
+    max-height: 200px;
+  }
+
+  .error-modal-footer {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+
+  .btn-copy-error {
+    background: var(--figma-bg-secondary);
+    color: var(--figma-text);
+    border: 1px solid var(--figma-border);
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+
+  .btn-copy-error:hover {
+    background: var(--figma-hover-overlay);
+  }
+
+  .btn-close-modal {
+    background: #0d99ff;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+
+  .btn-close-modal:hover {
+    background: #0b7fd4;
+  }
+
+  .btn-save-item {
+    padding: 4px 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-save-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+  }
+
+  .btn-save-item:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .table-container {
+    flex: 1;
+    overflow-y: auto;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+  }
+  
+  body.figma-dark .table-container {
+    background: rgba(30, 30, 30, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .mode-switch {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .mode-switch-btn {
+    flex: 1;
+    padding: 10px;
+    background: var(--figma-bg);
+    color: var(--figma-text);
+    border: 2px solid var(--figma-border);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .mode-switch-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: transparent;
+  }
+
+  .mode-switch-btn:hover:not(.active) {
+    border-color: var(--figma-gradient-1);
+    background: rgba(102, 126, 234, 0.05);
+  }
+
+  .text-preview {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 </style>
 
-<button class="settings-icon" id="settings-toggle" title="Settings">⚙️</button>
+<!-- Write Mode View (Default) -->
+<div class="container view active" id="write-view" style="height: 100vh; display: flex; flex-direction: column;">
+  <div class="section" style="padding: 4px; position: relative;">
+    <input type="text" id="search-input" placeholder="🔍 Search by key..." 
+           style="width: 100%; padding: 6px 40px 6px 40px; border: 1px solid var(--figma-border); border-radius: 4px; font-size: 12px; background: var(--figma-bg-secondary); color: var(--figma-text); box-sizing: border-box;" />
+    <button class="btn-primary" id="btn-load-items" style="position: absolute; left: 6px; top: 4px; width: 28px; height: 28px; padding: 0; font-size: 16px; border-radius: 4px; display: flex; align-items: center; justify-content: center;">🔄</button>
+    <button class="settings-icon" id="settings-toggle-inline" title="Settings" style="position: absolute; right: 6px; top: 4px; width: 28px; height: 28px; padding: 0; font-size: 14px; border-radius: 4px; display: flex; align-items: center; justify-content: center;">⚙️</button>
+</div>
 
-<!-- Main View -->
-<div class="container view active" id="main-view">
+  <div class="section hidden" id="items-table-section" style="padding: 6px; flex: 1; display: flex; flex-direction: column;">
+    <div class="table-container">
+      <table class="write-table">
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Text</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="items-table-body">
+          <!-- Items will be loaded here -->
+        </tbody>
+      </table>
+    </div>
+</div>
+
+  <div class="status-container">
+    <div id="write-status"></div>
+  </div>
+</div>
+
+<!-- Read Mode View -->
+<div class="container view" id="read-view">
   <h2>✨ TranslatorWiz</h2>
   <div class="subtitle">Contentful-powered translation magic</div>
 
@@ -514,50 +1051,111 @@
   </div>
 </div>
 
-<!-- Settings View -->
-<div class="container view" id="settings-view">
-  <h2>⚙️ Settings</h2>
-  <div class="subtitle">Configure your Contentful connection</div>
+<!-- Content Preview View -->
+<div class="container view" id="preview-view">
+  <h2>📋 Content Preview</h2>
+  <div class="subtitle">Map and preview Contentful records</div>
 
   <div class="section">
-    <div class="config-field">
-      <label>Space ID</label>
-      <input type="text" id="space-id" placeholder="Enter your Contentful Space ID" />
-    </div>
+    <label>📦 Select Content Type</label>
+    <select id="content-type-select" disabled>
+      <option value="">Loading content types...</option>
+    </select>
+    <button id="add-content-type" class="btn-small" style="margin-top: 8px; width: 100%;" disabled>+ Add Another Content Type</button>
+  </div>
 
-    <div class="config-field">
-      <label>Environment</label>
-      <input type="text" id="environment" placeholder="e.g., master" />
-    </div>
-
-    <div class="config-field">
-      <label>🔒 Preview Token (Hidden)</label>
-      <input type="password" id="preview-token" placeholder="Enter your preview token" />
-    </div>
-
-    <div class="config-field">
-      <label>Content Type</label>
-      <input type="text" id="content-type" placeholder="e.g., translation" />
-    </div>
-
-    <div class="config-field">
-      <label>Key Field</label>
-      <input type="text" id="key-field" placeholder="e.g., key" />
-    </div>
-
-    <div class="config-field">
-      <label>Value Field</label>
-      <input type="text" id="value-field" placeholder="e.g., value" />
-    </div>
-
-    <div class="config-field">
-      <label>Node Name Pattern (Regex)</label>
-      <input type="text" id="node-pattern" placeholder="e.g., ^jams_" />
+  <div class="section hidden" id="mapping-section">
+    <div class="mapping-header">
+      <label>🔗 Field Mappings</label>
+      <button id="clear-mappings" class="btn-secondary" style="padding: 6px 12px; font-size: 12px;">Clear All</button>
     </div>
     
-    <div class="config-actions">
-      <button class="btn-primary" id="save-config">💾 Save & Validate</button>
-      <button class="btn-secondary" id="reset-config">Reset to Default</button>
+    <div id="content-type-groups">
+      <!-- Content type groups will be added here -->
+    </div>
+
+    <div class="button-group" style="margin-top: 12px;">
+      <button id="apply-mappings" class="btn-primary" disabled>Apply & Load Records</button>
+    </div>
+  </div>
+
+  <div class="section hidden" id="record-navigation">
+    <div class="record-header">
+      <label>📄 Record Preview</label>
+      <div class="record-info">
+        <span id="record-counter">Record 1 of 0</span>
+      </div>
+    </div>
+    
+    <div class="record-controls">
+      <button id="prev-record" class="btn-nav" disabled>← Previous</button>
+      <button id="next-record" class="btn-nav" disabled>Next →</button>
+    </div>
+    
+    <div id="record-data" class="record-data">
+      <!-- Current record data will be displayed here -->
+    </div>
+  </div>
+
+  <div class="status-container">
+    <div id="preview-status"></div>
+  </div>
+</div>
+
+<!-- Settings View -->
+<div class="container view" id="settings-view" style="height: 100vh; overflow-y: auto; display: flex; flex-direction: column; padding: 12px;">
+  <div style="margin-bottom: 16px;">
+    <h2 style="margin: 0 0 4px 0; font-size: 18px; font-weight: 600;">⚙️ Settings</h2>
+    <div class="subtitle" style="margin: 0;">Configure your Contentful connection</div>
+  </div>
+
+  <div class="section" style="flex: 1; overflow-y: auto;">
+    <div style="display: grid; gap: 16px;">
+    <div class="config-field">
+        <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">🔑 Space ID <span style="color: #f44336;">*</span></label>
+        <input type="text" id="space-id" placeholder="Enter your Contentful Space ID" style="width: 100%; box-sizing: border-box;" />
+    </div>
+
+    <div class="config-field">
+        <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">🔒 CMA Token <span style="color: #f44336;">*</span></label>
+        <input type="password" id="cma-token" placeholder="Enter your CMA token" style="width: 100%; box-sizing: border-box;" />
+        <div style="font-size: 10px; color: var(--figma-text-tertiary); margin-top: 4px;">Content Management API token</div>
+    </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+    <div class="config-field">
+          <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">🌍 Environment</label>
+          <input type="text" id="environment" placeholder="master" style="width: 100%; box-sizing: border-box;" />
+    </div>
+
+    <div class="config-field">
+          <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">📦 Content Type</label>
+          <input type="text" id="content-type" placeholder="translation" style="width: 100%; box-sizing: border-box;" />
+        </div>
+    </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+    <div class="config-field">
+          <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">🔑 Key Field</label>
+          <input type="text" id="key-field" placeholder="key" style="width: 100%; box-sizing: border-box;" />
+    </div>
+
+    <div class="config-field">
+          <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">💬 Value Field</label>
+          <input type="text" id="value-field" placeholder="value" style="width: 100%; box-sizing: border-box;" />
+        </div>
+    </div>
+
+    <div class="config-field">
+        <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">🎯 Node Name Pattern (Regex)</label>
+        <input type="text" id="node-pattern" placeholder="^jams_" style="width: 100%; box-sizing: border-box;" />
+        <div style="font-size: 10px; color: var(--figma-text-tertiary); margin-top: 4px;">Only nodes matching this pattern will be loaded</div>
+      </div>
+    </div>
+    
+    <div class="config-actions" style="margin-top: 16px; display: flex; gap: 8px;">
+      <button class="btn-primary" id="save-config" style="flex: 1;">💾 Save & Validate</button>
+      <button class="btn-secondary" id="reset-config" style="flex: 0 0 auto;">Reset to Default</button>
   </div>
 
     <div class="preflight-container" id="preflight-container">
@@ -580,9 +1178,7 @@
     </div>
   </div>
 
-  <div class="section">
-    <button class="btn-secondary" id="back-to-main" style="width: 100%;">← Back to Translator</button>
-  </div>
+  <button class="btn-secondary" id="back-to-main" style="width: calc(100% - 24px); margin: 0 12px 12px 12px; flex-shrink: 0;">← Back to Translator</button>
 
   <div class="status-container">
     <div id="settings-status"></div>
@@ -592,15 +1188,23 @@
 <script>
 let config = null;
 let isLoading = false;
+
 const defaultConfig = {
-  SPACE_ID: "4fejn84m8z5w",
+  SPACE_ID: "",
   ENVIRONMENT: "master",
-  PREVIEW_TOKEN: "8R6kV7olel_4nuNpRsgYRXP1RwZ5Vax_3-nnS58zorA",
+  CMA_TOKEN: "",
   CONTENT_TYPE: "translation",
   KEY_FIELD: "key",
   VALUE_FIELD: "value",
   NODE_NAME_PATTERN: "^jams_"
 };
+
+// Check if configuration is complete
+function isConfigComplete(cfg) {
+  if (!cfg) return false;
+  // Required fields that user must fill
+  return !!(cfg.SPACE_ID && cfg.SPACE_ID.trim() && cfg.CMA_TOKEN && cfg.CMA_TOKEN.trim());
+}
 
 // Detect and apply Figma theme
 function applyFigmaTheme() {
@@ -641,18 +1245,48 @@ observer.observe(document.documentElement, {
 // Request config and start auto-load on startup
 parent.postMessage({ pluginMessage: { type: 'init' } }, '*');
 
-// View switching
-document.getElementById('settings-toggle').onclick = () => {
-  switchView('settings');
-};
+// View switching - wait for DOM to be ready
+window.addEventListener('DOMContentLoaded', () => {
+  const settingsBtn = document.getElementById('settings-toggle-inline');
+  if (settingsBtn) {
+    settingsBtn.onclick = () => {
+      console.log('Settings button clicked');
+      switchView('settings');
+    };
+  } else {
+    console.error('Settings button not found!');
+  }
 
-document.getElementById('back-to-main').onclick = () => {
-  switchView('main');
-};
+  const backBtn = document.getElementById('back-to-main');
+  if (backBtn) {
+    backBtn.onclick = () => {
+      switchView('write');
+    };
+  }
+});
 
 function switchView(viewName) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.getElementById(`${viewName}-view`).classList.add('active');
+  console.log('switchView called with:', viewName);
+  
+  const targetView = document.getElementById(`${viewName}-view`);
+  console.log('Target view element:', targetView);
+  
+  if (!targetView) {
+    console.error(`View "${viewName}-view" not found!`);
+    return;
+  }
+  
+  // Remove active from all views
+  document.querySelectorAll('.view').forEach(v => {
+    console.log('Removing active from:', v.id, v.classList.contains('active'));
+    v.classList.remove('active');
+    v.style.display = 'none'; // Force hide
+  });
+  
+  // Activate target view
+  targetView.classList.add('active');
+  targetView.style.display = 'block'; // Force show
+  console.log('Activated view:', targetView.id, targetView.classList.contains('active'));
   
   if (viewName === 'settings') {
     loadConfigIntoEditor();
@@ -672,7 +1306,7 @@ function loadConfigIntoEditor() {
   
   document.getElementById('space-id').value = configToLoad.SPACE_ID || '';
   document.getElementById('environment').value = configToLoad.ENVIRONMENT || '';
-  document.getElementById('preview-token').value = configToLoad.PREVIEW_TOKEN || '';
+  document.getElementById('cma-token').value = configToLoad.CMA_TOKEN || '';
   document.getElementById('content-type').value = configToLoad.CONTENT_TYPE || '';
   document.getElementById('key-field').value = configToLoad.KEY_FIELD || '';
   document.getElementById('value-field').value = configToLoad.VALUE_FIELD || '';
@@ -683,7 +1317,7 @@ function getConfigFromFields() {
   return {
     SPACE_ID: document.getElementById('space-id').value.trim(),
     ENVIRONMENT: document.getElementById('environment').value.trim(),
-    PREVIEW_TOKEN: document.getElementById('preview-token').value.trim(),
+    CMA_TOKEN: document.getElementById('cma-token').value.trim(),
     CONTENT_TYPE: document.getElementById('content-type').value.trim(),
     KEY_FIELD: document.getElementById('key-field').value.trim(),
     VALUE_FIELD: document.getElementById('value-field').value.trim(),
@@ -798,7 +1432,7 @@ function resetPreflightSteps() {
 function validateConfig(cfg) {
   return new Promise((resolve) => {
     // Check all required fields
-    const required = ['SPACE_ID', 'ENVIRONMENT', 'PREVIEW_TOKEN', 'CONTENT_TYPE', 'KEY_FIELD', 'VALUE_FIELD', 'NODE_NAME_PATTERN'];
+    const required = ['SPACE_ID', 'ENVIRONMENT', 'CMA_TOKEN', 'CONTENT_TYPE', 'KEY_FIELD', 'VALUE_FIELD', 'NODE_NAME_PATTERN'];
     const missing = required.filter(field => !cfg[field]);
     
     if (missing.length > 0) {
@@ -945,6 +1579,262 @@ document.getElementById('cancel').onclick = () => {
   parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*');
 }
 
+// ========== Write Mode Functionality ==========
+
+let textItems = [];
+let contentfulItems = {};
+
+document.getElementById('btn-load-items').onclick = async () => {
+  if (!config) {
+    setWriteStatus('⚠️ Please configure Contentful connection first', 'error');
+    return;
+  }
+  
+  console.log('🔄 Load button clicked - fetching fresh data from Figma and Contentful');
+  setWriteStatus('Loading text items...', 'loading');
+  
+  // Clear existing data to force fresh fetch
+  textItems = [];
+  contentfulItems = {};
+  
+  // Fetch text nodes from Figma
+  parent.postMessage({ pluginMessage: { type: 'get-translatable-nodes', config } }, '*');
+};
+
+function setWriteStatus(text, type = 'info') {
+  const status = document.getElementById('write-status');
+  status.className = type;
+  status.textContent = text;
+}
+
+async function loadItemsAndCheckStatus(items) {
+  console.log('📝 Loaded', items.length, 'text items from Figma');
+  textItems = items;
+  
+  if (items.length === 0) {
+    setWriteStatus('No translatable text items found', 'info');
+    return;
+  }
+  
+  // Check for duplicate names
+  const nameCount = {};
+  const duplicates = [];
+  items.forEach(item => {
+    nameCount[item.name] = (nameCount[item.name] || 0) + 1;
+    if (nameCount[item.name] > 1 && !duplicates.includes(item.name)) {
+      duplicates.push(item.name);
+    }
+  });
+  
+  if (duplicates.length > 0) {
+    console.warn('⚠️ DUPLICATE NODE NAMES DETECTED:');
+    duplicates.forEach(name => {
+      console.warn(`  - "${name}" appears ${nameCount[name]} times`);
+      const dupeItems = items.filter(item => item.name === name);
+      dupeItems.forEach((item, idx) => {
+        console.warn(`    ${idx + 1}. ID: ${item.id}, Text: "${item.characters.substring(0, 50)}..."`);
+      });
+    });
+    setWriteStatus(`⚠️ Warning: ${duplicates.length} duplicate name(s) found - check console`, 'error');
+  }
+  
+  // Always fetch fresh data from Contentful to get the latest state
+  console.log('🔄 Fetching fresh data from Contentful...');
+  setWriteStatus('Fetching from Contentful...', 'loading');
+  parent.postMessage({ pluginMessage: { type: 'get-all-contentful-items', config } }, '*');
+}
+
+function renderItemsTable() {
+  const tbody = document.getElementById('items-table-body');
+  tbody.innerHTML = '';
+  
+  // Get search filter
+  const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
+  
+  // Filter items based on search
+  const filteredItems = textItems.filter(item => 
+    item.name.toLowerCase().includes(searchTerm)
+  );
+  
+  filteredItems.forEach((item, index) => {
+    const originalIndex = textItems.findIndex(original => original.id === item.id);
+    const tr = document.createElement('tr');
+    
+    // Add click handler to filter by this item
+    tr.style.cursor = 'pointer';
+    tr.onclick = (e) => {
+      // Don't trigger if clicking a button
+      if (e.target.tagName === 'BUTTON') return;
+      
+      const searchInput = document.getElementById('search-input');
+      searchInput.value = item.name;
+      searchInput.dispatchEvent(new Event('input'));
+      searchInput.focus();
+    };
+    
+    // Key column
+    const keyTd = document.createElement('td');
+    keyTd.textContent = item.name;
+    keyTd.style.fontWeight = '600';
+    tr.appendChild(keyTd);
+    
+    // Text column
+    const textTd = document.createElement('td');
+    const textDiv = document.createElement('div');
+    textDiv.className = 'text-preview';
+    textDiv.textContent = item.characters;
+    textDiv.title = item.characters;
+    textTd.appendChild(textDiv);
+    tr.appendChild(textTd);
+    
+    // Status column
+    const statusTd = document.createElement('td');
+    const statusBadge = document.createElement('span');
+    statusBadge.className = 'status-badge checking';
+    statusBadge.id = `status-${originalIndex}`;
+    
+    const contentfulItem = contentfulItems[item.name];
+    if (!contentfulItem) {
+      statusBadge.className = 'status-badge not-exists';
+      statusBadge.textContent = '+';
+      statusBadge.title = 'New - Does not exist in Contentful';
+    } else {
+      // Bulletproof comparison with normalization
+      const figmaText = normalizeText(item.characters);
+      const contentfulText = normalizeText(contentfulItem.value);
+      const isEqual = textsAreEqual(item.characters, contentfulItem.value);
+      
+      console.log(`Comparing "${item.name}":`);
+      console.log('  Figma Raw:', `"${item.characters}"`);
+      console.log('  Figma Normalized:', `"${figmaText}"`);
+      console.log('  Contentful Raw:', `"${contentfulItem.value}"`);
+      console.log('  Contentful Normalized:', `"${contentfulText}"`);
+      console.log('  Equal:', isEqual);
+      console.log('  Lengths:', { figma: figmaText.length, contentful: contentfulText.length });
+      if (!isEqual) {
+        console.log('  Figma Char Codes:', Array.from(figmaText).map(c => c.charCodeAt(0)));
+        console.log('  Contentful Char Codes:', Array.from(contentfulText).map(c => c.charCodeAt(0)));
+      }
+      
+      if (!isEqual) {
+        statusBadge.className = 'status-badge out-of-sync';
+        statusBadge.textContent = '!';
+        statusBadge.title = `Out of Sync - Figma: "${figmaText}" vs Contentful: "${contentfulText}"`;
+      } else {
+        statusBadge.className = 'status-badge synced';
+        statusBadge.textContent = '✓';
+        statusBadge.title = 'Synced - Matches Contentful';
+      }
+    }
+    
+    statusTd.appendChild(statusBadge);
+    tr.appendChild(statusTd);
+    
+    // Action column
+    const actionTd = document.createElement('td');
+    
+    const needsUpdate = !contentfulItem || !textsAreEqual(item.characters, contentfulItem.value);
+    
+    if (needsUpdate) {
+      const saveBtn = document.createElement('button');
+      saveBtn.className = 'btn-save-item';
+      saveBtn.textContent = contentfulItem ? 'Update' : 'Create';
+      saveBtn.onclick = () => saveItemToContentful(item, originalIndex);
+      actionTd.appendChild(saveBtn);
+    }
+    
+    tr.appendChild(actionTd);
+    tbody.appendChild(tr);
+  });
+  
+  document.getElementById('items-table-section').classList.remove('hidden');
+  setWriteStatus('✓ Ready', 'success');
+}
+
+// Search functionality
+document.getElementById('search-input').addEventListener('input', () => {
+  renderItemsTable();
+});
+
+// Bulletproof text normalization and comparison
+function normalizeText(text) {
+  if (!text) return '';
+  return text
+    .trim()                           // Remove leading/trailing whitespace
+    .replace(/\s+/g, ' ')             // Normalize multiple spaces to single space
+    .replace(/\u00A0/g, ' ')          // Replace non-breaking spaces with regular spaces
+    .replace(/[\u200B-\u200D\uFEFF]/g, '') // Remove zero-width characters
+    .normalize('NFC');                // Unicode normalization (canonical composition)
+}
+
+function textsAreEqual(text1, text2) {
+  const normalized1 = normalizeText(text1);
+  const normalized2 = normalizeText(text2);
+  return normalized1 === normalized2;
+}
+
+function saveItemToContentful(item, index) {
+  const statusBadge = document.getElementById(`status-${index}`);
+  statusBadge.className = 'status-badge checking';
+  statusBadge.textContent = '⏳';
+  statusBadge.title = 'Saving...';
+  
+  const isUpdate = !!contentfulItems[item.name];
+  const entryId = isUpdate ? contentfulItems[item.name].id : null;
+  
+  parent.postMessage({ 
+    pluginMessage: { 
+      type: 'save-contentful-item',
+      config,
+      item: {
+        key: item.name,
+        value: item.characters,
+        entryId: entryId,
+        isUpdate: isUpdate
+      }
+    } 
+  }, '*');
+}
+
+function updateItemStatus(key, success, errorMsg, errorDetails) {
+  console.log('=== updateItemStatus called ===');
+  console.log('Key:', key);
+  console.log('Success:', success);
+  console.log('Error:', errorMsg);
+  console.log('Error Details:', errorDetails);
+  
+  if (success) {
+    console.log('✓ Save successful, refreshing from Contentful...');
+    
+    // Instead of updating cache manually, re-fetch from Contentful to get the REAL state
+    setWriteStatus(`✓ ${key} saved, refreshing...`, 'success');
+    parent.postMessage({ pluginMessage: { type: 'get-all-contentful-items', config } }, '*');
+  } else {
+    // On error, update status badge and show detailed error modal
+    const index = textItems.findIndex(item => item.name === key);
+    if (index !== -1) {
+      const statusBadge = document.getElementById(`status-${index}`);
+      if (statusBadge) {
+        statusBadge.className = 'status-badge out-of-sync';
+        statusBadge.textContent = '✗';
+        statusBadge.title = `Error: ${errorMsg}`;
+      }
+    }
+    
+    // Show brief error in status bar
+    setWriteStatus(`❌ Failed: ${errorMsg}`, 'error');
+    
+    // Show detailed error modal if we have details
+    if (errorDetails) {
+      showErrorModal(
+        `Failed to save "${key}"`,
+        errorMsg || 'An unknown error occurred',
+        errorDetails
+      );
+    }
+  }
+}
+
 document.getElementById('locale').onchange = () => {
   const btn = document.getElementById('apply-translation');
   btn.disabled = false;
@@ -964,9 +1854,17 @@ window.onmessage = (event) => {
       return;
     }
     config = msg.config;
-    setStatus('Initializing...', 'loading');
-    // Auto-load locales
-    parent.postMessage({ pluginMessage: { type: 'load-locales', config } }, '*');
+    
+    // Check if configuration is complete (has Space ID and CMA Token)
+    if (!isConfigComplete(config)) {
+      // Show onboarding/settings screen
+      switchView('settings');
+      setSettingsStatus('👋 Welcome! Please configure your Contentful connection to get started.', 'info');
+      return;
+    }
+    
+    // Config is complete - stay on write view (default view)
+    setWriteStatus('✓ Ready! Click "Load Text Items" to begin', 'success');
   }
   
   if (msg.type === 'node-count') {
@@ -1086,5 +1984,606 @@ function disableUI(disabled) {
     btn.disabled = !select.value;
   }
 }
+
+// ========== Content Preview Mode ==========
+
+let currentMode = 'translation';
+let contentTypes = [];
+let selectedContentType = null;
+let contentTypeFields = [];
+let contentTypeGroups = []; // Array of {contentType, fields, mappings}
+let records = [];
+let currentRecordIndex = 0;
+
+// Mode switching
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const mode = btn.getAttribute('data-mode');
+    switchMode(mode);
+  });
+});
+
+function switchMode(mode) {
+  currentMode = mode;
+  
+  // Update mode buttons
+  document.querySelectorAll('.mode-btn').forEach(btn => {
+    if (btn.getAttribute('data-mode') === mode) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+  
+  // Show/hide views
+  if (mode === 'translation') {
+    document.getElementById('main-view').classList.add('active');
+    document.getElementById('preview-view').classList.remove('active');
+  } else if (mode === 'preview') {
+    document.getElementById('main-view').classList.remove('active');
+    document.getElementById('preview-view').classList.add('active');
+    
+    // Load content types if not loaded
+    if (contentTypes.length === 0) {
+      loadContentTypes();
+    }
+  }
+}
+
+function loadContentTypes() {
+  if (!config) {
+    setPreviewStatus('Configuration not loaded', 'error');
+    return;
+  }
+  
+  setPreviewStatus('Loading content types...', 'loading');
+  parent.postMessage({ pluginMessage: { type: 'load-content-types', config } }, '*');
+}
+
+function setPreviewStatus(text, type = 'info') {
+  const status = document.getElementById('preview-status');
+  status.className = type;
+  
+  while (status.firstChild) {
+    status.removeChild(status.firstChild);
+  }
+  
+  if (type === 'loading') {
+    const spinner = document.createElement('span');
+    spinner.className = 'spinner';
+    const textSpan = document.createElement('span');
+    textSpan.textContent = text;
+    status.appendChild(spinner);
+    status.appendChild(textSpan);
+  } else {
+    status.textContent = text;
+  }
+}
+
+// Content type selection
+document.getElementById('content-type-select').addEventListener('change', (e) => {
+  const contentTypeId = e.target.value;
+  if (!contentTypeId) return;
+  
+  selectedContentType = contentTypes.find(ct => ct.sys.id === contentTypeId);
+  if (selectedContentType) {
+    addContentTypeGroup(selectedContentType);
+    // Reset selector
+    e.target.value = '';
+  }
+});
+
+// Add another content type
+document.getElementById('add-content-type').addEventListener('click', () => {
+  const select = document.getElementById('content-type-select');
+  if (select.value) {
+    const contentType = contentTypes.find(ct => ct.sys.id === select.value);
+    if (contentType) {
+      addContentTypeGroup(contentType);
+      select.value = '';
+    }
+  }
+});
+
+function addContentTypeGroup(contentType) {
+  // Check if already added
+  if (contentTypeGroups.some(g => g.contentType.sys.id === contentType.sys.id)) {
+    setPreviewStatus(`Content type "${contentType.name}" already added`, 'error');
+    return;
+  }
+  
+  const groupId = Date.now();
+  const group = {
+    id: groupId,
+    contentType: contentType,
+    fields: contentType.fields || [],
+    mappings: []
+  };
+  
+  contentTypeGroups.push(group);
+  
+  // Show mapping section
+  document.getElementById('mapping-section').classList.remove('hidden');
+  
+  // Hide record navigation
+  document.getElementById('record-navigation').classList.add('hidden');
+  
+  // Create group UI
+  const groupDiv = document.createElement('div');
+  groupDiv.className = 'content-type-group';
+  groupDiv.setAttribute('data-group-id', groupId);
+  
+  groupDiv.innerHTML = `
+    <div class="content-type-group-header">
+      <div class="content-type-title">
+        <span class="content-type-badge">${sanitizeString(contentType.name)}</span>
+        <span style="font-size: 11px; color: var(--figma-text-tertiary);">${group.fields.length} fields</span>
+      </div>
+      <button class="btn-remove-group" onclick="removeContentTypeGroup(${groupId})">Remove</button>
+    </div>
+    <div class="mappings-container" data-group-id="${groupId}">
+      <!-- Mappings will be added here -->
+    </div>
+    <button class="add-field-btn" onclick="addMappingToGroup(${groupId})">+ Add Field Mapping</button>
+  `;
+  
+  document.getElementById('content-type-groups').appendChild(groupDiv);
+  
+  setPreviewStatus(`Content type "${contentType.name}" added with ${group.fields.length} fields`, 'success');
+  updateApplyButton();
+  
+  // Enable "Add Another" button
+  document.getElementById('add-content-type').disabled = false;
+}
+
+// Add mapping to specific group
+function addMappingToGroup(groupId) {
+  const group = contentTypeGroups.find(g => g.id === groupId);
+  if (!group) return;
+  
+  const mappingId = Date.now();
+  const mappingDiv = document.createElement('div');
+  mappingDiv.className = 'mapping-item';
+  mappingDiv.setAttribute('data-mapping-id', mappingId);
+  mappingDiv.setAttribute('data-group-id', groupId);
+  
+  mappingDiv.innerHTML = `
+    <div class="mapping-row">
+      <div class="mapping-field">
+        <label>Content Field</label>
+        <select class="field-select">
+          <option value="">Select field...</option>
+          ${group.fields.map(f => `<option value="${sanitizeString(f.id)}">${sanitizeString(f.name)} (${sanitizeString(f.id)})</option>`).join('')}
+        </select>
+      </div>
+      <div class="mapping-field">
+        <label>Text Node</label>
+        <select class="node-select">
+          <option value="">Select node...</option>
+        </select>
+      </div>
+      <button class="btn-remove" onclick="removeMappingRow(${mappingId}, ${groupId})">Remove</button>
+    </div>
+  `;
+  
+  const container = document.querySelector(`.mappings-container[data-group-id="${groupId}"]`);
+  if (container) {
+    container.appendChild(mappingDiv);
+  }
+  
+  // Request text nodes from Figma
+  parent.postMessage({ pluginMessage: { type: 'get-text-nodes' } }, '*');
+  
+  updateApplyButton();
+}
+
+function removeMappingRow(mappingId, groupId) {
+  const mappingDiv = document.querySelector(`[data-mapping-id="${mappingId}"]`);
+  if (mappingDiv) {
+    mappingDiv.remove();
+  }
+  updateApplyButton();
+}
+
+function removeContentTypeGroup(groupId) {
+  const groupDiv = document.querySelector(`[data-group-id="${groupId}"].content-type-group`);
+  if (groupDiv) {
+    groupDiv.remove();
+  }
+  
+  contentTypeGroups = contentTypeGroups.filter(g => g.id !== groupId);
+  
+  if (contentTypeGroups.length === 0) {
+    document.getElementById('mapping-section').classList.add('hidden');
+    document.getElementById('record-navigation').classList.add('hidden');
+    document.getElementById('add-content-type').disabled = true;
+  }
+  
+  updateApplyButton();
+  setPreviewStatus('Content type removed', 'info');
+}
+
+function updateApplyButton() {
+  const mappingItems = document.querySelectorAll('.mapping-item');
+  document.getElementById('apply-mappings').disabled = mappingItems.length === 0;
+}
+
+// Clear all mappings
+document.getElementById('clear-mappings').addEventListener('click', () => {
+  contentTypeGroups = [];
+  document.getElementById('content-type-groups').innerHTML = '';
+  document.getElementById('mapping-section').classList.add('hidden');
+  document.getElementById('record-navigation').classList.add('hidden');
+  document.getElementById('add-content-type').disabled = true;
+  updateApplyButton();
+  setPreviewStatus('All mappings cleared', 'info');
+});
+
+// Apply mappings and load records from all content types
+document.getElementById('apply-mappings').addEventListener('click', () => {
+  if (contentTypeGroups.length === 0) {
+    setPreviewStatus('No content types configured', 'error');
+    return;
+  }
+  
+  // Collect all mappings from all groups with content type info
+  const allMappings = [];
+  const contentTypesToLoad = [];
+  
+  contentTypeGroups.forEach(group => {
+    const groupMappings = [];
+    const container = document.querySelector(`.mappings-container[data-group-id="${group.id}"]`);
+    
+    if (container) {
+      container.querySelectorAll('.mapping-item').forEach(item => {
+        const fieldSelect = item.querySelector('.field-select');
+        const nodeSelect = item.querySelector('.node-select');
+        
+        if (fieldSelect.value && nodeSelect.value) {
+          groupMappings.push({
+            field: fieldSelect.value,
+            node: nodeSelect.value,
+            contentTypeId: group.contentType.sys.id
+          });
+        }
+      });
+    }
+    
+    if (groupMappings.length > 0) {
+      allMappings.push(...groupMappings);
+      if (!contentTypesToLoad.includes(group.contentType.sys.id)) {
+        contentTypesToLoad.push(group.contentType.sys.id);
+      }
+    }
+  });
+  
+  if (allMappings.length === 0) {
+    setPreviewStatus('Please configure at least one mapping', 'error');
+    return;
+  }
+  
+  setPreviewStatus('Loading records from multiple content types...', 'loading');
+  
+  // Load records from all content types
+  parent.postMessage({ 
+    pluginMessage: { 
+      type: 'load-multiple-records', 
+      config, 
+      contentTypes: contentTypesToLoad,
+      mappings: allMappings
+    } 
+  }, '*');
+});
+
+// Record navigation
+document.getElementById('prev-record').addEventListener('click', () => {
+  if (currentRecordIndex > 0) {
+    currentRecordIndex--;
+    displayCurrentRecord();
+    applyRecordToNodes();
+  }
+});
+
+document.getElementById('next-record').addEventListener('click', () => {
+  if (currentRecordIndex < records.length - 1) {
+    currentRecordIndex++;
+    displayCurrentRecord();
+    applyRecordToNodes();
+  }
+});
+
+function displayCurrentRecord() {
+  if (records.length === 0) return;
+  
+  const record = records[currentRecordIndex];
+  const recordDataDiv = document.getElementById('record-data');
+  recordDataDiv.innerHTML = '';
+  
+  // Update counter
+  document.getElementById('record-counter').textContent = `Record ${currentRecordIndex + 1} of ${records.length}`;
+  
+  // Display record fields
+  const fields = record.fields || {};
+  Object.keys(fields).forEach(fieldKey => {
+    const fieldDiv = document.createElement('div');
+    fieldDiv.className = 'record-field';
+    
+    const fieldName = document.createElement('span');
+    fieldName.className = 'field-name';
+    fieldName.textContent = fieldKey;
+    
+    const fieldValue = document.createElement('span');
+    fieldValue.className = 'field-value';
+    fieldValue.textContent = sanitizeString(String(fields[fieldKey] || ''));
+    fieldValue.title = String(fields[fieldKey] || '');
+    
+    fieldDiv.appendChild(fieldName);
+    fieldDiv.appendChild(fieldValue);
+    recordDataDiv.appendChild(fieldDiv);
+  });
+  
+  // Update navigation buttons
+  document.getElementById('prev-record').disabled = currentRecordIndex === 0;
+  document.getElementById('next-record').disabled = currentRecordIndex === records.length - 1;
+}
+
+function applyRecordToNodes() {
+  if (records.length === 0 || !records[currentRecordIndex]) return;
+  
+  const record = records[currentRecordIndex];
+  const fields = record.fields || {};
+  
+  // Collect all mappings from all groups with content type info
+  const allMappings = [];
+  
+  contentTypeGroups.forEach(group => {
+    const container = document.querySelector(`.mappings-container[data-group-id="${group.id}"]`);
+    
+    if (container) {
+      container.querySelectorAll('.mapping-item').forEach(item => {
+        const fieldSelect = item.querySelector('.field-select');
+        const nodeSelect = item.querySelector('.node-select');
+        
+        if (fieldSelect.value && nodeSelect.value) {
+          allMappings.push({
+            field: fieldSelect.value,
+            node: nodeSelect.value,
+            contentTypeId: group.contentType.sys.id
+          });
+        }
+      });
+    }
+  });
+  
+  // Send to Figma to update nodes
+  parent.postMessage({
+    pluginMessage: {
+      type: 'apply-record-to-nodes',
+      mappings: allMappings,
+      recordFields: fields
+    }
+  }, '*');
+}
+
+function createCombinedRecords(recordsByType) {
+  // Create combined records by taking all combinations
+  // For simplicity, we'll create records by taking index-aligned entries from each content type
+  const contentTypeIds = Object.keys(recordsByType);
+  
+  if (contentTypeIds.length === 0) return [];
+  
+  // Find the max number of records across all content types
+  let maxRecords = 0;
+  contentTypeIds.forEach(ctId => {
+    const count = recordsByType[ctId]?.length || 0;
+    if (count > maxRecords) maxRecords = count;
+  });
+  
+  // Create combined records
+  const combined = [];
+  for (let i = 0; i < maxRecords; i++) {
+    const combinedFields = {};
+    
+    contentTypeIds.forEach(ctId => {
+      const records = recordsByType[ctId] || [];
+      const record = records[i] || records[0]; // Use first record if we run out
+      
+      if (record && record.fields) {
+        // Merge fields, prefixing with content type ID to avoid collisions
+        Object.keys(record.fields).forEach(fieldKey => {
+          // Store both prefixed and unprefixed for flexibility
+          combinedFields[`${ctId}.${fieldKey}`] = record.fields[fieldKey];
+          // If no collision, also store without prefix
+          if (!combinedFields[fieldKey]) {
+            combinedFields[fieldKey] = record.fields[fieldKey];
+          }
+        });
+      }
+    });
+    
+    combined.push({
+      sys: { id: `combined_${i}` },
+      fields: combinedFields
+    });
+  }
+  
+  return combined;
+}
+
+// Message handler additions for content preview
+const originalOnMessage = window.onmessage;
+window.onmessage = (event) => {
+  // Call original handler first
+  if (originalOnMessage) {
+    originalOnMessage(event);
+  }
+  
+  if (!event || !event.data || !event.data.pluginMessage) return;
+  const msg = event.data.pluginMessage;
+  
+  if (msg.type === 'content-types-loaded') {
+    contentTypes = msg.contentTypes || [];
+    const select = document.getElementById('content-type-select');
+    select.innerHTML = '<option value="">Select content type...</option>';
+    
+    contentTypes.forEach(ct => {
+      const opt = document.createElement('option');
+      opt.value = ct.sys.id;
+      opt.textContent = `${ct.name} (${ct.sys.id})`;
+      select.appendChild(opt);
+    });
+    
+    select.disabled = false;
+    setPreviewStatus(`${contentTypes.length} content type(s) available`, 'success');
+  }
+  
+  if (msg.type === 'text-nodes-loaded') {
+    const nodes = msg.nodes || [];
+    
+    // Update all node selects
+    document.querySelectorAll('.node-select').forEach(select => {
+      const currentValue = select.value;
+      select.innerHTML = '<option value="">Select node...</option>';
+      
+      nodes.forEach(node => {
+        const opt = document.createElement('option');
+        opt.value = node.id;
+        opt.textContent = `${node.name} (${node.characters.substring(0, 20)}...)`;
+        if (node.id === currentValue) {
+          opt.selected = true;
+        }
+        select.appendChild(opt);
+      });
+    });
+  }
+  
+  if (msg.type === 'records-loaded') {
+    records = msg.records || [];
+    currentRecordIndex = 0;
+    
+    if (records.length > 0) {
+      document.getElementById('record-navigation').classList.remove('hidden');
+      displayCurrentRecord();
+      applyRecordToNodes();
+      setPreviewStatus(`${records.length} record(s) loaded`, 'success');
+    } else {
+      setPreviewStatus('No records found', 'error');
+    }
+  }
+  
+  if (msg.type === 'multiple-records-loaded') {
+    // msg.recordsByContentType is an object: { contentTypeId: [records] }
+    const recordsByType = msg.recordsByContentType || {};
+    
+    // For now, use the first record from each content type to create combinations
+    // This creates "combined" records for preview
+    records = createCombinedRecords(recordsByType);
+    currentRecordIndex = 0;
+    
+    if (records.length > 0) {
+      document.getElementById('record-navigation').classList.remove('hidden');
+      displayCurrentRecord();
+      applyRecordToNodes();
+      setPreviewStatus(`${records.length} combined record(s) loaded`, 'success');
+    } else {
+      setPreviewStatus('No records found', 'error');
+    }
+  }
+  
+  if (msg.type === 'record-applied') {
+    // Success feedback could go here
+  }
+  
+  // Write mode message handlers
+  if (msg.type === 'translatable-nodes-loaded') {
+    loadItemsAndCheckStatus(msg.nodes || []);
+  }
+  
+  if (msg.type === 'contentful-items-loaded') {
+    console.log('📥 Contentful items loaded from server:', Object.keys(msg.items || {}).length, 'items');
+    contentfulItems = msg.items || {};
+    
+    // Log what we got from Contentful for debugging
+    Object.keys(contentfulItems).forEach(key => {
+      console.log(`  - ${key}: "${contentfulItems[key].value.substring(0, 50)}..." (ID: ${contentfulItems[key].id})`);
+    });
+    
+    renderItemsTable();
+    setWriteStatus('✓ Ready', 'success');
+  }
+  
+  if (msg.type === 'item-saved') {
+    console.log('Received item-saved message:', msg);
+    updateItemStatus(msg.key, msg.success, msg.error, msg.errorDetails);
+  }
+  
+  // Handle text node selection in Figma canvas
+  if (msg.type === 'text-node-selected') {
+    const searchInput = document.getElementById('search-input');
+    if (searchInput && msg.nodeName) {
+      console.log('📌 Text node selected in Figma:', msg.nodeName);
+      searchInput.value = msg.nodeName;
+      searchInput.dispatchEvent(new Event('input'));
+    }
+  }
+};
+
+// Error Modal Functions
+function showErrorModal(title, message, details) {
+  const modal = document.getElementById('error-modal');
+  document.getElementById('error-modal-title').textContent = title;
+  document.getElementById('error-modal-message').textContent = message;
+  document.getElementById('error-modal-details').textContent = JSON.stringify(details, null, 2);
+  modal.classList.add('show');
+}
+
+function hideErrorModal() {
+  document.getElementById('error-modal').classList.remove('show');
+}
+
+function copyErrorToClipboard() {
+  const details = document.getElementById('error-modal-details').textContent;
+  const message = document.getElementById('error-modal-message').textContent;
+  const title = document.getElementById('error-modal-title').textContent;
+  
+  const errorReport = `=== ${title} ===\n\n${message}\n\n=== Technical Details ===\n${details}`;
+  
+  navigator.clipboard.writeText(errorReport).then(() => {
+    const btn = document.getElementById('btn-copy-error');
+    const originalText = btn.textContent;
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => {
+      btn.textContent = originalText;
+    }, 2000);
+  }).catch(() => {
+    // Fallback for older browsers
+    const textarea = document.createElement('textarea');
+    textarea.value = errorReport;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+  });
+}
+
+</script>
+
+<!-- Error Modal -->
+<div id="error-modal" class="error-modal">
+  <div class="error-modal-content">
+    <div class="error-modal-header">
+      <div class="error-modal-title" id="error-modal-title">Error</div>
+      <button class="error-modal-close" onclick="hideErrorModal()">×</button>
+    </div>
+    <div class="error-modal-body">
+      <div class="error-message" id="error-modal-message"></div>
+      <div class="error-details" id="error-modal-details"></div>
+    </div>
+    <div class="error-modal-footer">
+      <button class="btn-copy-error" id="btn-copy-error" onclick="copyErrorToClipboard()">📋 Copy Error Details</button>
+      <button class="btn-close-modal" onclick="hideErrorModal()">Close</button>
+    </div>
+  </div>
+</div>
 
 </script>
