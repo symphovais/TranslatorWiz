@@ -107,30 +107,42 @@ function validateConfig(config: ContentfulConfig): string | null {
 
 // Listen for selection changes in Figma
 figma.on('selectionchange', () => {
-  const selection = figma.currentPage.selection;
-  
-  if (selection.length === 1 && selection[0].type === 'TEXT') {
-    const textNode = selection[0] as TextNode;
-    figma.ui.postMessage({
-      type: 'text-node-selected',
-      nodeName: textNode.name,
-      nodeText: textNode.characters
-    });
+  try {
+    if (!figma.currentPage) return;
+    
+    const selection = figma.currentPage.selection;
+    
+    if (selection.length === 1 && selection[0] && selection[0].type === 'TEXT') {
+      const textNode = selection[0] as TextNode;
+      
+      // Safely access characters
+      let characters = '';
+      try {
+        characters = textNode.characters;
+      } catch (e) {
+        console.warn('Could not read text node characters:', e);
+        characters = '[Unable to read text]';
+      }
+      
+      figma.ui.postMessage({
+        type: 'text-node-selected',
+        nodeName: textNode.name || '[Unnamed]',
+        nodeText: characters
+      });
+    }
+  } catch (error) {
+    console.error('Selection change handler error:', error);
+    // Don't crash the plugin
   }
 });
 
-figma.ui.onmessage = async (msg: { 
-  type: string; 
-  config?: ContentfulConfig; 
-  locale?: string; 
-  count?: number; 
-  contentType?: string; 
-  contentTypes?: string[];
-  mappings?: FieldMapping[];
-  recordFields?: any;
-  item?: any;
-}) => {
+figma.ui.onmessage = async (msg: any) => {
   try {
+    // Validate message structure
+    if (!msg || typeof msg !== 'object' || typeof msg.type !== 'string') {
+      console.error('Invalid message format:', msg);
+      return;
+    }
     if (msg.type === 'init') {
       // Load config from storage
       configData = await loadConfigFromStorage();
@@ -485,17 +497,35 @@ figma.ui.onmessage = async (msg: {
       return;
     }
   } catch (error) {
+    console.error('Message handler error:', error);
     const errorMessage = error instanceof Error ? error.message : String(error);
-    figma.ui.postMessage({ type: 'error', message: errorMessage });
+    
+    // Send error to UI
+    try {
+      figma.ui.postMessage({ type: 'error', message: errorMessage });
+    } catch (postError) {
+      console.error('Failed to send error to UI:', postError);
+    }
   }
 };
 
 function getTranslatableNodeCount(config: ContentfulConfig): number {
-  const pattern = new RegExp(config.NODE_NAME_PATTERN);
-  const textNodes = figma.currentPage.findAll(
-    (n) => n.type === 'TEXT' && pattern.test(n.name)
-  ) as TextNode[];
-  return textNodes.length;
+  try {
+    if (!figma.currentPage) return 0;
+    
+    const pattern = new RegExp(config.NODE_NAME_PATTERN);
+    const textNodes = figma.currentPage.findAll(
+      (n) => {
+        if (!n || n.type !== 'TEXT') return false;
+        if (!n.name) return false;
+        return pattern.test(n.name);
+      }
+    ) as TextNode[];
+    return textNodes.length;
+  } catch (error) {
+    console.error('Error counting translatable nodes:', error);
+    return 0;
+  }
 }
 
 async function fetchWithTimeout(url: string, options?: any, timeout: number = API_TIMEOUT): Promise<any> {

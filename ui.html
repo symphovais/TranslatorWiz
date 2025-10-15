@@ -6,18 +6,19 @@
   }
   
   :root {
-    /* Default light theme colors */
-    --figma-bg: #f5f5f5;
-    --figma-bg-secondary: #ffffff;
-    --figma-text: #000000;
-    --figma-text-secondary: #333333;
-    --figma-text-tertiary: #666666;
-    --figma-border: #e0e0e0;
-    --figma-gradient-1: #667eea;
-    --figma-gradient-2: #764ba2;
-    --figma-hover-overlay: rgba(0, 0, 0, 0.06);
-    --figma-icon-bg: rgba(255, 255, 255, 0.2);
-    --figma-icon-bg-hover: rgba(255, 255, 255, 0.3);
+    /* Clean light theme colors */
+    --figma-bg: #ffffff;
+    --figma-bg-secondary: #f8f9fa;
+    --figma-text: #1a1a1a;
+    --figma-text-secondary: #4a4a4a;
+    --figma-text-tertiary: #8a8a8a;
+    --figma-border: #e5e5e5;
+    --figma-accent: #FFC107;
+    --figma-accent-hover: #FFB300;
+    --figma-danger: #FF6B6B;
+    --figma-success: #51CF66;
+    --figma-hover-overlay: rgba(0, 0, 0, 0.04);
+    --figma-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   }
 
   /* Dark theme */
@@ -60,8 +61,8 @@
   
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-    padding: 8px;
-    background: transparent;
+    padding: 0;
+    background: var(--figma-bg);
     color: var(--figma-text);
     height: 100vh;
     overflow: hidden;
@@ -89,12 +90,11 @@
   }
   
   .section {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(10px);
-    border-radius: 6px;
-    padding: 8px;
-    margin-bottom: 6px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: var(--figma-bg);
+    border-radius: 0;
+    padding: 12px 16px;
+    margin-bottom: 0;
+    border-bottom: 1px solid var(--figma-border);
     transition: background 0.2s ease;
   }
   
@@ -144,10 +144,10 @@
   
   select {
     width: 100%;
-    padding: 10px 12px;
-    border: 2px solid var(--figma-border);
-    border-radius: 8px;
-    font-size: 14px;
+    padding: 8px 12px;
+    border: 1px solid var(--figma-border);
+    border-radius: 4px;
+    font-size: 13px;
     background: var(--figma-bg-secondary);
     color: var(--figma-text);
     transition: all 0.2s;
@@ -167,9 +167,9 @@
   }
   
   button {
-    padding: 10px 18px;
+    padding: 8px 16px;
     border: none;
-    border-radius: 6px;
+    border-radius: 4px;
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
@@ -210,43 +210,44 @@
   
   .status-container {
     position: relative;
-    min-height: 40px;
+    min-height: 0;
   }
   
   #status {
-    padding: 12px 14px;
-    font-size: 12px;
-    border-radius: 8px;
-    margin-bottom: 12px;
+    padding: 12px 16px;
+    font-size: 13px;
+    border-radius: 0;
+    margin-bottom: 0;
     animation: slideIn 0.3s ease-out;
     display: flex;
     align-items: center;
     gap: 8px;
+    border-bottom: 1px solid var(--figma-border);
   }
   
   #status.info {
-    background: var(--figma-bg-secondary);
-    color: var(--figma-text);
-    border-left: 4px solid #18a0fb;
+    background: var(--figma-bg);
+    color: var(--figma-text-secondary);
+    border-left: none;
   }
   
   #status.success {
-    background: var(--figma-bg-secondary);
-    color: var(--figma-text);
-    border-left: 4px solid #0fa958;
+    background: var(--figma-bg);
+    color: var(--figma-success);
+    border-left: none;
     animation: success 0.4s ease-out;
   }
   
   #status.error {
-    background: var(--figma-bg-secondary);
-    color: var(--figma-text);
-    border-left: 4px solid #f24822;
+    background: var(--figma-bg);
+    color: var(--figma-danger);
+    border-left: none;
   }
   
   #status.loading {
-    background: var(--figma-bg-secondary);
-    color: var(--figma-text);
-    border-left: 4px solid #18a0fb;
+    background: var(--figma-bg);
+    color: var(--figma-text-secondary);
+    border-left: none;
   }
   
   #status:empty {
@@ -293,18 +294,33 @@
     max-height: 100vh;
   }
   
-  .settings-icon {
+  .btn-icon {
     background: var(--figma-bg);
     color: var(--figma-text-secondary);
     border: 1px solid var(--figma-border);
+    border-radius: 4px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
+    min-width: 32px;
+    min-height: 32px;
   }
   
-  .settings-icon:hover {
-    background: var(--figma-hover-overlay);
+  .btn-icon:hover {
+    background: var(--figma-bg-secondary);
+    border-color: var(--figma-text-tertiary);
     color: var(--figma-text);
-    transform: scale(1.05);
+  }
+  
+  .btn-icon:active {
+    transform: scale(0.95);
+  }
+  
+  .btn-icon svg {
+    display: block;
   }
   
   textarea {
@@ -334,12 +350,13 @@
   }
   
   .btn-primary {
-    background: #18a0fb;
-    color: white;
+    background: var(--figma-accent);
+    color: #1a1a1a;
+    font-weight: 600;
   }
 
   .btn-primary:hover:not(:disabled) {
-    background: #0d8de0;
+    background: var(--figma-accent-hover);
   }
   
   .btn-secondary {
@@ -347,10 +364,11 @@
     color: var(--figma-text);
     border: 1px solid var(--figma-border);
     transition: all 0.2s ease;
+    font-weight: 500;
   }
 
   .btn-secondary:hover:not(:disabled) {
-    background: var(--figma-hover-overlay);
+    background: var(--figma-bg-secondary);
   }
   
   .btn-test {
@@ -361,22 +379,24 @@
   input[type="text"],
   input[type="password"] {
     width: 100%;
-    padding: 10px 12px;
-    border: 2px solid var(--figma-border);
-    border-radius: 8px;
-    font-size: 14px;
-    background: var(--figma-bg-secondary);
+    padding: 8px 12px;
+    border: 1px solid var(--figma-border);
+    border-radius: 4px;
+    font-size: 13px;
+    background: var(--figma-bg);
     color: var(--figma-text);
-    transition: all 0.2s;
-    margin-bottom: 12px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    transition: border-color 0.2s ease;
   }
-
+  
   input[type="text"]:focus,
   input[type="password"]:focus {
     outline: none;
-    border-color: #18a0fb;
-    box-shadow: 0 0 0 2px rgba(24, 160, 251, 0.2);
+    border-color: var(--figma-accent);
+  }
+  
+  input[type="text"]::placeholder,
+  input[type="password"]::placeholder {
+    color: var(--figma-text-tertiary);
   }
 
   input[type="password"] {
@@ -610,9 +630,9 @@
   }
 
   .contentful-link {
-    color: #667eea;
+    color: #0066CC;
     text-decoration: none;
-    font-weight: 600;
+    font-weight: 500;
     display: inline-flex;
     align-items: center;
     gap: 4px;
@@ -620,14 +640,14 @@
   }
   
   .contentful-link:hover {
-    color: #764ba2;
+    color: #0052A3;
     text-decoration: underline;
   }
   
   .contentful-link::after {
     content: '↗';
     font-size: 10px;
-    opacity: 0.6;
+    opacity: 0.5;
   }
   
   .record-data {
@@ -752,33 +772,34 @@
   .write-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 12px;
-    font-size: 12px;
+    margin-top: 0;
+    font-size: 13px;
   }
 
   .write-table th {
-    background: var(--figma-bg);
-    color: var(--figma-text);
-    padding: 6px 8px;
+    background: var(--figma-bg-secondary);
+    color: var(--figma-text-secondary);
+    padding: 12px 16px;
     text-align: left;
     font-weight: 600;
-    font-size: 11px;
-    border-bottom: 2px solid var(--figma-border);
+    font-size: 12px;
+    border-bottom: 1px solid var(--figma-border);
     position: sticky;
     top: 0;
     z-index: 1;
+    text-transform: none;
   }
 
   .write-table td {
-    padding: 6px 8px;
+    padding: 12px 16px;
     border-bottom: 1px solid var(--figma-border);
     vertical-align: middle;
-    font-size: 11px;
+    font-size: 13px;
     color: var(--figma-text);
   }
 
   .write-table tbody tr:hover {
-    background: var(--figma-hover-overlay);
+    background: var(--figma-bg-secondary);
   }
 
   .write-table tbody tr {
@@ -789,31 +810,36 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    font-size: 14px;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    font-size: 16px;
     font-weight: 600;
+    transition: all 0.2s ease;
   }
 
   .status-badge.not-exists {
-    background: #fef3c7;
-    color: #92400e;
+    background: #FFF9E6;
+    color: #F59E0B;
+    border: 1px solid #FDE68A;
   }
 
   .status-badge.out-of-sync {
-    background: #fee2e2;
-    color: #991b1b;
+    background: #FEE2E2;
+    color: #DC2626;
+    border: 1px solid #FECACA;
   }
 
   .status-badge.synced {
-    background: #d1fae5;
-    color: #065f46;
+    background: #D1FAE5;
+    color: #059669;
+    border: 1px solid #A7F3D0;
   }
 
   .status-badge.checking {
-    background: var(--figma-bg);
+    background: var(--figma-bg-secondary);
     color: var(--figma-text-tertiary);
+    border: 1px solid var(--figma-border);
   }
 
   /* Error Modal */
@@ -932,43 +958,40 @@
   }
 
   .btn-save-item {
-    padding: 4px 12px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    padding: 6px 16px;
+    background: var(--figma-accent);
+    color: #1a1a1a;
     border: none;
     border-radius: 4px;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
   }
 
   .btn-save-item:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+    background: var(--figma-accent-hover);
   }
 
   .btn-save-item:disabled {
     opacity: 0.3;
     cursor: not-allowed;
-    transform: none;
   }
 
   .table-container {
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(10px);
+    border: none;
+    border-radius: 0;
+    background: var(--figma-bg);
     min-height: 0;
     max-height: 100%;
   }
   
   body.figma-dark .table-container {
-    background: rgba(30, 30, 30, 0.9);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #2c2c2c;
+    border: none;
   }
 
   .mode-switch {
@@ -1007,15 +1030,76 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+
+  /* Write Status Footer */
+  #write-status {
+    padding: 10px 16px;
+    font-size: 12px;
+    color: var(--figma-text-secondary);
+    background: var(--figma-bg-secondary);
+    border-top: 1px solid var(--figma-border);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 36px;
+  }
+
+  #write-status:empty {
+    display: none;
+  }
+
+  #write-status.success {
+    color: var(--figma-success);
+  }
+
+  #write-status.error {
+    color: var(--figma-danger);
+  }
+
+  #write-status.loading {
+    color: var(--figma-text-secondary);
+  }
+
+  #write-status::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.6;
+  }
+
+  #write-status.success::before {
+    background: var(--figma-success);
+    opacity: 1;
+  }
+
+  #write-status.error::before {
+    background: var(--figma-danger);
+    opacity: 1;
+  }
+
+  #write-status.loading::before {
+    animation: pulse 1.5s ease-in-out infinite;
+  }
 </style>
 
 <!-- Write Mode View (Default) -->
 <div class="container view active" id="write-view" style="height: 100vh; display: flex; flex-direction: column;">
-  <div class="section" style="padding: 4px; position: relative;">
-    <input type="text" id="search-input" placeholder="🔍 Search by key..." 
-           style="width: 100%; padding: 6px 40px 6px 40px; border: 1px solid var(--figma-border); border-radius: 4px; font-size: 12px; background: var(--figma-bg-secondary); color: var(--figma-text); box-sizing: border-box;" />
-    <button class="btn-primary" id="btn-load-items" style="position: absolute; left: 6px; top: 4px; width: 28px; height: 28px; padding: 0; font-size: 16px; border-radius: 4px; display: flex; align-items: center; justify-content: center;">🔄</button>
-    <button class="settings-icon" id="settings-toggle-inline" title="Settings" style="position: absolute; right: 6px; top: 4px; width: 28px; height: 28px; padding: 0; font-size: 14px; border-radius: 4px; display: flex; align-items: center; justify-content: center;">⚙️</button>
+  <div class="section" style="padding: 12px 16px; display: flex; align-items: center; gap: 8px;">
+    <button class="btn-icon" id="btn-load-items" title="Sync keys">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M13.65 2.35C12.2 0.9 10.21 0 8 0C3.58 0 0.01 3.58 0.01 8C0.01 12.42 3.58 16 8 16C11.73 16 14.84 13.45 15.73 10H13.65C12.83 12.33 10.61 14 8 14C4.69 14 2 11.31 2 8C2 4.69 4.69 2 8 2C9.66 2 11.14 2.69 12.22 3.78L9 7H16V0L13.65 2.35Z" fill="currentColor"/>
+      </svg>
+    </button>
+    <input type="text" id="search-input" placeholder="Search keys or text..." 
+           style="flex: 1; padding: 8px 12px; border: 1px solid var(--figma-border); border-radius: 4px; font-size: 13px; background: var(--figma-bg-secondary); color: var(--figma-text); box-sizing: border-box;" />
+    <button class="btn-icon" id="settings-toggle-inline" title="Settings">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M13.5 8C13.5 8.17 13.49 8.34 13.47 8.51L15.04 9.7C15.18 9.81 15.22 10.01 15.13 10.17L13.63 12.83C13.54 12.99 13.35 13.05 13.18 12.99L11.34 12.27C10.97 12.55 10.56 12.78 10.12 12.95L9.84 14.91C9.82 15.09 9.66 15.22 9.47 15.22H6.47C6.28 15.22 6.12 15.09 6.1 14.91L5.82 12.95C5.38 12.78 4.97 12.55 4.6 12.27L2.76 12.99C2.59 13.05 2.4 12.99 2.31 12.83L0.81 10.17C0.72 10.01 0.76 9.81 0.9 9.7L2.47 8.51C2.45 8.34 2.44 8.17 2.44 8C2.44 7.83 2.45 7.66 2.47 7.49L0.9 6.3C0.76 6.19 0.72 5.99 0.81 5.83L2.31 3.17C2.4 3.01 2.59 2.95 2.76 3.01L4.6 3.73C4.97 3.45 5.38 3.22 5.82 3.05L6.1 1.09C6.12 0.91 6.28 0.78 6.47 0.78H9.47C9.66 0.78 9.82 0.91 9.84 1.09L10.12 3.05C10.56 3.22 10.97 3.45 11.34 3.73L13.18 3.01C13.35 2.95 13.54 3.01 13.63 3.17L15.13 5.83C15.22 5.99 15.18 6.19 15.04 6.3L13.47 7.49C13.49 7.66 13.5 7.83 13.5 8ZM8 5.5C6.62 5.5 5.5 6.62 5.5 8C5.5 9.38 6.62 10.5 8 10.5C9.38 10.5 10.5 9.38 10.5 8C10.5 6.62 9.38 5.5 8 5.5Z" fill="currentColor"/>
+      </svg>
+    </button>
 </div>
 
   <div class="section hidden" id="items-table-section" style="padding: 6px; flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden;">
@@ -1672,19 +1756,45 @@ async function loadItemsAndCheckStatus(items) {
 }
 
 function renderItemsTable() {
-  const tbody = document.getElementById('items-table-body');
-  tbody.innerHTML = '';
-  
-  // Get search filter
-  const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
-  
-  // Filter items based on search
-  const filteredItems = textItems.filter(item => 
-    item.name.toLowerCase().includes(searchTerm)
-  );
-  
-  filteredItems.forEach((item, index) => {
-    const originalIndex = textItems.findIndex(original => original.id === item.id);
+  try {
+    const tbody = document.getElementById('items-table-body');
+    if (!tbody) {
+      console.error('Table body element not found');
+      return;
+    }
+    
+    tbody.innerHTML = '';
+    
+    // Validate textItems array
+    if (!Array.isArray(textItems)) {
+      console.error('textItems is not an array');
+      setWriteStatus('Error: Invalid data structure', 'error');
+      return;
+    }
+    
+    // Get search filter
+    const searchInput = document.getElementById('search-input');
+    const searchTerm = (searchInput?.value || '').toLowerCase().trim();
+    
+    // Filter items based on search (search in both key name and text content)
+    const filteredItems = textItems.filter(item => {
+      if (!item || typeof item !== 'object') return false;
+      
+      const name = String(item.name || '').toLowerCase();
+      const characters = String(item.characters || '').toLowerCase();
+      
+      return name.includes(searchTerm) || characters.includes(searchTerm);
+    });
+    
+    filteredItems.forEach((item) => {
+      const originalIndex = textItems.findIndex(original => 
+        original && original.id === item.id
+      );
+      
+      if (originalIndex === -1) {
+        console.warn('Could not find original index for item:', item.id);
+        return; // Skip this item
+      }
     const tr = document.createElement('tr');
     
     // Add click handler to filter by this item
@@ -1791,11 +1901,18 @@ function renderItemsTable() {
     }
     
     tr.appendChild(actionTd);
-    tbody.appendChild(tr);
-  });
-  
-  document.getElementById('items-table-section').classList.remove('hidden');
-  setWriteStatus('✓ Ready', 'success');
+      tbody.appendChild(tr);
+    });
+    
+    const tableSection = document.getElementById('items-table-section');
+    if (tableSection) {
+      tableSection.classList.remove('hidden');
+    }
+    setWriteStatus('✓ Ready', 'success');
+  } catch (error) {
+    console.error('Error rendering items table:', error);
+    setWriteStatus('Error displaying items', 'error');
+  }
 }
 
 // Search functionality
