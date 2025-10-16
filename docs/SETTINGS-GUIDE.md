@@ -2,7 +2,7 @@
 
 ## 📝 Overview
 
-TranslatorWiz now includes a **Settings Screen** where you can configure your Contentful connection using JSON. This makes the plugin flexible and reusable across different projects and Contentful setups.
+ContentFi now includes a **Settings Screen** where you can configure your Contentful connection using JSON. This makes the plugin flexible and reusable across different projects and Contentful setups.
 
 ---
 

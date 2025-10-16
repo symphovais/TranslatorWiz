@@ -1,7 +1,7 @@
-# TranslatorWiz Plugin Packager
+# ContentFi Plugin Packager
 # Creates a distributable ZIP file for testers
 
-Write-Host "Building TranslatorWiz Plugin Package..." -ForegroundColor Cyan
+Write-Host "Building ContentFi Plugin Package..." -ForegroundColor Cyan
 
 # Build the plugin
 Write-Host "`n1. Building TypeScript..." -ForegroundColor Yellow
@@ -27,10 +27,18 @@ Copy-Item "code.js" -Destination $distFolder
 Copy-Item "ui.html" -Destination $distFolder
 Copy-Item "DISTRIBUTION.md" -Destination "$distFolder\README.md"
 
-# Get version from manifest
-$manifest = Get-Content "manifest.json" | ConvertFrom-Json
-$version = $manifest.version
-$zipName = "TranslatorWiz-v$version.zip"
+# Copy icon files if they exist
+if (Test-Path "icon-32.png") {
+    Copy-Item "icon-32.png" -Destination $distFolder
+}
+if (Test-Path "icon-128.png") {
+    Copy-Item "icon-128.png" -Destination $distFolder
+}
+
+# Get version from package.json
+$package = Get-Content "package.json" | ConvertFrom-Json
+$version = $package.version
+$zipName = "ContentFi-v$version.zip"
 
 # Create ZIP
 Write-Host "`n4. Creating ZIP archive..." -ForegroundColor Yellow

@@ -1,4 +1,4 @@
-# TranslatorWiz - Distribution Guide
+# ContentFi - Distribution Guide
 
 ## For Testers: Installation Instructions
 
@@ -10,17 +10,17 @@
 
 1. **Download the plugin files**
    - Extract the ZIP file to a folder on your computer
-   - Example: `C:\FigmaPlugins\TranslatorWiz\`
+   - Example: `C:\FigmaPlugins\ContentFi\`
 
 2. **Import into Figma**
    - Open Figma Desktop app
    - Go to: `Plugins` → `Development` → `Import plugin from manifest...`
-   - Navigate to your TranslatorWiz folder
+   - Navigate to your ContentFi folder
    - Select `manifest.json`
    - Click "Open"
 
 3. **Using the plugin**
-   - The plugin will appear in: `Plugins` → `Development` → `TranslatorWiz`
+   - The plugin will appear in: `Plugins` → `Development` → `ContentFi`
    - Click it to launch
 
 ### Configuration
@@ -73,16 +73,16 @@ cp DISTRIBUTION.md dist-package/README.md
 
 # 4. Create ZIP (optional)
 # On Windows PowerShell:
-Compress-Archive -Path dist-package/* -DestinationPath TranslatorWiz-v1.0.zip
+Compress-Archive -Path dist-package/* -DestinationPath ContentFi-v1.0.zip
 
 # On Mac/Linux:
-zip -r TranslatorWiz-v1.0.zip dist-package/
+zip -r ContentFi-v1.0.zip dist-package/
 ```
 
 ### Updating the Plugin
 
 When you release updates:
-1. Update version in `manifest.json`
+1. Update version in `package.json`
 2. Rebuild: `npm run build`
 3. Share new files with testers
 4. Testers just need to replace the files (no re-import needed)

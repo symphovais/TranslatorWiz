@@ -1,8 +1,8 @@
-# TranslatorWiz - Figma Plugin Knowledge Base
+# ContentFi - Figma Plugin Knowledge Base
 
 ## 📋 Overview
 
-**TranslatorWiz** is a Figma plugin that integrates with Contentful CMS to manage translations and content directly within Figma designs. It enables designers to apply translations to text layers, preview content from Contentful, and write back translation keys to Contentful.
+**ContentFi** is a Figma plugin that integrates with Contentful CMS to manage translations and content directly within Figma designs. It enables designers to apply translations to text layers, preview content from Contentful, and write back translation keys to Contentful.
 
 ### Key Features
 - 🌍 **Multi-language Translation**: Apply translations from Contentful to Figma text nodes
@@ -18,7 +18,7 @@
 
 ### File Structure
 ```
-TranslatorWiz/
+ContentFi/
 ├── manifest.json          # Plugin manifest (metadata, permissions)
 ├── code.ts               # Main plugin logic (TypeScript source)
 ├── code.js               # Compiled JavaScript (generated from code.ts)

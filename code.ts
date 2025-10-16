@@ -1,4 +1,4 @@
-// TranslatorWiz - Figma plugin for Contentful-based translations
+// ContentFi - Figma plugin for Contentful-based translations
 
 figma.showUI(__html__, { width: 900, height: 500, themeColors: true });
 

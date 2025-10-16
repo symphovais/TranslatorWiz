@@ -1,8 +1,8 @@
 #!/bin/bash
-# TranslatorWiz Plugin Packager
+# ContentFi Plugin Packager
 # Creates a distributable ZIP file for testers
 
-echo "📦 Building TranslatorWiz Plugin Package..."
+echo "📦 Building ContentFi Plugin Package..."
 
 # Build the plugin
 echo ""
@@ -29,9 +29,17 @@ cp code.js "$DIST_FOLDER/"
 cp ui.html "$DIST_FOLDER/"
 cp DISTRIBUTION.md "$DIST_FOLDER/README.md"
 
-# Get version from manifest
-VERSION=$(node -pe "JSON.parse(require('fs').readFileSync('manifest.json')).version")
-ZIP_NAME="TranslatorWiz-v${VERSION}.zip"
+# Copy icon files if they exist
+if [ -f "icon-32.png" ]; then
+    cp icon-32.png "$DIST_FOLDER/"
+fi
+if [ -f "icon-128.png" ]; then
+    cp icon-128.png "$DIST_FOLDER/"
+fi
+
+# Get version from package.json
+VERSION=$(node -pe "JSON.parse(require('fs').readFileSync('package.json')).version")
+ZIP_NAME="ContentFi-v${VERSION}.zip"
 
 # Create ZIP
 echo ""
