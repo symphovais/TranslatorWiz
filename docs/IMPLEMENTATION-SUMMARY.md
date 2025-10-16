@@ -2,7 +2,7 @@
 
 ## ✅ Implementation Complete
 
-All OAuth 2.0 integration components have been successfully implemented for the ContentFi Figma plugin.
+All OAuth 2.0 integration components have been successfully implemented for the ConteFi Figma plugin.
 
 ---
 

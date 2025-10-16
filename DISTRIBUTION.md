@@ -1,4 +1,4 @@
-# ContentFi - Distribution Guide
+# ConteFi - Distribution Guide
 
 ## For Testers: Installation Instructions
 
@@ -10,17 +10,17 @@
 
 1. **Download the plugin files**
    - Extract the ZIP file to a folder on your computer
-   - Example: `C:\FigmaPlugins\ContentFi\`
+   - Example: `C:\FigmaPlugins\ConteFi\`
 
 2. **Import into Figma**
    - Open Figma Desktop app
    - Go to: `Plugins` → `Development` → `Import plugin from manifest...`
-   - Navigate to your ContentFi folder
+   - Navigate to your ConteFi folder
    - Select `manifest.json`
    - Click "Open"
 
 3. **Using the plugin**
-   - The plugin will appear in: `Plugins` → `Development` → `ContentFi`
+   - The plugin will appear in: `Plugins` → `Development` → `ConteFi`
    - Click it to launch
 
 ### Configuration
@@ -73,10 +73,10 @@ cp DISTRIBUTION.md dist-package/README.md
 
 # 4. Create ZIP (optional)
 # On Windows PowerShell:
-Compress-Archive -Path dist-package/* -DestinationPath ContentFi-v1.0.zip
+Compress-Archive -Path dist-package/* -DestinationPath ConteFi-v1.0.zip
 
 # On Mac/Linux:
-zip -r ContentFi-v1.0.zip dist-package/
+zip -r ConteFi-v1.0.zip dist-package/
 ```
 
 ### Updating the Plugin

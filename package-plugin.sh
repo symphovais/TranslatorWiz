@@ -1,8 +1,8 @@
 #!/bin/bash
-# ContentFi Plugin Packager
+# ConteFi Plugin Packager
 # Creates a distributable ZIP file for testers
 
-echo "📦 Building ContentFi Plugin Package..."
+echo "📦 Building ConteFi Plugin Package..."
 
 # Build the plugin
 echo ""
@@ -39,7 +39,7 @@ fi
 
 # Get version from package.json
 VERSION=$(node -pe "JSON.parse(require('fs').readFileSync('package.json')).version")
-ZIP_NAME="ContentFi-v${VERSION}.zip"
+ZIP_NAME="ConteFi-v${VERSION}.zip"
 
 # Create ZIP
 echo ""

@@ -1,11 +1,11 @@
 {
-  "name": "ContentFi",
+  "name": "ConteFi",
   "id": "1558089998326222257",
   "api": "1.0.0",
   "main": "code.js",
   "menu": [
     {
-      "name": "ContentFi",
+      "name": "ConteFi",
       "command": "open"
     }
   ],

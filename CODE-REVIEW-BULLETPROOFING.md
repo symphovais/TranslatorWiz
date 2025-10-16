@@ -1,4 +1,4 @@
-# Code Review: Bulletproofing ContentFi
+# Code Review: Bulletproofing ConteFi
 
 ## Executive Summary
 

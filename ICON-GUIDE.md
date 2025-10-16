@@ -1,4 +1,4 @@
-# ContentFi Plugin Icons Guide
+# ConteFi Plugin Icons Guide
 
 ## Icon Requirements
 
@@ -13,8 +13,8 @@
 
 ## Design Tips
 
-### For ContentFi Plugin
-Since ContentFi integrates with Contentful CMS, consider:
+### For ConteFi Plugin
+Since ConteFi integrates with Contentful CMS, consider:
 - Using a combination of content/document icon with connectivity elements
 - Incorporating Contentful's brand colors if appropriate
 - Keeping it simple and recognizable at small sizes
@@ -47,14 +47,14 @@ The manifest already has the menu configuration. Once you add the icon files, up
 
 ```json
 {
-  "name": "ContentFi",
+  "name": "ConteFi",
   "version": "1.0.0",
   "id": "1558089998326222257",
   "api": "1.0.0",
   "main": "code.js",
   "menu": [
     {
-      "name": "ContentFi",
+      "name": "ConteFi",
       "command": "open"
     }
   ],
@@ -101,7 +101,7 @@ When exporting from design tools:
 
 ## Example Icon Concept
 
-For ContentFi, you could combine:
+For ConteFi, you could combine:
 - 📄 Document/content icon
 - 🔗 Connection/link symbol
 - 🎨 Figma-style design aesthetic

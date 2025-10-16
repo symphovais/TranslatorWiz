@@ -1,7 +1,7 @@
-# ContentFi Plugin Packager
+# ConteFi Plugin Packager
 # Creates a distributable ZIP file for testers
 
-Write-Host "Building ContentFi Plugin Package..." -ForegroundColor Cyan
+Write-Host "Building ConteFi Plugin Package..." -ForegroundColor Cyan
 
 # Build the plugin
 Write-Host "`n1. Building TypeScript..." -ForegroundColor Yellow
@@ -38,7 +38,7 @@ if (Test-Path "icon-128.png") {
 # Get version from package.json
 $package = Get-Content "package.json" | ConvertFrom-Json
 $version = $package.version
-$zipName = "ContentFi-v$version.zip"
+$zipName = "ConteFi-v$version.zip"
 
 # Create ZIP
 Write-Host "`n4. Creating ZIP archive..." -ForegroundColor Yellow
