@@ -1,0 +1,9 @@
+{
+  "SPACE_ID": "your-space-id",
+  "ENVIRONMENT": "master",
+  "PREVIEW_TOKEN": "your-preview-token",
+  "CONTENT_TYPE": "translation",
+  "KEY_FIELD": "key",
+  "VALUE_FIELD": "value",
+  "NODE_NAME_PATTERN": "^your_prefix_"
+}

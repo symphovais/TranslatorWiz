@@ -1,0 +1,25 @@
+{
+  "name": "ConteFi",
+  "id": "1558089998326222257",
+  "api": "1.0.0",
+  "main": "code.js",
+  "menu": [
+    {
+      "name": "ConteFi",
+      "command": "open"
+    }
+  ],
+  "capabilities": [],
+  "enableProposedApi": false,
+  "documentAccess": "dynamic-page",
+  "editorType": [
+    "figma"
+  ],
+  "ui": "ui.html",
+  "networkAccess": {
+    "allowedDomains": [
+      "https://api.contentful.com"
+    ],
+    "reasoning": "Access to Contentful Content Management API (CMA) for managing content"
+  }
+}
