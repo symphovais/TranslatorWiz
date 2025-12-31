@@ -3,8 +3,16 @@
 
 Write-Host "Building ConteFi Plugin Package..." -ForegroundColor Cyan
 
+# Create distribution folder
+Write-Host "`n1. Creating distribution folder..." -ForegroundColor Yellow
+$distFolder = "dist-package"
+if (Test-Path $distFolder) {
+    Remove-Item $distFolder -Recurse -Force
+}
+New-Item -ItemType Directory -Path $distFolder | Out-Null
+
 # Build the plugin
-Write-Host "`n1. Building TypeScript..." -ForegroundColor Yellow
+Write-Host "`n2. Building TypeScript..." -ForegroundColor Yellow
 npm run build
 
 if ($LASTEXITCODE -ne 0) {
@@ -12,18 +20,9 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 
-# Create distribution folder
-Write-Host "`n2. Creating distribution folder..." -ForegroundColor Yellow
-$distFolder = "dist-package"
-if (Test-Path $distFolder) {
-    Remove-Item $distFolder -Recurse -Force
-}
-New-Item -ItemType Directory -Path $distFolder | Out-Null
-
 # Copy required files
 Write-Host "`n3. Copying files..." -ForegroundColor Yellow
 Copy-Item "manifest.json" -Destination $distFolder
-Copy-Item "code.js" -Destination $distFolder
 Copy-Item "ui.html" -Destination $distFolder
 Copy-Item "DISTRIBUTION.md" -Destination "$distFolder\README.md"
 
