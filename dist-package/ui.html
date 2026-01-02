@@ -6,29 +6,125 @@
   }
   
   :root {
-    /* Clean light theme colors */
-    --figma-bg: #ffffff;
-    --figma-bg-secondary: #f8f9fa;
-    --figma-text: #1a1a1a;
-    --figma-text-secondary: #4a4a4a;
-    --figma-text-tertiary: #8a8a8a;
-    --figma-border: #e5e5e5;
-    --figma-accent: #FFC107;
-    --figma-accent-hover: #FFB300;
-    --figma-danger: #FF6B6B;
-    --figma-success: #51CF66;
+    /* 8-Step Color Scales - Perceptually Balanced */
+    /* All colors at same step number have same luminance for visual consistency */
+
+    /* Gray Scale */
+    --gray-50: #fafafa;   /* ~95% luminance */
+    --gray-100: #f5f5f5;  /* ~85% */
+    --gray-200: #eeeeee;  /* ~75% */
+    --gray-300: #e0e0e0;  /* ~65% */
+    --gray-400: #bdbdbd;  /* ~55% */
+    --gray-500: #9e9e9e;  /* ~50% */
+    --gray-600: #757575;  /* ~40% */
+    --gray-700: #616161;  /* ~30% */
+    --gray-800: #424242;  /* ~20% */
+
+    /* Blue Scale */
+    --blue-50: #e3f2fd;   /* ~95% */
+    --blue-100: #bbdefb;  /* ~85% */
+    --blue-200: #90caf9;  /* ~75% */
+    --blue-300: #64b5f6;  /* ~65% */
+    --blue-400: #42a5f5;  /* ~55% */
+    --blue-500: #2196f3;  /* ~50% - base */
+    --blue-600: #1e88e5;  /* ~40% */
+    --blue-700: #1976d2;  /* ~30% */
+    --blue-800: #1565c0;  /* ~20% */
+
+    /* Green Scale */
+    --green-50: #e8f5e9;   /* ~95% */
+    --green-100: #c8e6c9;  /* ~85% */
+    --green-200: #a5d6a7;  /* ~75% */
+    --green-300: #81c784;  /* ~65% */
+    --green-400: #66bb6a;  /* ~55% */
+    --green-500: #4caf50;  /* ~50% - base */
+    --green-600: #43a047;  /* ~40% */
+    --green-700: #388e3c;  /* ~30% */
+    --green-800: #2e7d32;  /* ~20% */
+
+    /* Yellow Scale */
+    --yellow-50: #fffde7;  /* ~95% */
+    --yellow-100: #fff9c4; /* ~85% */
+    --yellow-200: #fff59d; /* ~75% */
+    --yellow-300: #fff176; /* ~65% */
+    --yellow-400: #ffee58; /* ~55% */
+    --yellow-500: #ffeb3b; /* ~50% - base */
+    --yellow-600: #fdd835; /* ~40% */
+    --yellow-700: #fbc02d; /* ~30% */
+    --yellow-800: #f9a825; /* ~20% */
+
+    /* Orange Scale */
+    --orange-50: #fff3e0;  /* ~95% */
+    --orange-100: #ffe0b2; /* ~85% */
+    --orange-200: #ffcc80; /* ~75% */
+    --orange-300: #ffb74d; /* ~65% */
+    --orange-400: #ffa726; /* ~55% */
+    --orange-500: #ff9800; /* ~50% - base */
+    --orange-600: #fb8c00; /* ~40% */
+    --orange-700: #f57c00; /* ~30% */
+    --orange-800: #ef6c00; /* ~20% */
+
+    /* Red Scale */
+    --red-50: #ffebee;     /* ~95% */
+    --red-100: #ffcdd2;    /* ~85% */
+    --red-200: #ef9a9a;    /* ~75% */
+    --red-300: #e57373;    /* ~65% */
+    --red-400: #ef5350;    /* ~55% */
+    --red-500: #f44336;    /* ~50% - base */
+    --red-600: #e53935;    /* ~40% */
+    --red-700: #d32f2f;    /* ~30% */
+    --red-800: #c62828;    /* ~20% */
+
+    /* Pure Black & White (for absolute values) */
+    --white: #ffffff;
+    --black: #000000;
+
+    /* Semantic Aliases - map to color scales */
+    --figma-bg: var(--white);
+    --figma-bg-secondary: var(--gray-50);
+
+    --figma-border: var(--gray-300);
+    --figma-border-secondary: var(--gray-500);
+
+    --figma-text: var(--gray-800);
+    --figma-text-secondary: var(--gray-600);
+    --figma-text-tertiary: var(--gray-500);
+
+
+    --figma-accent: var(--yellow-600);
+    --figma-accent-hover: var(--yellow-700);
+    --figma-danger: var(--red-500);
+    --figma-success: var(--green-500);
+
+    --figma-blue: var(--blue-500);
+    --figma-blue-hover: var(--blue-700);
+
+    /* Link Colors - use blue scale */
+    --figma-link: var(--blue-700);
+    --figma-link-hover: var(--blue-800);
+
+    /* Special Use */
     --figma-hover-overlay: rgba(0, 0, 0, 0.04);
     --figma-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   }
 
   /* Dark theme */
   body.figma-dark {
-    --figma-bg: #2c2c2c;
-    --figma-bg-secondary: #1e1e1e;
-    --figma-text: #ffffff;
-    --figma-text-secondary: #cccccc;
-    --figma-text-tertiary: #999999;
-    --figma-border: #3c3c3c;
+    /* In dark mode, grays invert (lightest becomes darkest) */
+    --gray-50: #1e1e1e;
+    --gray-100: #2c2c2c;
+    --gray-200: #3c3c3c;
+    --gray-300: #4a4a4a;
+    --gray-400: #666666;
+    --gray-500: #999999;
+    --gray-600: #cccccc;
+    --gray-700: #e5e5e5;
+    --gray-800: #ffffff;
+
+    /* Background switches to dark gray in dark mode */
+    --figma-bg: var(--gray-100);
+
+    /* Dark mode specific overrides */
     --figma-hover-overlay: rgba(255, 255, 255, 0.06);
     --figma-icon-bg: rgba(255, 255, 255, 0.1);
     --figma-icon-bg-hover: rgba(255, 255, 255, 0.2);
@@ -435,32 +531,43 @@
     background: var(--figma-bg-secondary);
     border-radius: 6px;
     border: 2px solid var(--figma-border);
-    transition: all 0.3s;
+    transition: all 0.3s ease;
+    min-height: 44px;
   }
 
   .preflight-step.checking {
-    border-color: #18a0fb;
+    border-color: var(--blue-500);
     background: var(--figma-bg-secondary);
   }
 
   .preflight-step.success {
-    border-color: #0fa958;
+    border-color: var(--green-600);
     background: var(--figma-bg-secondary);
-    animation: success 0.4s ease-out;
   }
 
   .preflight-step.error {
-    border-color: #f24822;
+    border-color: var(--red-600);
     background: var(--figma-bg-secondary);
   }
 
   .preflight-icon {
     width: 24px;
     height: 24px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 16px;
+  }
+
+  .preflight-icon svg {
+    width: 20px;
+    height: 20px;
+    transition: all 0.2s ease;
+  }
+
+  .preflight-icon .spinner {
+    animation: spin 0.8s linear infinite;
   }
 
   .preflight-text {
@@ -468,11 +575,6 @@
     font-size: 13px;
     color: var(--figma-text-secondary);
     transition: color 0.3s ease;
-  }
-
-  .preflight-step .spinner {
-    width: 16px;
-    height: 16px;
   }
 
   /* Mode Toggle */
@@ -1083,6 +1185,110 @@
   #write-status.loading::before {
     animation: pulse 1.5s ease-in-out infinite;
   }
+
+  /* Validation Modal */
+  .validation-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .validation-modal.show {
+    display: flex;
+  }
+
+  .validation-modal-content {
+    background: var(--figma-bg);
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 600px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .validation-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-shrink: 0;
+  }
+
+  .validation-modal-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--figma-text);
+  }
+
+  .validation-modal-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: var(--figma-text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .validation-modal-close:hover {
+    color: var(--figma-text);
+  }
+
+  .validation-modal-body {
+    color: var(--figma-text);
+    font-size: 13px;
+    line-height: 1.5;
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1;
+    min-height: 0;
+    padding-right: 4px;
+  }
+
+  .validation-modal-body::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .validation-modal-body::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .validation-modal-body::-webkit-scrollbar-thumb {
+    background: var(--figma-border);
+    border-radius: 4px;
+  }
+
+  .validation-modal-body::-webkit-scrollbar-thumb:hover {
+    background: var(--figma-border-secondary);
+  }
+
+  #validation-steps-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #validation-steps-container .preflight-step:last-child {
+    margin-bottom: 0;
+  }
+
+  .validation-modal-footer {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 16px;
+    flex-shrink: 0;
+  }
 </style>
 
 <!-- Write Mode View (Default) -->
@@ -1351,44 +1557,6 @@
       <button class="btn-secondary" id="reset-config" style="flex: 0 0 auto;">Reset to Default</button>
   </div>
 
-    <div class="preflight-container" id="preflight-container">
-      <div class="preflight-step" id="preflight-validate">
-        <div class="preflight-icon">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0ZM8 14C4.68629 14 2 11.3137 2 8C2 4.68629 4.68629 2 8 2C11.3137 2 14 4.68629 14 8C14 11.3137 11.3137 14 8 14Z" fill="currentColor"/>
-            <path d="M8 4C7.44772 4 7 4.44772 7 5V8.41421L5.29289 10.1213C4.90237 10.5118 4.90237 11.1449 5.29289 11.5355C5.68342 11.926 6.31658 11.926 6.70711 11.5355L8.70711 9.53553C8.89464 9.34799 9 9.09343 9 8.82843V5C9 4.44772 8.55228 4 8 4Z" fill="currentColor"/>
-          </svg>
-        </div>
-        <div class="preflight-text">Validating configuration...</div>
-      </div>
-      <div class="preflight-step" id="preflight-locales">
-        <div class="preflight-icon">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0ZM8 14C4.68629 14 2 11.3137 2 8C2 4.68629 4.68629 2 8 2C11.3137 2 14 4.68629 14 8C14 11.3137 11.3137 14 8 14Z" fill="currentColor"/>
-            <path d="M8 4C7.44772 4 7 4.44772 7 5V8.41421L5.29289 10.1213C4.90237 10.5118 4.90237 11.1449 5.29289 11.5355C5.68342 11.926 6.31658 11.926 6.70711 11.5355L8.70711 9.53553C8.89464 9.34799 9 9.09343 9 8.82843V5C9 4.44772 8.55228 4 8 4Z" fill="currentColor"/>
-          </svg>
-        </div>
-        <div class="preflight-text">Testing connection & fetching locales...</div>
-      </div>
-      <div class="preflight-step" id="preflight-content">
-        <div class="preflight-icon">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0ZM8 14C4.68629 14 2 11.3137 2 8C2 4.68629 4.68629 2 8 2C11.3137 2 14 4.68629 14 8C14 11.3137 11.3137 14 8 14Z" fill="currentColor"/>
-            <path d="M8 4C7.44772 4 7 4.44772 7 5V8.41421L5.29289 10.1213C4.90237 10.5118 4.90237 11.1449 5.29289 11.5355C5.68342 11.926 6.31658 11.926 6.70711 11.5355L8.70711 9.53553C8.89464 9.34799 9 9.09343 9 8.82843V5C9 4.44772 8.55228 4 8 4Z" fill="currentColor"/>
-          </svg>
-        </div>
-        <div class="preflight-text">Verifying content type...</div>
-      </div>
-      <div class="preflight-step" id="preflight-save">
-        <div class="preflight-icon">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0ZM8 14C4.68629 14 2 11.3137 2 8C2 4.68629 4.68629 2 8 2C11.3137 2 14 4.68629 14 8C14 11.3137 11.3137 14 8 14Z" fill="currentColor"/>
-            <path d="M8 4C7.44772 4 7 4.44772 7 5V8.41421L5.29289 10.1213C4.90237 10.5118 4.90237 11.1449 5.29289 11.5355C5.68342 11.926 6.31658 11.926 6.70711 11.5355L8.70711 9.53553C8.89464 9.34799 9 9.09343 9 8.82843V5C9 4.44772 8.55228 4 8 4Z" fill="currentColor"/>
-          </svg>
-        </div>
-        <div class="preflight-text">Saving configuration...</div>
-      </div>
-    </div>
   </div>
 
   <button class="btn-secondary" id="back-to-main" style="width: calc(100% - 24px); margin: 0 12px 12px 12px; flex-shrink: 0;">← Back to Translator</button>
@@ -1503,13 +1671,6 @@ function switchView(viewName) {
   
   if (viewName === 'settings') {
     loadConfigIntoEditor();
-  } else {
-    // Hide preflight container when leaving settings
-    const preflightContainer = document.getElementById('preflight-container');
-    if (preflightContainer) {
-      preflightContainer.classList.remove('active');
-      resetPreflightSteps();
-    }
   }
 }
 
@@ -1540,19 +1701,13 @@ function getConfigFromFields() {
 
 document.getElementById('save-config').onclick = async () => {
   const newConfig = getConfigFromFields();
-  
-  // Start preflight checks
-  const preflightContainer = document.getElementById('preflight-container');
-  preflightContainer.classList.add('active');
-  
-  // Smooth scroll to preflight checks
-  setTimeout(() => {
-    preflightContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }, 100);
-  
+
+  // Show validation modal
+  showValidationModal();
+
   // Disable the save button
   document.getElementById('save-config').disabled = true;
-  
+
   // Run preflight checks step by step
   await runPreflightChecks(newConfig);
 };
@@ -1560,10 +1715,6 @@ document.getElementById('save-config').onclick = async () => {
 document.getElementById('reset-config').onclick = () => {
   loadConfigIntoEditor();
   setSettingsStatus('Reset to default values', 'info');
-  
-  // Hide preflight if visible
-  document.getElementById('preflight-container').classList.remove('active');
-  resetPreflightSteps();
 };
 
 async function runPreflightChecks(newConfig) {
@@ -1576,29 +1727,40 @@ async function runPreflightChecks(newConfig) {
   
   for (const step of steps) {
     const element = document.getElementById(step.id);
-    
+
     // Mark as checking
     element.classList.remove('success', 'error');
     element.classList.add('checking');
     const icon = element.querySelector('.preflight-icon');
-    while (icon.firstChild) {
-      icon.removeChild(icon.firstChild);
-    }
-    const spinner = document.createElement('span');
-    spinner.className = 'spinner';
-    icon.appendChild(spinner);
+    icon.innerHTML = `
+      <svg class="spinner" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="spinnerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:var(--figma-accent);stop-opacity:1" />
+            <stop offset="100%" style="stop-color:var(--figma-accent);stop-opacity:0.3" />
+          </linearGradient>
+        </defs>
+        <circle cx="12" cy="12" r="10" stroke="var(--figma-border)" stroke-width="3" opacity="0.2"/>
+        <circle cx="12" cy="12" r="10" stroke="url(#spinnerGradient)" stroke-width="3" stroke-linecap="round" stroke-dasharray="15 50"/>
+      </svg>
+    `;
     
     // Wait a bit so user can see the step
     await new Promise(resolve => setTimeout(resolve, step.delay));
     
     try {
       const result = await step.check();
-      
+
       if (result.success) {
         element.classList.remove('checking');
         element.classList.add('success');
-        const iconEl = element.querySelector('.preflight-icon');
-        iconEl.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0ZM11.7071 6.70711L7.70711 10.7071C7.31658 11.0976 6.68342 11.0976 6.29289 10.7071L4.29289 8.70711C3.90237 8.31658 3.90237 7.68342 4.29289 7.29289C4.68342 6.90237 5.31658 6.90237 5.70711 7.29289L7 8.58579L10.2929 5.29289C10.6834 4.90237 11.3166 4.90237 11.7071 5.29289C12.0976 5.68342 12.0976 6.31658 11.7071 6.70711Z" fill="currentColor"/></svg>';
+
+        element.querySelector('.preflight-icon').innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" fill="var(--green-500)"/>
+            <path d="M8 12 L11 15 L16 9" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        `;
 
         if (result.message) {
           element.querySelector('.preflight-text').textContent = result.message;
@@ -1609,40 +1771,39 @@ async function runPreflightChecks(newConfig) {
     } catch (error) {
       element.classList.remove('checking');
       element.classList.add('error');
-      const iconEl = element.querySelector('.preflight-icon');
-      iconEl.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0ZM11.0607 10.0607C11.6464 10.6464 11.6464 11.5962 11.0607 12.182C10.4749 12.7678 9.52513 12.7678 8.93934 12.182L8 11.2426L7.06066 12.182C6.47487 12.7678 5.52513 12.7678 4.93934 12.182C4.35355 11.5962 4.35355 10.6464 4.93934 10.0607L5.87868 9.12132L4.93934 8.18198C4.35355 7.59619 4.35355 6.64645 4.93934 6.06066C5.52513 5.47487 6.47487 5.47487 7.06066 6.06066L8 7L8.93934 6.06066C9.52513 5.47487 10.4749 5.47487 11.0607 6.06066C11.6464 6.64645 11.6464 7.59619 11.0607 8.18198L10.1213 9.12132L11.0607 10.0607Z" fill="currentColor"/></svg>';
+      element.querySelector('.preflight-icon').innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" fill="var(--red-500)"/>
+          <path d="M8 8 L16 16 M16 8 L8 16" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      `;
       element.querySelector('.preflight-text').textContent = error.message;
-      
-      setSettingsStatus('Preflight check failed: ' + error.message, 'error');
+
       document.getElementById('save-config').disabled = false;
+
+      // Show error message in modal
+      const statusDiv = document.getElementById('validation-status');
+      statusDiv.style.display = 'block';
+      statusDiv.innerHTML = '<div style="color: var(--red-600); font-weight: 500; padding: 12px; background: var(--red-50); border-radius: 6px;">' + error.message + '</div>';
+
+      // Show close button
+      document.getElementById('validation-close-btn').style.display = 'flex';
+      document.getElementById('validation-footer').style.display = 'flex';
       return;
     }
   }
   
   // All checks passed!
-  setSettingsStatus('Configuration saved successfully!', 'success');
   document.getElementById('save-config').disabled = false;
-  
-  setTimeout(() => {
-    switchView('main');
-    resetPreflightSteps();
-  }, 1500);
-}
 
-function resetPreflightSteps() {
-  const steps = ['preflight-validate', 'preflight-locales', 'preflight-content', 'preflight-save'];
-  steps.forEach(id => {
-    const element = document.getElementById(id);
-    element.classList.remove('checking', 'success', 'error');
-    const iconEl = element.querySelector('.preflight-icon');
-    iconEl.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0ZM8 14C4.68629 14 2 11.3137 2 8C2 4.68629 4.68629 2 8 2C11.3137 2 14 4.68629 14 8C14 11.3137 11.3137 14 8 14Z" fill="currentColor"/><path d="M8 4C7.44772 4 7 4.44772 7 5V8.41421L5.29289 10.1213C4.90237 10.5118 4.90237 11.1449 5.29289 11.5355C5.68342 11.926 6.31658 11.926 6.70711 11.5355L8.70711 9.53553C8.89464 9.34799 9 9.09343 9 8.82843V5C9 4.44772 8.55228 4 8 4Z" fill="currentColor"/></svg>';
-  });
-  
-  // Reset text
-  document.getElementById('preflight-validate').querySelector('.preflight-text').textContent = 'Validating configuration...';
-  document.getElementById('preflight-locales').querySelector('.preflight-text').textContent = 'Testing connection & fetching locales...';
-  document.getElementById('preflight-content').querySelector('.preflight-text').textContent = 'Verifying content type...';
-  document.getElementById('preflight-save').querySelector('.preflight-text').textContent = 'Saving configuration...';
+  // Show success message in modal
+  const statusDiv = document.getElementById('validation-status');
+  statusDiv.style.display = 'block';
+  statusDiv.innerHTML = '<div style="color: var(--green-600); font-weight: 500; padding: 12px; background: var(--green-50); border-radius: 6px;">Configuration saved successfully!</div>';
+
+  // Show close button
+  document.getElementById('validation-close-btn').style.display = 'flex';
+  document.getElementById('validation-footer').style.display = 'flex';
 }
 
 function validateConfig(cfg) {
@@ -2194,16 +2355,11 @@ window.onmessage = (event) => {
   // Settings responses
   if (msg.type === 'config-saved') {
     config = msg.config;
-    setSettingsStatus('Config saved successfully!', 'success');
-    setTimeout(() => {
-      switchView('main');
-      // Auto-reload locales with new config
-      parent.postMessage({ pluginMessage: { type: 'load-locales', config } }, '*');
-    }, 1500);
+    // Note: Individual handlers in saveConfig() promise already handle this
   }
 
   if (msg.type === 'config-save-failed') {
-    setSettingsStatus('Save failed: ' + sanitizeString(msg.message), 'error');
+    // Note: Individual handlers in saveConfig() promise already handle this
   }
 }
 
@@ -2842,6 +2998,59 @@ function copyErrorToClipboard() {
   });
 }
 
+// Validation Modal Functions
+function showValidationModal() {
+  document.getElementById('validation-modal').classList.add('show');
+  // Hide close button during validation
+  document.getElementById('validation-close-btn').style.display = 'none';
+  document.getElementById('validation-footer').style.display = 'none';
+  document.getElementById('validation-status').style.display = 'none';
+
+  // Create the preflight steps
+  createPreflightSteps();
+}
+
+function hideValidationModal() {
+  document.getElementById('validation-modal').classList.remove('show');
+  document.getElementById('validation-steps-container').innerHTML = '';
+  document.getElementById('validation-status').style.display = 'none';
+  document.getElementById('validation-status').innerHTML = '';
+}
+
+function createPreflightSteps() {
+  const steps = [
+    { id: 'preflight-validate', text: 'Validating configuration...' },
+    { id: 'preflight-locales', text: 'Testing connection & fetching locales...' },
+    { id: 'preflight-content', text: 'Verifying content type...' },
+    { id: 'preflight-save', text: 'Saving configuration...' }
+  ];
+
+  const container = document.getElementById('validation-steps-container');
+  container.innerHTML = '';
+
+  steps.forEach(step => {
+    const stepDiv = document.createElement('div');
+    stepDiv.className = 'preflight-step';
+    stepDiv.id = step.id;
+    stepDiv.innerHTML = `
+      <div class="preflight-icon">
+        <svg class="spinner" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="spinnerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:var(--figma-accent);stop-opacity:1" />
+              <stop offset="100%" style="stop-color:var(--figma-accent);stop-opacity:0.3" />
+            </linearGradient>
+          </defs>
+          <circle cx="12" cy="12" r="10" stroke="var(--figma-border)" stroke-width="3" opacity="0.2"/>
+          <circle cx="12" cy="12" r="10" stroke="url(#spinnerGradient)" stroke-width="3" stroke-linecap="round" stroke-dasharray="15 50"/>
+        </svg>
+      </div>
+      <div class="preflight-text">${step.text}</div>
+    `;
+    container.appendChild(stepDiv);
+  });
+}
+
 </script>
 
 <!-- Error Modal -->
@@ -2863,6 +3072,27 @@ function copyErrorToClipboard() {
         Copy Error Details
       </button>
       <button class="btn-close-modal" onclick="hideErrorModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Validation Modal -->
+<div id="validation-modal" class="validation-modal">
+  <div class="validation-modal-content">
+    <div class="validation-modal-header">
+      <div class="validation-modal-title">Validating Configuration</div>
+      <button class="validation-modal-close" onclick="hideValidationModal()" id="validation-close-btn" style="display: none;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 4 L12 12 M12 4 L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="validation-modal-body">
+      <div id="validation-steps-container"></div>
+      <div id="validation-status" style="margin-top: 16px; display: none;"></div>
+    </div>
+    <div class="validation-modal-footer" id="validation-footer" style="display: none;">
+      <button class="btn-primary" onclick="hideValidationModal()">Close</button>
     </div>
   </div>
 </div>
