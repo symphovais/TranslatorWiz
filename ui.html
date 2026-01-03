@@ -307,6 +307,12 @@
   .status-container {
     position: relative;
     min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    gap: 16px;
+    border-top: 1px solid var(--figma-border);
   }
   
   #status {
@@ -423,7 +429,36 @@
   .btn-icon svg {
     display: block;
   }
-  
+
+  .stats-compact {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    padding: 0 12px;
+    font-size: 12px;
+  }
+
+  .stat-label {
+    color: var(--figma-text-secondary);
+    font-weight: 500;
+    margin-right: 4px;
+  }
+
+  .stat-value {
+    color: var(--figma-text);
+    font-weight: 600;
+    min-width: 20px;
+    text-align: right;
+  }
+
+  .stat-value.stat-new {
+    color: var(--yellow-800);
+  }
+
+  .stat-value.stat-changed {
+    color: var(--red-500);
+  }
+
   textarea {
     width: 100%;
     min-height: 200px;
@@ -1242,15 +1277,12 @@
 
   /* Write Status Footer */
   #write-status {
-    padding: 10px 16px;
     font-size: 12px;
     color: var(--figma-text-secondary);
-    background: var(--figma-bg-secondary);
-    border-top: 1px solid var(--figma-border);
     display: flex;
     align-items: center;
     gap: 6px;
-    min-height: 36px;
+    flex: 1;
   }
 
   #write-status:empty {
@@ -1899,6 +1931,20 @@
 
   <div class="status-container">
     <div id="write-status"></div>
+    <div class="stats-compact">
+      <span class="stat-item">
+        <span class="stat-label">Total:</span>
+        <span class="stat-value" id="stat-total">-</span>
+      </span>
+      <span class="stat-item">
+        <span class="stat-label">New:</span>
+        <span class="stat-value stat-new" id="stat-new">-</span>
+      </span>
+      <span class="stat-item">
+        <span class="stat-label">Changed:</span>
+        <span class="stat-value stat-changed" id="stat-changed">-</span>
+      </span>
+    </div>
   </div>
 </div>
 
@@ -3325,6 +3371,31 @@ function createSpinnerSvg() {
 }
 
 /**
+ * Update stats display (Total, New, Changed counts)
+ */
+function updateStats() {
+  let total = textItems.length;
+  let newCount = 0;
+  let changedCount = 0;
+
+  textItems.forEach(item => {
+    const contentfulItem = contentfulItems[item.name];
+    if (!contentfulItem) {
+      newCount++;
+    } else {
+      const isEqual = textsAreEqual(item.characters, contentfulItem.value);
+      if (!isEqual) {
+        changedCount++;
+      }
+    }
+  });
+
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-new').textContent = newCount;
+  document.getElementById('stat-changed').textContent = changedCount;
+}
+
+/**
  * Set tooltip for an element
  * @param {HTMLElement} element - Element to add tooltip to
  * @param {string} text - Tooltip text
@@ -3676,6 +3747,9 @@ window.onmessage = (event) => {
       // Show onboarding/settings screen
       switchView('settings');
       setSettingsStatus('Welcome! Please configure your Contentful connection to get started.', 'info');
+      document.getElementById('stat-total').textContent = '0';
+      document.getElementById('stat-new').textContent = '0';
+      document.getElementById('stat-changed').textContent = '0';
       return;
     }
     
@@ -4339,13 +4413,14 @@ window.onmessage = (event) => {
   if (msg.type === 'contentful-items-loaded') {
     console.log('📥 Contentful items loaded from server:', Object.keys(msg.items || {}).length, 'items');
     contentfulItems = msg.items || {};
-    
+
     // Log what we got from Contentful for debugging
     Object.keys(contentfulItems).forEach(key => {
       console.log(`  - ${key}: "${contentfulItems[key].value.substring(0, 50)}..." (ID: ${contentfulItems[key].id})`);
     });
-    
+
     renderItemsTable();
+    updateStats();
     setWriteStatus('Ready', 'success');
   }
   
