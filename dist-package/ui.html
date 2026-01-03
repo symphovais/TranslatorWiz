@@ -2216,6 +2216,18 @@ window.addEventListener('DOMContentLoaded', () => {
     };
   }
 
+  // Add validation listeners for required fields
+  const spaceIdInput = document.getElementById('space-id');
+  const cmaTokenInput = document.getElementById('cma-token');
+
+  if (spaceIdInput) {
+    spaceIdInput.addEventListener('input', validateRequiredFields);
+  }
+
+  if (cmaTokenInput) {
+    cmaTokenInput.addEventListener('input', validateRequiredFields);
+  }
+
   // Request stored window size state from backend
   parent.postMessage({ pluginMessage: { type: 'get-window-size-state' } }, '*');
 });
@@ -2251,7 +2263,7 @@ function switchView(viewName) {
 // Settings functionality
 function loadConfigIntoEditor() {
   const configToLoad = config || defaultConfig;
-  
+
   document.getElementById('space-id').value = configToLoad.SPACE_ID || '';
   document.getElementById('environment').value = configToLoad.ENVIRONMENT || '';
   document.getElementById('cma-token').value = configToLoad.CMA_TOKEN || '';
@@ -2259,6 +2271,26 @@ function loadConfigIntoEditor() {
   document.getElementById('key-field').value = configToLoad.KEY_FIELD || '';
   document.getElementById('value-field').value = configToLoad.VALUE_FIELD || '';
   document.getElementById('node-pattern').value = configToLoad.NODE_NAME_PATTERN || '';
+
+  // Initial validation check
+  validateRequiredFields();
+}
+
+function validateRequiredFields() {
+  const spaceId = document.getElementById('space-id').value.trim();
+  const cmaToken = document.getElementById('cma-token').value.trim();
+  const saveButton = document.getElementById('save-config');
+
+  // Disable button if either required field is empty
+  if (!spaceId || !cmaToken) {
+    saveButton.disabled = true;
+    saveButton.style.opacity = '0.5';
+    saveButton.style.cursor = 'not-allowed';
+  } else {
+    saveButton.disabled = false;
+    saveButton.style.opacity = '1';
+    saveButton.style.cursor = 'pointer';
+  }
 }
 
 function getConfigFromFields() {
