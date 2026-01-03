@@ -623,6 +623,15 @@
     max-width: 140px;
   }
 
+  /* Span elements in key column for compact mode */
+  body.compact-mode .write-table td:nth-child(1) span {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 140px;
+  }
+
   /* Clear search button */
   .search-clear-btn {
     position: absolute;
@@ -1074,6 +1083,15 @@
 
   /* Contentful link styling */
   .write-table .contentful-link {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Span elements in key column (non-linked keys) */
+  .write-table td:nth-child(1) span {
     display: inline-block;
     max-width: 100%;
     overflow: hidden;
@@ -1859,7 +1877,7 @@
     font-weight: 500;
     line-height: 1.4;
     white-space: normal;
-    max-width: 200px;
+    max-width: 90vw;
     border-radius: 6px;
     opacity: 0;
     pointer-events: none;
@@ -2952,12 +2970,14 @@ function renderIndividualItems(items) {
       link.textContent = keyName;
       link.title = 'Open in Contentful';
       link.onclick = (e) => e.stopPropagation();
+      link.dataset.keyName = keyName;
       keyTd.appendChild(link);
     } else {
       // Wrap in span for consistency with grouped items
       const keySpan = document.createElement('span');
       keySpan.textContent = keyName;
       keySpan.style.fontWeight = '600';
+      keySpan.dataset.keyName = keyName;
       keyTd.appendChild(keySpan);
     }
     tr.appendChild(keyTd);
@@ -2967,7 +2987,6 @@ function renderIndividualItems(items) {
     const textDiv = document.createElement('div');
     textDiv.className = 'text-preview';
     textDiv.textContent = item.characters;
-    setTooltipIfTruncated(textDiv, item.characters);
     textTd.appendChild(textDiv);
     tr.appendChild(textTd);
 
@@ -3034,6 +3053,26 @@ function renderIndividualItems(items) {
 
   tbody.innerHTML = '';
   tbody.appendChild(fragment);
+
+  // Apply tooltips after elements are in DOM and layout is complete
+  setTimeout(() => {
+    tbody.querySelectorAll('a[data-key-name], span[data-key-name]').forEach(element => {
+      const keyName = element.dataset.keyName;
+      // Force reflow to ensure dimensions are calculated
+      void element.offsetWidth;
+      if (isTextTruncated(element)) {
+        setTooltip(element, keyName);
+      }
+    });
+
+    tbody.querySelectorAll('.text-preview').forEach(element => {
+      // Force reflow to ensure dimensions are calculated
+      void element.offsetWidth;
+      if (isTextTruncated(element)) {
+        setTooltip(element, element.textContent);
+      }
+    });
+  }, 0);
 }
 
 // Render grouped items
@@ -3116,12 +3155,14 @@ function renderGroupedItems(filteredItems) {
       link.onclick = (e) => {
         e.stopPropagation(); // Prevent row click handler
       };
+      link.dataset.keyName = keyName;
       keyTd.appendChild(link);
     } else {
       // No link for new items - wrap in span
       const keySpan = document.createElement('span');
       keySpan.innerHTML = displayName;
       keySpan.style.fontWeight = '600';
+      keySpan.dataset.keyName = keyName;
       keyTd.appendChild(keySpan);
     }
 
@@ -3133,7 +3174,6 @@ function renderGroupedItems(filteredItems) {
     textDiv.className = 'text-preview';
     const textContent = uniqueTexts.join(' | ');
     textDiv.textContent = textContent;
-    setTooltipIfTruncated(textDiv, textContent);
     textTd.appendChild(textDiv);
     tr.appendChild(textTd);
 
@@ -3244,6 +3284,26 @@ function renderGroupedItems(filteredItems) {
   // Batch DOM update - clear table and append all rows at once
   tbody.innerHTML = '';
   tbody.appendChild(fragment);
+
+  // Apply tooltips after elements are in DOM and layout is complete
+  setTimeout(() => {
+    tbody.querySelectorAll('a[data-key-name], span[data-key-name]').forEach(element => {
+      const keyName = element.dataset.keyName;
+      // Force reflow to ensure dimensions are calculated
+      void element.offsetWidth;
+      if (isTextTruncated(element)) {
+        setTooltip(element, keyName);
+      }
+    });
+
+    tbody.querySelectorAll('.text-preview').forEach(element => {
+      // Force reflow to ensure dimensions are calculated
+      void element.offsetWidth;
+      if (isTextTruncated(element)) {
+        setTooltip(element, element.textContent);
+      }
+    });
+  }, 0);
 }
 
 function renderItemsTable() {
@@ -3419,6 +3479,11 @@ if (btnResize) {
     // Send resize message to backend (backend will store the state)
     console.log('Sending resize message:', { type: 'resize-window', width: size.width, height: size.height, isCompact: isCompact });
     parent.postMessage({ pluginMessage: { type: 'resize-window', width: size.width, height: size.height, isCompact: isCompact } }, '*');
+
+    // Refresh tooltips after layout changes
+    setTimeout(() => {
+      refreshTruncatedTooltips();
+    }, 100);
   };
 } else {
   console.error('btn-resize button not found!');
@@ -3593,17 +3658,15 @@ function setTooltipIfTruncated(element, text) {
 function refreshTruncatedTooltips() {
   // Find all text-preview elements
   const textElements = document.querySelectorAll('.text-preview');
-  // Select all links and spans in first column (key column)
-  const keyElements = document.querySelectorAll('td:first-child a.contentful-link, td:first-child span');
+  // Select all links and spans with data-key-name (key column)
+  const keyElements = document.querySelectorAll('a[data-key-name], span[data-key-name]');
 
   // Process text elements
   textElements.forEach(element => {
     const text = element.textContent;
     if (text) {
       if (isTextTruncated(element)) {
-        if (element.getAttribute('data-tooltip') !== text) {
-          setTooltip(element, text);
-        }
+        setTooltip(element, text);
       } else {
         removeTooltip(element);
       }
@@ -3612,18 +3675,10 @@ function refreshTruncatedTooltips() {
 
   // Process key elements
   keyElements.forEach(element => {
-    // Prefer existing tooltip (clean key name), otherwise extract from text content
-    let text = element.getAttribute('data-tooltip');
-    if (!text) {
-      // Strip any count prefix like "(3) " from the displayed text
-      text = element.textContent.replace(/^\(\d+\)\s*/, '').trim();
-    }
-
-    if (text) {
+    const keyName = element.dataset.keyName;
+    if (keyName) {
       if (isTextTruncated(element)) {
-        if (element.getAttribute('data-tooltip') !== text) {
-          setTooltip(element, text);
-        }
+        setTooltip(element, keyName);
       } else {
         removeTooltip(element);
       }
@@ -3647,7 +3702,7 @@ function positionTooltip(element) {
   // Match the actual tooltip CSS styles exactly
   const tempTooltip = document.createElement('div');
   const isMultiline = element.hasAttribute('data-tooltip-multiline');
-  const maxWidth = isMultiline ? '200px' : '300px';
+  const maxWidth = isMultiline ? '200px' : '90vw';
   tempTooltip.style.cssText = `position:fixed;visibility:hidden;padding:6px 10px;font-size:11px;font-weight:500;line-height:1.4;white-space:normal;max-width:${maxWidth};border-radius:6px;`;
   tempTooltip.textContent = tooltipText;
   document.body.appendChild(tempTooltip);
