@@ -2921,6 +2921,61 @@ if (btnResize) {
   console.error('btn-resize button not found!');
 }
 
+// ============================================================
+// UTILITY FUNCTIONS
+// ============================================================
+
+/**
+ * Build Contentful entry URL
+ */
+function buildContentfulUrl(config, entryId) {
+  const { SPACE_ID, ENVIRONMENT } = config;
+  return `https://app.contentful.com/spaces/${encodeURIComponent(SPACE_ID)}/environments/${encodeURIComponent(ENVIRONMENT)}/entries/${encodeURIComponent(entryId)}`;
+}
+
+/**
+ * Create flex container element
+ */
+function createFlexContainer() {
+  const container = document.createElement('div');
+  container.className = 'flex-container';
+  return container;
+}
+
+/**
+ * Find original item index by ID
+ */
+function findItemIndexById(items, id) {
+  return items.findIndex(item => item && item.id === id);
+}
+
+/**
+ * Check if items have text conflicts
+ */
+function hasTextConflict(items) {
+  if (items.length <= 1) return false;
+  const uniqueTexts = [...new Set(items.map(item => item.characters))];
+  return uniqueTexts.length > 1;
+}
+
+/**
+ * Create spinner SVG
+ */
+function createSpinnerSvg() {
+  return `
+    <svg class="spinner" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="spinnerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:var(--figma-accent);stop-opacity:1" />
+          <stop offset="100%" style="stop-color:var(--figma-accent);stop-opacity:0.3" />
+        </linearGradient>
+      </defs>
+      <circle cx="12" cy="12" r="10" stroke="var(--figma-border)" stroke-width="3" opacity="0.2"/>
+      <circle cx="12" cy="12" r="10" stroke="url(#spinnerGradient)" stroke-width="3" stroke-linecap="round" stroke-dasharray="15 50"/>
+    </svg>
+  `;
+}
+
 // Bulletproof text normalization and comparison
 function normalizeText(text) {
   if (!text) return '';
