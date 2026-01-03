@@ -2197,6 +2197,47 @@ observer.observe(document.documentElement, {
 // Request config and start auto-load on startup
 parent.postMessage({ pluginMessage: { type: 'init' } }, '*');
 
+// Auto-refresh system
+let autoRefreshInterval = null;
+const AUTO_REFRESH_INTERVAL = 30000; // 30 seconds
+
+function startAutoRefresh() {
+  if (autoRefreshInterval) {
+    clearInterval(autoRefreshInterval);
+  }
+
+  autoRefreshInterval = setInterval(() => {
+    if (config && isConfigComplete(config)) {
+      refreshData();
+    }
+  }, AUTO_REFRESH_INTERVAL);
+}
+
+function stopAutoRefresh() {
+  if (autoRefreshInterval) {
+    clearInterval(autoRefreshInterval);
+    autoRefreshInterval = null;
+  }
+}
+
+function refreshData() {
+  if (!config || !isConfigComplete(config)) {
+    return;
+  }
+
+  setWriteStatus('Refreshing...', 'loading');
+
+  try {
+    parent.postMessage({ pluginMessage: { type: 'get-translatable-nodes', config } }, '*');
+  } catch (error) {
+    console.error('Failed to refresh data:', error);
+    setWriteStatus('Refresh failed', 'error');
+  }
+}
+
+// Start auto-refresh on load
+startAutoRefresh();
+
 // View switching - wait for DOM to be ready
 window.addEventListener('DOMContentLoaded', () => {
   const settingsBtn = document.getElementById('settings-toggle-inline');
@@ -4469,6 +4510,11 @@ window.onmessage = (event) => {
       searchInput.value = msg.nodeName;
       searchInput.dispatchEvent(new Event('input'));
     }
+  }
+
+  // Handle auto-refresh trigger from backend
+  if (msg.type === 'auto-refresh-trigger') {
+    refreshData();
   }
 };
 

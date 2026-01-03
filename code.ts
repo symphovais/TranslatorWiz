@@ -2,6 +2,11 @@
 
 figma.showUI(__html__, { width: 800, height: 500, themeColors: true });
 
+// Load all pages to enable documentchange listener
+(async () => {
+  await figma.loadAllPagesAsync();
+})();
+
 interface ContentfulConfig {
   SPACE_ID: string;
   ENVIRONMENT: string;
@@ -109,12 +114,12 @@ function validateConfig(config: ContentfulConfig): string | null {
 figma.on('selectionchange', () => {
   try {
     if (!figma.currentPage) return;
-    
+
     const selection = figma.currentPage.selection;
-    
+
     if (selection.length === 1 && selection[0] && selection[0].type === 'TEXT') {
       const textNode = selection[0] as TextNode;
-      
+
       // Safely access characters
       let characters = '';
       try {
@@ -123,7 +128,7 @@ figma.on('selectionchange', () => {
         console.warn('Could not read text node characters:', e);
         characters = '[Unable to read text]';
       }
-      
+
       figma.ui.postMessage({
         type: 'text-node-selected',
         nodeName: textNode.name || '[Unnamed]',
@@ -132,6 +137,31 @@ figma.on('selectionchange', () => {
     }
   } catch (error) {
     console.error('Selection change handler error:', error);
+    // Don't crash the plugin
+  }
+});
+
+// Listen for document changes and trigger auto-refresh
+let lastRefreshTrigger = 0;
+const REFRESH_THROTTLE = 5000; // 5 seconds minimum between triggers
+
+figma.on('documentchange', () => {
+  try {
+    const now = Date.now();
+
+    // Throttle: only trigger if 5 seconds have passed since last trigger
+    if (now - lastRefreshTrigger < REFRESH_THROTTLE) {
+      return;
+    }
+
+    lastRefreshTrigger = now;
+
+    // Notify UI to refresh data
+    figma.ui.postMessage({
+      type: 'auto-refresh-trigger'
+    });
+  } catch (error) {
+    console.error('Document change handler error:', error);
     // Don't crash the plugin
   }
 });
