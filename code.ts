@@ -520,6 +520,93 @@ figma.ui.onmessage = async (msg: any) => {
       return;
     }
 
+    if (msg.type === 'update-multiple-nodes') {
+      try {
+        const { nodeIds, newText } = msg;
+
+        if (!nodeIds || !Array.isArray(nodeIds) || nodeIds.length === 0) {
+          figma.ui.postMessage({
+            type: 'update-multiple-nodes-result',
+            success: false,
+            error: 'Invalid node IDs'
+          });
+          return;
+        }
+
+        let successCount = 0;
+        const errors: string[] = [];
+
+        for (const nodeId of nodeIds) {
+          try {
+            const node = await figma.getNodeByIdAsync(nodeId);
+
+            if (!node || !('type' in node) || node.type !== 'TEXT') {
+              errors.push(`Node ${nodeId}: Not found or not a text node`);
+              continue;
+            }
+
+            const textNode = node as TextNode;
+
+            if (textNode.hasMissingFont) {
+              errors.push(`${node.name}: Missing font`);
+              continue;
+            }
+
+            // Load fonts (handle mixed fonts like applyTranslations)
+            const fontName = textNode.fontName;
+            if (fontName === figma.mixed) {
+              // Text has mixed fonts, load all ranges
+              for (let i = 0; i < textNode.characters.length; i++) {
+                const font = textNode.getRangeFontName(i, i + 1) as FontName;
+                await figma.loadFontAsync(font);
+              }
+            } else {
+              await figma.loadFontAsync(fontName as FontName);
+            }
+
+            // Update the text
+            textNode.characters = newText;
+            successCount++;
+
+          } catch (nodeError) {
+            const errorMsg = nodeError instanceof Error ? nodeError.message : String(nodeError);
+            errors.push(`Node ${nodeId}: ${errorMsg}`);
+          }
+        }
+
+        figma.ui.postMessage({
+          type: 'update-multiple-nodes-result',
+          success: successCount > 0,
+          count: successCount,
+          errors: errors.length > 0 ? errors : undefined,
+          error: successCount === 0 ? errors[0] : undefined
+        });
+
+      } catch (error) {
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        figma.ui.postMessage({
+          type: 'update-multiple-nodes-result',
+          success: false,
+          error: errorMsg
+        });
+      }
+      return;
+    }
+
+    if (msg.type === 'select-node') {
+      try {
+        const { nodeId } = msg;
+        const node = await figma.getNodeByIdAsync(nodeId);
+        if (node && 'type' in node) {
+          figma.currentPage.selection = [node as SceneNode];
+          figma.viewport.scrollAndZoomIntoView([node as SceneNode]);
+        }
+      } catch (error) {
+        console.error('Error selecting node:', error);
+      }
+      return;
+    }
+
     if (msg.type === 'cancel') {
       figma.closePlugin();
       return;

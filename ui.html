@@ -1478,6 +1478,227 @@
     margin-top: 16px;
     flex-shrink: 0;
   }
+
+  /* Conflict Resolution Modal */
+  .conflict-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .conflict-modal.show {
+    display: flex;
+  }
+
+  .conflict-modal-content {
+    background: var(--figma-bg);
+    border-radius: 12px;
+    padding: 0;
+    max-width: 560px;
+    width: 90%;
+    max-height: 85vh;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  }
+
+  .conflict-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--figma-border);
+  }
+
+  .conflict-modal-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--figma-text);
+    letter-spacing: -0.01em;
+  }
+
+  .conflict-modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--figma-text-tertiary);
+    padding: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .conflict-modal-close:hover {
+    background: var(--figma-hover-overlay);
+    color: var(--figma-text);
+  }
+
+  .conflict-modal-body {
+    padding: 24px;
+    max-height: calc(85vh - 140px);
+    overflow-y: auto;
+  }
+
+  .conflict-key-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--figma-text);
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+
+  .conflict-instance-count {
+    font-size: 13px;
+    color: var(--figma-text-secondary);
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  .conflict-version {
+    background: var(--figma-bg);
+    border: 1px solid var(--figma-border);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+    transition: all 0.15s ease;
+  }
+
+  .conflict-version:hover {
+    border-color: var(--figma-border-secondary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  .conflict-version-text {
+    font-size: 13px;
+    color: var(--figma-text);
+    line-height: 1.6;
+    margin-bottom: 8px;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+  }
+
+  .conflict-version-meta {
+    font-size: 11px;
+    color: var(--figma-text-secondary);
+    margin-bottom: 10px;
+    font-style: italic;
+  }
+
+  .conflict-version-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn-show-in-figma,
+  .btn-use-this-version {
+    flex: 1;
+    background: var(--figma-bg-secondary);
+    color: var(--figma-text);
+    border: 1px solid var(--figma-border);
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.15s ease;
+  }
+
+  .btn-show-in-figma:hover,
+  .btn-use-this-version:hover {
+    background: var(--figma-bg);
+    border-color: var(--figma-text);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  }
+
+  .btn-use-this-version:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .conflict-contentful-section {
+    background: var(--figma-bg-secondary);
+    border: 1px solid var(--figma-border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 24px;
+  }
+
+  .conflict-contentful-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--figma-text-tertiary);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .conflict-contentful-text {
+    font-size: 13px;
+    color: var(--figma-text);
+    line-height: 1.6;
+  }
+
+  .conflict-versions-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--figma-text-tertiary);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .conflict-modal-footer {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    padding: 16px 24px;
+    border-top: 1px solid var(--figma-border);
+    background: var(--figma-bg-secondary);
+  }
+
+  .btn-cancel-conflict {
+    background: transparent;
+    color: var(--figma-text-secondary);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.15s ease;
+  }
+
+  .btn-cancel-conflict:hover {
+    background: var(--figma-hover-overlay);
+    color: var(--figma-text);
+  }
+
+  .btn-save-item {
+    padding: 6px 16px;
+    background: var(--figma-accent);
+    color: var(--gray-800);
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-save-item:hover {
+    background: var(--figma-accent-hover);
+  }
 </style>
 
 <!-- Write Mode View (Default) -->
@@ -1898,6 +2119,197 @@ function confirmReset() {
   loadConfigIntoEditor();
 }
 
+// Conflict Resolution Modal Functions
+let currentConflictData = null;
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function showConflictModal(keyName, items, contentfulValue) {
+  currentConflictData = {
+    keyName: keyName,
+    items: items,
+    contentfulValue: contentfulValue
+  };
+
+  // Set key name and count
+  document.getElementById('conflict-key-name').textContent = keyName;
+
+  const uniqueCount = new Set(items.map(item => item.characters)).size;
+  document.getElementById('conflict-instance-count').textContent =
+    `${items.length} instances, ${uniqueCount} unique text ${uniqueCount === 1 ? 'variation' : 'variations'} found. Choose one to apply to all instances.`;
+
+  // Group items by unique text content
+  const uniqueVariants = new Map(); // Map<text, items[]>
+
+  items.forEach((item) => {
+    const text = item.characters;
+    if (!uniqueVariants.has(text)) {
+      uniqueVariants.set(text, []);
+    }
+    uniqueVariants.get(text).push(item);
+  });
+
+  // Build versions list - one card per unique text
+  const container = document.getElementById('conflict-versions-container');
+  container.innerHTML = '';
+
+  let variantIndex = 0;
+  uniqueVariants.forEach((itemsWithSameText, text) => {
+    const firstItem = itemsWithSameText[0];
+    const count = itemsWithSameText.length;
+
+    const versionDiv = document.createElement('div');
+    versionDiv.className = 'conflict-version';
+    versionDiv.setAttribute('data-version-index', variantIndex);
+    versionDiv.setAttribute('data-text-value', text);
+
+    // Escape the text for use in onclick attribute
+    const escapedText = escapeHtml(text).replace(/'/g, '&#39;');
+
+    versionDiv.innerHTML = `
+      <div class="conflict-version-text">${escapeHtml(text)}</div>
+      <div class="conflict-version-meta">${count > 1 ? `${count} instances with this text` : '1 instance'}</div>
+      <div class="conflict-version-actions">
+        <button class="btn-show-in-figma" onclick="event.stopPropagation(); showNodeInFigma('${firstItem.id}')">
+          Show in Figma
+        </button>
+        <button class="btn-use-this-version" onclick="event.stopPropagation(); useThisVersionByText('${escapedText}')">
+          Change All to This
+        </button>
+      </div>
+    `;
+
+    container.appendChild(versionDiv);
+    variantIndex++;
+  });
+
+  // Show Contentful value if exists
+  const contentfulSection = document.getElementById('conflict-contentful-section');
+  if (contentfulValue) {
+    contentfulSection.style.display = 'block';
+    document.getElementById('conflict-contentful-value').textContent = contentfulValue;
+  } else {
+    contentfulSection.style.display = 'none';
+  }
+
+  // Show modal
+  document.getElementById('conflict-modal').classList.add('show');
+}
+
+function hideConflictModal() {
+  document.getElementById('conflict-modal').classList.remove('show');
+  currentConflictData = null;
+}
+
+function showNodeInFigma(nodeId) {
+  parent.postMessage({
+    pluginMessage: {
+      type: 'select-node',
+      nodeId: nodeId
+    }
+  }, '*');
+}
+
+function useThisVersionByText(selectedText) {
+  if (!currentConflictData) return;
+
+  // Unescape HTML entities
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = selectedText;
+  const unescapedText = textarea.value;
+
+  // Find the index of an item with the selected text
+  const versionIndex = currentConflictData.items.findIndex(item => item.characters === unescapedText);
+
+  if (versionIndex === -1) {
+    console.error('Could not find item with selected text:', unescapedText);
+    return;
+  }
+
+  // Use the existing handleUpdateAllInFigma logic
+  handleUpdateAllInFigma(versionIndex);
+}
+
+function useThisVersion(versionIndex) {
+  if (!currentConflictData) return;
+  handleUpdateAllInFigma(versionIndex);
+}
+
+async function handleUpdateAllInFigma(versionIndex) {
+  if (!currentConflictData) return;
+
+  const selectedItem = currentConflictData.items[versionIndex];
+  const nodeIds = currentConflictData.items.map(item => item.id);
+
+  // Disable all "Use This Version" buttons
+  const allButtons = document.querySelectorAll('.btn-use-this-version');
+  allButtons.forEach(btn => btn.disabled = true);
+
+  setWriteStatus(`Updating ${nodeIds.length} instances in Figma...`, 'loading');
+
+  try {
+    // Send message to backend to update all nodes
+    parent.postMessage({
+      pluginMessage: {
+        type: 'update-multiple-nodes',
+        nodeIds: nodeIds,
+        newText: selectedItem.characters
+      }
+    }, '*');
+
+    // Wait for response
+    const response = await new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => reject(new Error('Timeout')), 10000);
+
+      const handler = (event) => {
+        if (event.data.pluginMessage?.type === 'update-multiple-nodes-result') {
+          clearTimeout(timeout);
+          window.removeEventListener('message', handler);
+          resolve(event.data.pluginMessage);
+        }
+      };
+
+      window.addEventListener('message', handler);
+    });
+
+    if (response.success) {
+      setWriteStatus(`Updated ${response.count} instances in Figma - all now have the same text`, 'success');
+
+      // Update local data
+      currentConflictData.items.forEach(item => {
+        item.characters = selectedItem.characters;
+      });
+
+      // Update textItems
+      textItems.forEach(item => {
+        if (nodeIds.includes(item.id)) {
+          item.characters = selectedItem.characters;
+        }
+      });
+
+      hideConflictModal();
+
+      // Re-render table - will now show save button since conflict is gone
+      setTimeout(() => {
+        renderItemsTable();
+      }, 100);
+    } else {
+      throw new Error(response.error || 'Failed to update nodes');
+    }
+  } catch (error) {
+    console.error('Error updating nodes:', error);
+    setWriteStatus(`Error: ${error.message}`, 'error');
+
+    // Re-enable buttons on error
+    const allButtons = document.querySelectorAll('.btn-use-this-version');
+    allButtons.forEach(btn => btn.disabled = false);
+  }
+}
+
 async function runPreflightChecks(newConfig) {
   const steps = [
     { id: 'preflight-validate', check: () => validateConfig(newConfig), delay: 800 },
@@ -2254,8 +2666,25 @@ function renderItemsTable() {
 
       return true; // Show all
     });
-    
+
+    // Group items by key (name) to detect conflicts
+    const groupedItems = {};
     filteredItems.forEach((item) => {
+      if (!groupedItems[item.name]) {
+        groupedItems[item.name] = [];
+      }
+      groupedItems[item.name].push(item);
+    });
+
+    // Render grouped items
+    Object.keys(groupedItems).forEach((keyName) => {
+      const items = groupedItems[keyName];
+      const item = items[0]; // Use first item for display
+      const count = items.length;
+
+      // Detect if there are conflicting text values
+      const uniqueTexts = [...new Set(items.map(i => i.characters))];
+      const hasConflict = count > 1 && uniqueTexts.length > 1;
       const originalIndex = textItems.findIndex(original => 
         original && original.id === item.id
       );
@@ -2280,38 +2709,50 @@ function renderItemsTable() {
     
     // Key column
     const keyTd = document.createElement('td');
-    const contentfulItem = contentfulItems[item.name];
-    
+    const contentfulItem = contentfulItems[keyName];
+
+    // Display name with count and conflict warning
+    let displayName = count > 1 ? `(${count}) ${keyName}` : keyName;
+
+    // Add warning icon if there's a conflict
+    if (hasConflict) {
+      const warningSvg = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; margin-right: 4px; vertical-align: text-bottom;"><path d="M8 1 L15 14 L1 14 Z" fill="var(--red-500)" stroke="var(--red-500)" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6 v3 M8 11 v1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>';
+      displayName = `${warningSvg}${displayName}`;
+    }
+
     if (contentfulItem && contentfulItem.id) {
       // Create clickable link to Contentful
       // Correct Contentful web app URL format with environment
       const link = document.createElement('a');
       const contentfulUrl = `https://app.contentful.com/spaces/${encodeURIComponent(config.SPACE_ID)}/environments/${encodeURIComponent(config.ENVIRONMENT)}/entries/${encodeURIComponent(contentfulItem.id)}`;
-      
+
       link.href = contentfulUrl;
       link.target = '_blank';
       link.rel = 'noopener noreferrer';
       link.className = 'contentful-link';
-      link.textContent = item.name;
+      link.innerHTML = displayName;
       link.title = 'Open in Contentful';
       link.onclick = (e) => {
         e.stopPropagation(); // Prevent row click handler
       };
       keyTd.appendChild(link);
     } else {
-      // No link for new items
-      keyTd.textContent = item.name;
-      keyTd.style.fontWeight = '600';
+      // No link for new items - wrap in span
+      const keySpan = document.createElement('span');
+      keySpan.innerHTML = displayName;
+      keySpan.style.fontWeight = '600';
+      keyTd.appendChild(keySpan);
     }
     
     tr.appendChild(keyTd);
     
-    // Text column
+    // Text column - show all unique text values
     const textTd = document.createElement('td');
     const textDiv = document.createElement('div');
     textDiv.className = 'text-preview';
-    textDiv.textContent = item.characters;
-    textDiv.title = item.characters;
+    const textContent = uniqueTexts.join(' | ');
+    textDiv.textContent = textContent;
+    textDiv.title = textContent;
     textTd.appendChild(textDiv);
     tr.appendChild(textTd);
     
@@ -2358,17 +2799,39 @@ function renderItemsTable() {
     
     // Action column
     const actionTd = document.createElement('td');
-    
-    const needsUpdate = !contentfulItem || !textsAreEqual(item.characters, contentfulItem.value);
-    
-    if (needsUpdate) {
-      const saveBtn = document.createElement('button');
-      saveBtn.className = 'btn-save-item';
-      saveBtn.textContent = contentfulItem ? 'Update' : 'Create';
-      saveBtn.onclick = () => saveItemToContentful(item, originalIndex);
-      actionTd.appendChild(saveBtn);
+
+    if (hasConflict) {
+      // Show "Resolve Conflict" button
+      const resolveBtn = document.createElement('button');
+      resolveBtn.className = 'btn-save-item';
+      resolveBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 4px; vertical-align: text-bottom;"><path d="M8 1 L15 14 L1 14 Z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6 v3 M8 11 v1" stroke="var(--figma-accent)" stroke-width="1.5" stroke-linecap="round"/></svg>Resolve';
+      resolveBtn.title = `Resolve ${uniqueTexts.length} conflicting text variations`;
+      resolveBtn.onclick = (e) => {
+        e.stopPropagation();
+        showConflictModal(keyName, items, contentfulItem ? contentfulItem.value : null);
+      };
+      actionTd.appendChild(resolveBtn);
+    } else {
+      // Check if any item in the group needs update
+      let needsUpdate = !contentfulItem;
+      if (!needsUpdate) {
+        for (const itm of items) {
+          if (!textsAreEqual(itm.characters, contentfulItem.value)) {
+            needsUpdate = true;
+            break;
+          }
+        }
+      }
+
+      if (needsUpdate) {
+        const saveBtn = document.createElement('button');
+        saveBtn.className = 'btn-save-item';
+        saveBtn.textContent = contentfulItem ? 'Update' : 'Create';
+        saveBtn.onclick = () => saveItemToContentful(item, originalIndex);
+        actionTd.appendChild(saveBtn);
+      }
     }
-    
+
     tr.appendChild(actionTd);
       tbody.appendChild(tr);
     });
@@ -3406,6 +3869,37 @@ function createPreflightSteps() {
     </div>
     <div class="validation-modal-footer" id="validation-footer" style="display: none;">
       <button class="btn-primary" onclick="hideValidationModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Conflict Resolution Modal -->
+<div id="conflict-modal" class="conflict-modal">
+  <div class="conflict-modal-content">
+    <div class="conflict-modal-header">
+      <div class="conflict-modal-title">
+        Resolve Conflict
+      </div>
+      <button class="conflict-modal-close" onclick="hideConflictModal()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 4 L12 12 M12 4 L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="conflict-modal-body">
+      <div class="conflict-key-name"><span id="conflict-key-name"></span></div>
+      <div class="conflict-instance-count" id="conflict-instance-count"></div>
+
+      <div class="conflict-contentful-section" id="conflict-contentful-section">
+        <div class="conflict-contentful-label">Current value in Contentful</div>
+        <div class="conflict-contentful-text" id="conflict-contentful-value"></div>
+      </div>
+
+      <div class="conflict-versions-label">Text variations in Figma</div>
+      <div id="conflict-versions-container"></div>
+    </div>
+    <div class="conflict-modal-footer">
+      <button class="btn-conflict-action btn-cancel-conflict" onclick="hideConflictModal()">Cancel</button>
     </div>
   </div>
 </div>
