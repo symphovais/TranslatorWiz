@@ -1108,30 +1108,31 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
-    font-size: 16px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 13px;
     font-weight: 600;
     transition: all 0.2s ease;
   }
 
   .status-badge.not-exists {
-    background: #FFF9E6;
-    color: #F59E0B;
-    border: 1px solid #FDE68A;
+    background: var(--yellow-100);
+    color: var(--yellow-800);
+    border: 1px solid var(--yellow-500);
+    line-height: 1;
   }
 
   .status-badge.out-of-sync {
-    background: #FEE2E2;
-    color: #DC2626;
-    border: 1px solid #FECACA;
+    background: var(--red-50);
+    color: var(--red-600);
+    border: 1px solid var(--red-100);
   }
 
   .status-badge.synced {
-    background: #D1FAE5;
-    color: #059669;
-    border: 1px solid #A7F3D0;
+    background: var(--green-50);
+    color: var(--green-600);
+    border: 1px solid var(--green-100);
   }
 
   .status-badge.checking {
@@ -2996,18 +2997,18 @@ function renderIndividualItems(items) {
 
     if (!contentfulItem) {
       statusBadge.className = 'status-badge not-exists';
-      statusBadge.textContent = '+';
+      statusBadge.innerHTML = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
       setTooltip(statusBadge, 'New - Does not exist in Contentful');
     } else {
       const isEqual = textsAreEqual(item.characters, contentfulItem.value);
       const contentfulText = normalizeText(contentfulItem.value);
       if (!isEqual) {
         statusBadge.className = 'status-badge out-of-sync';
-        statusBadge.textContent = '!';
+        statusBadge.innerHTML = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4v5M8 11v1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
         setTooltip(statusBadge, `Contentful: "${contentfulText}"`, 'top', true);
       } else {
         statusBadge.className = 'status-badge synced';
-        statusBadge.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.6 3.2L5.6 10.2L2 6.6L3.4 5.2L5.6 7.4L11.2 1.8L12.6 3.2Z" fill="currentColor"/></svg>';
+        statusBadge.innerHTML = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8 L7 12 L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
         setTooltip(statusBadge, 'Synced - Matches Contentful');
       }
     }
@@ -3185,7 +3186,7 @@ function renderGroupedItems(filteredItems) {
 
     if (!contentfulItem) {
       statusBadge.className = 'status-badge not-exists';
-      statusBadge.textContent = '+';
+      statusBadge.innerHTML = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
       setTooltip(statusBadge, 'New - Does not exist in Contentful');
     } else {
       // Check if any item in the group is out of sync
@@ -3203,11 +3204,11 @@ function renderGroupedItems(filteredItems) {
 
       if (!allSynced) {
         statusBadge.className = 'status-badge out-of-sync';
-        statusBadge.textContent = '!';
+        statusBadge.innerHTML = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4v5M8 11v1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
         setTooltip(statusBadge, `Contentful: "${contentfulText}"`, 'top', true);
       } else {
         statusBadge.className = 'status-badge synced';
-        statusBadge.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.6 3.2L5.6 10.2L2 6.6L3.4 5.2L5.6 7.4L11.2 1.8L12.6 3.2Z" fill="currentColor"/></svg>';
+        statusBadge.innerHTML = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8 L7 12 L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
         setTooltip(statusBadge, 'Synced - Matches Contentful');
       }
     }
@@ -3867,7 +3868,7 @@ function updateItemStatus(key, success, errorMsg, errorDetails) {
       const statusBadge = document.getElementById(`status-${index}`);
       if (statusBadge) {
         statusBadge.className = 'status-badge out-of-sync';
-        statusBadge.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.25 1.75L1.75 12.25M1.75 1.75L12.25 12.25" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+        statusBadge.innerHTML = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3L13 13M13 3L3 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
         statusBadge.title = `Error: ${errorMsg}`;
       }
     }
