@@ -395,26 +395,31 @@
     color: var(--figma-text-secondary);
     border: 1px solid var(--figma-border);
     border-radius: 4px;
-    padding: 8px;
+    padding: 6px 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s ease;
-    min-width: 32px;
-    min-height: 32px;
+    transition: all 0.2s;
+    min-width: 28px;
+    min-height: 28px;
   }
-  
+
   .btn-icon:hover {
     background: var(--figma-bg-secondary);
-    border-color: var(--figma-text-tertiary);
-    color: var(--figma-text);
+    border-color: var(---figma-border-secondary);
   }
-  
+
+  .btn-icon.active {
+    background: var(--figma-accent);
+    color: var(--gray-800);
+    border-color: transparent;
+  }
+
   .btn-icon:active {
     transform: scale(0.95);
   }
-  
+
   .btn-icon svg {
     display: block;
   }
@@ -1444,7 +1449,13 @@
         </svg>
       </button>
     </div>
-    <button class="btn-icon" id="settings-toggle-inline" title="Settings">
+    <button class="btn-icon" id="filter-toggle" data-tooltip="Show changes only" data-tooltip-pos="bottom">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 2L8 7V14L8 7L13 2H3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <div style="flex: 1;"></div>
+    <button class="btn-icon" id="settings-toggle-inline" data-tooltip="Settings" data-tooltip-pos="bottom">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M13.5 8C13.5 8.17 13.49 8.34 13.47 8.51L15.04 9.7C15.18 9.81 15.22 10.01 15.13 10.17L13.63 12.83C13.54 12.99 13.35 13.05 13.18 12.99L11.34 12.27C10.97 12.55 10.56 12.78 10.12 12.95L9.84 14.91C9.82 15.09 9.66 15.22 9.47 15.22H6.47C6.28 15.22 6.12 15.09 6.1 14.91L5.82 12.95C5.38 12.78 4.97 12.55 4.6 12.27L2.76 12.99C2.59 13.05 2.4 12.99 2.31 12.83L0.81 10.17C0.72 10.01 0.76 9.81 0.9 9.7L2.47 8.51C2.45 8.34 2.44 8.17 2.44 8C2.44 7.83 2.45 7.66 2.47 7.49L0.9 6.3C0.76 6.19 0.72 5.99 0.81 5.83L2.31 3.17C2.4 3.01 2.59 2.95 2.76 3.01L4.6 3.73C4.97 3.45 5.38 3.22 5.82 3.05L6.1 1.09C6.12 0.91 6.28 0.78 6.47 0.78H9.47C9.66 0.78 9.82 0.91 9.84 1.09L10.12 3.05C10.56 3.22 10.97 3.45 11.34 3.73L13.18 3.01C13.35 2.95 13.54 3.01 13.63 3.17L15.13 5.83C15.22 5.99 15.18 6.19 15.04 6.3L13.47 7.49C13.49 7.66 13.5 7.83 13.5 8ZM8 5.5C6.62 5.5 5.5 6.62 5.5 8C5.5 9.38 6.62 10.5 8 10.5C9.38 10.5 10.5 9.38 10.5 8C10.5 6.62 9.38 5.5 8 5.5Z" fill="currentColor"/>
       </svg>
@@ -2074,6 +2085,7 @@ document.getElementById('cancel').onclick = () => {
 
 let textItems = [];
 let contentfulItems = {};
+let currentFilter = 'all'; // 'all' or 'changes'
 
 document.getElementById('btn-load-items').onclick = async () => {
   if (!config) {
@@ -2155,15 +2167,30 @@ function renderItemsTable() {
     // Get search filter
     const searchInput = document.getElementById('search-input');
     const searchTerm = (searchInput?.value || '').toLowerCase().trim();
-    
+
     // Filter items based on search (search in both key name and text content)
     const filteredItems = textItems.filter(item => {
       if (!item || typeof item !== 'object') return false;
-      
+
       const name = String(item.name || '').toLowerCase();
       const characters = String(item.characters || '').toLowerCase();
-      
-      return name.includes(searchTerm) || characters.includes(searchTerm);
+
+      // First apply search filter
+      const matchesSearch = name.includes(searchTerm) || characters.includes(searchTerm);
+      if (!matchesSearch) return false;
+
+      // Then apply change filter if active
+      if (currentFilter === 'changes') {
+        const contentfulItem = contentfulItems[item.name];
+        // Show if new (doesn't exist) or changed (exists but different)
+        if (!contentfulItem) {
+          return true; // New item
+        }
+        const isEqual = textsAreEqual(item.characters, contentfulItem.value);
+        return !isEqual; // Changed item
+      }
+
+      return true; // Show all
     });
     
     filteredItems.forEach((item) => {
@@ -2315,6 +2342,29 @@ searchClearBtn.addEventListener('click', () => {
   searchInput.focus();
   renderItemsTable();
 });
+
+// Filter toggle functionality
+const filterToggle = document.getElementById('filter-toggle');
+
+if (filterToggle) {
+  filterToggle.onclick = () => {
+    // Toggle between 'all' and 'changes'
+    currentFilter = currentFilter === 'all' ? 'changes' : 'all';
+
+    // Update button appearance and icon
+    if (currentFilter === 'changes') {
+      filterToggle.classList.add('active');
+      filterToggle.setAttribute('data-tooltip', 'Show all items');
+      filterToggle.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 2L8 7V14L8 7L13 2H3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="currentColor" fill-opacity="0.3"/></svg>';
+    } else {
+      filterToggle.classList.remove('active');
+      filterToggle.setAttribute('data-tooltip', 'Show changes only');
+      filterToggle.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 2L8 7V14L8 7L13 2H3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>';
+    }
+
+    renderItemsTable();
+  };
+}
 
 // Bulletproof text normalization and comparison
 function normalizeText(text) {
