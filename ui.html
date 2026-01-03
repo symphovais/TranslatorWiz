@@ -2847,25 +2847,37 @@ function renderItemsTable() {
   }
 }
 
+// Debounce render to prevent excessive re-renders
+let renderDebounceTimer = null;
+
+function debouncedRenderItemsTable() {
+  if (renderDebounceTimer) {
+    clearTimeout(renderDebounceTimer);
+  }
+  renderDebounceTimer = setTimeout(() => {
+    renderItemsTable();
+  }, 150); // 150ms debounce
+}
+
 // Search functionality
 const searchInput = document.getElementById('search-input');
 const searchClearBtn = document.getElementById('search-clear-btn');
 
 searchInput.addEventListener('input', () => {
-  // Show/hide clear button based on input value
+  // Toggle clear button visibility
   if (searchInput.value.trim()) {
     searchClearBtn.classList.add('visible');
   } else {
     searchClearBtn.classList.remove('visible');
   }
-  renderItemsTable();
+  debouncedRenderItemsTable();
 });
 
 searchClearBtn.addEventListener('click', () => {
   searchInput.value = '';
   searchClearBtn.classList.remove('visible');
   searchInput.focus();
-  renderItemsTable();
+  debouncedRenderItemsTable();
 });
 
 // Filter toggle functionality
