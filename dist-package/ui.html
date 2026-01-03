@@ -1186,6 +1186,88 @@
     animation: pulse 1.5s ease-in-out infinite;
   }
 
+  /* Reset Confirmation Modal */
+  .reset-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .reset-modal.show {
+    display: flex;
+  }
+
+  .reset-modal-content {
+    background: var(--figma-bg);
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .reset-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .reset-modal-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--figma-text);
+  }
+
+  .reset-modal-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: var(--figma-text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .reset-modal-close:hover {
+    color: var(--figma-text);
+  }
+
+  .reset-modal-body {
+    margin-bottom: 20px;
+    color: var(--figma-text);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .reset-modal-footer {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+
+  .btn-danger {
+    background: var(--red-500);
+    color: var(--white);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+
+  .btn-danger:hover {
+    background: var(--red-600);
+  }
+
   /* Validation Modal */
   .validation-modal {
     display: none;
@@ -1554,8 +1636,12 @@
         </svg>
         Save & Validate
       </button>
-      <button class="btn-secondary" id="reset-config" style="flex: 0 0 auto;">Reset to Default</button>
   </div>
+
+    <!-- Reset link -->
+    <div style="margin-top: 24px; text-align: right;">
+      <a href="#" id="reset-config" style="font-size: 12px; color: var(--figma-text-secondary); text-decoration: none;">Reset all fields to default</a>
+    </div>
 
   </div>
 
@@ -1712,10 +1798,27 @@ document.getElementById('save-config').onclick = async () => {
   await runPreflightChecks(newConfig);
 };
 
-document.getElementById('reset-config').onclick = () => {
-  loadConfigIntoEditor();
-  setSettingsStatus('Reset to default values', 'info');
+// Show reset confirmation modal
+document.getElementById('reset-config').onclick = (e) => {
+  e.preventDefault();
+  showResetModal();
 };
+
+// Show reset modal
+function showResetModal() {
+  document.getElementById('reset-modal').classList.add('show');
+}
+
+// Hide reset modal
+function hideResetModal() {
+  document.getElementById('reset-modal').classList.remove('show');
+}
+
+// Confirm reset action
+function confirmReset() {
+  hideResetModal();
+  loadConfigIntoEditor();
+}
 
 async function runPreflightChecks(newConfig) {
   const steps = [
@@ -3072,6 +3175,28 @@ function createPreflightSteps() {
         Copy Error Details
       </button>
       <button class="btn-close-modal" onclick="hideErrorModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reset Confirmation Modal -->
+<div id="reset-modal" class="reset-modal">
+  <div class="reset-modal-content">
+    <div class="reset-modal-header">
+      <div class="reset-modal-title">Reset All Fields?</div>
+      <button class="reset-modal-close" onclick="hideResetModal()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 4 L12 12 M12 4 L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="reset-modal-body">
+      <p>Are you sure you want to reset all fields to their default values?</p>
+      <p style="color: var(--figma-text-secondary); margin-top: 8px;">Any unsaved changes will be lost.</p>
+    </div>
+    <div class="reset-modal-footer">
+      <button class="btn-secondary" onclick="hideResetModal()">Cancel</button>
+      <button class="btn-danger" onclick="confirmReset()">Reset to Default</button>
     </div>
   </div>
 </div>
