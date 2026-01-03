@@ -1,6 +1,6 @@
 // ConteFi - Figma plugin for Contentful-based translations
 
-figma.showUI(__html__, { width: 900, height: 500, themeColors: true });
+figma.showUI(__html__, { width: 800, height: 500, themeColors: true });
 
 interface ContentfulConfig {
   SPACE_ID: string;
@@ -488,6 +488,34 @@ figma.ui.onmessage = async (msg: any) => {
           error: errorMessage,
           errorDetails
         });
+      }
+      return;
+    }
+
+    if (msg.type === 'get-window-size-state') {
+      const isCompact = await figma.clientStorage.getAsync('window-size-compact');
+      console.log('Retrieved window size state:', isCompact);
+      figma.ui.postMessage({ type: 'window-size-state', isCompact: isCompact || false });
+      return;
+    }
+
+    if (msg.type === 'resize-window') {
+      console.log('Resize window message received:', msg.width, msg.height, 'isCompact:', msg.isCompact);
+      if (msg.width && msg.height) {
+        try {
+          figma.ui.resize(msg.width, msg.height);
+          console.log('Window resized successfully to:', msg.width, 'x', msg.height);
+
+          // Store the compact state
+          if (msg.isCompact !== undefined) {
+            await figma.clientStorage.setAsync('window-size-compact', msg.isCompact);
+            console.log('Stored window-size-compact:', msg.isCompact);
+          }
+        } catch (error) {
+          console.error('Failed to resize window:', error);
+        }
+      } else {
+        console.error('Invalid resize dimensions:', msg.width, msg.height);
       }
       return;
     }

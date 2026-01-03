@@ -540,6 +540,54 @@
     gap: 6px !important;
   }
 
+  body.compact-mode .write-table th:nth-child(1) {
+    width: 140px;
+    max-width: 140px;
+  }
+
+  body.compact-mode .write-table td:nth-child(1) {
+    width: 140px;
+    max-width: 140px;
+  }
+
+  body.compact-mode .write-table th:nth-child(2),
+  body.compact-mode .write-table td:nth-child(2) {
+    width: 180px;
+    max-width: 180px;
+  }
+
+  body.compact-mode .write-table .text-preview {
+    max-width: 140px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 1.4;
+  }
+
+  /* Status column (3rd column) */
+  body.compact-mode .write-table th:nth-child(3),
+  body.compact-mode .write-table td:nth-child(3) {
+    width: 50px !important;
+    max-width: 50px !important;
+  }
+
+  /* Action column (4th column) */
+  body.compact-mode .write-table th:nth-child(4),
+  body.compact-mode .write-table td:nth-child(4) {
+    width: 60px !important;
+    max-width: 60px !important;
+  }
+
+  body.compact-mode .write-table .contentful-link {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 140px;
+  }
+
   /* Clear search button */
   .search-clear-btn {
     position: absolute;
@@ -1455,6 +1503,11 @@
       </svg>
     </button>
     <div style="flex: 1;"></div>
+    <button class="btn-icon" id="btn-resize" data-tooltip="Compact window" data-tooltip-pos="bottom">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 2v4h4M6 14v-4H2M10 6l4-4M6 10l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
     <button class="btn-icon" id="settings-toggle-inline" data-tooltip="Settings" data-tooltip-pos="bottom">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M13.5 8C13.5 8.17 13.49 8.34 13.47 8.51L15.04 9.7C15.18 9.81 15.22 10.01 15.13 10.17L13.63 12.83C13.54 12.99 13.35 13.05 13.18 12.99L11.34 12.27C10.97 12.55 10.56 12.78 10.12 12.95L9.84 14.91C9.82 15.09 9.66 15.22 9.47 15.22H6.47C6.28 15.22 6.12 15.09 6.1 14.91L5.82 12.95C5.38 12.78 4.97 12.55 4.6 12.27L2.76 12.99C2.59 13.05 2.4 12.99 2.31 12.83L0.81 10.17C0.72 10.01 0.76 9.81 0.9 9.7L2.47 8.51C2.45 8.34 2.44 8.17 2.44 8C2.44 7.83 2.45 7.66 2.47 7.49L0.9 6.3C0.76 6.19 0.72 5.99 0.81 5.83L2.31 3.17C2.4 3.01 2.59 2.95 2.76 3.01L4.6 3.73C4.97 3.45 5.38 3.22 5.82 3.05L6.1 1.09C6.12 0.91 6.28 0.78 6.47 0.78H9.47C9.66 0.78 9.82 0.91 9.84 1.09L10.12 3.05C10.56 3.22 10.97 3.45 11.34 3.73L13.18 3.01C13.35 2.95 13.54 3.01 13.63 3.17L15.13 5.83C15.22 5.99 15.18 6.19 15.04 6.3L13.47 7.49C13.49 7.66 13.5 7.83 13.5 8ZM8 5.5C6.62 5.5 5.5 6.62 5.5 8C5.5 9.38 6.62 10.5 8 10.5C9.38 10.5 10.5 9.38 10.5 8C10.5 6.62 9.38 5.5 8 5.5Z" fill="currentColor"/>
@@ -1752,6 +1805,9 @@ window.addEventListener('DOMContentLoaded', () => {
       switchView('write');
     };
   }
+
+  // Request stored window size state from backend
+  parent.postMessage({ pluginMessage: { type: 'get-window-size-state' } }, '*');
 });
 
 function switchView(viewName) {
@@ -2087,6 +2143,12 @@ let textItems = [];
 let contentfulItems = {};
 let currentFilter = 'all'; // 'all' or 'changes'
 
+let isCompact = false;
+const SIZES = {
+  normal: { width: 800, height: 500 },
+  compact: { width: 450, height: 600 }
+};
+
 document.getElementById('btn-load-items').onclick = async () => {
   if (!config) {
     setWriteStatus('Please configure Contentful connection first', 'error');
@@ -2364,6 +2426,36 @@ if (filterToggle) {
 
     renderItemsTable();
   };
+}
+
+// Window resize toggle functionality
+const btnResize = document.getElementById('btn-resize');
+if (btnResize) {
+  btnResize.onclick = () => {
+    console.log('Resize button clicked, current isCompact:', isCompact);
+    isCompact = !isCompact;
+    const size = isCompact ? SIZES.compact : SIZES.normal;
+    console.log('New size:', size);
+
+    // Toggle compact mode class on body (if needed for CSS)
+    if (isCompact) {
+      document.body.classList.add('compact-mode');
+      // Change to expand icon (arrows pointing outward)
+      btnResize.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 10v4h4M14 6V2h-4M2 14l4-4M14 2l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      btnResize.setAttribute('data-tooltip', 'Expand window');
+    } else {
+      document.body.classList.remove('compact-mode');
+      // Change to compress icon (arrows pointing inward)
+      btnResize.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 2v4h4M6 14v-4H2M10 6l4-4M6 10l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      btnResize.setAttribute('data-tooltip', 'Compact window');
+    }
+
+    // Send resize message to backend (backend will store the state)
+    console.log('Sending resize message:', { type: 'resize-window', width: size.width, height: size.height, isCompact: isCompact });
+    parent.postMessage({ pluginMessage: { type: 'resize-window', width: size.width, height: size.height, isCompact: isCompact } }, '*');
+  };
+} else {
+  console.error('btn-resize button not found!');
 }
 
 // Bulletproof text normalization and comparison
@@ -3069,10 +3161,29 @@ window.onmessage = (event) => {
     });
   }
   
+  if (msg.type === 'window-size-state') {
+    console.log('Received window size state:', msg);
+    const savedIsCompact = msg.isCompact || false;
+    isCompact = savedIsCompact;
+
+    const btnResize = document.getElementById('btn-resize');
+    if (savedIsCompact) {
+      document.body.classList.add('compact-mode');
+      if (btnResize) {
+        btnResize.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 10v4h4M14 6V2h-4M2 14l4-4M14 2l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        btnResize.setAttribute('data-tooltip', 'Expand window');
+      }
+      parent.postMessage({ pluginMessage: { type: 'resize-window', width: SIZES.compact.width, height: SIZES.compact.height, isCompact: true } }, '*');
+    } else {
+      // Normal size (already set in figma.showUI, but send message anyway to be consistent)
+      parent.postMessage({ pluginMessage: { type: 'resize-window', width: SIZES.normal.width, height: SIZES.normal.height, isCompact: false } }, '*');
+    }
+  }
+
   if (msg.type === 'records-loaded') {
     records = msg.records || [];
     currentRecordIndex = 0;
-    
+
     if (records.length > 0) {
       document.getElementById('record-navigation').classList.remove('hidden');
       displayCurrentRecord();
