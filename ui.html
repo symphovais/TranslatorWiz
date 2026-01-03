@@ -1770,12 +1770,84 @@
     align-items: center;
     gap: 4px;
   }
+
+  /* Tooltip System */
+  /* Ensure SVG children don't block tooltip hover events */
+  [data-tooltip] svg,
+  [data-tooltip] svg * {
+    pointer-events: none;
+  }
+
+  /* Tooltip body */
+  [data-tooltip]::before {
+    content: attr(data-tooltip);
+    position: fixed;
+    left: var(--tooltip-left, -9999px);
+    top: var(--tooltip-top, -9999px);
+    padding: 6px 10px;
+    background: #18181B;
+    color: #FFFFFF;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.4;
+    white-space: normal;
+    max-width: 200px;
+    border-radius: 6px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    z-index: 999999;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Tooltip arrow - default (top position, arrow points down) */
+  [data-tooltip]::after {
+    content: '';
+    position: fixed;
+    left: var(--arrow-left, -9999px);
+    top: var(--arrow-top, -9999px);
+    width: 0;
+    height: 0;
+    border: 6px solid transparent;
+    border-top-color: #18181B;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    z-index: 999999;
+  }
+
+  /* Bottom tooltip arrow (points upward) */
+  [data-tooltip-pos="bottom"]::after {
+    border-top-color: transparent;
+    border-bottom-color: #18181B;
+  }
+
+  /* Show tooltip on hover */
+  [data-tooltip]:hover::before,
+  [data-tooltip]:hover::after,
+  [data-tooltip].tooltip-visible::before,
+  [data-tooltip].tooltip-visible::after {
+    opacity: 1;
+  }
+
+  /* Long tooltip text - allow wrapping */
+  [data-tooltip-multiline]::before {
+    white-space: normal;
+    max-width: 200px;
+    text-align: center;
+  }
+
+  /* Disabled state tooltips */
+  [data-tooltip][disabled]::before,
+  [data-tooltip][disabled]::after {
+    display: none;
+  }
 </style>
 
 <!-- Write Mode View (Default) -->
 <div class="container view active" id="write-view" style="height: 100vh; display: flex; flex-direction: column;">
   <div class="section" style="padding: 12px 16px; display: flex; align-items: center; gap: 8px;">
-    <button class="btn-icon" id="btn-load-items" title="Sync keys">
+    <button class="btn-icon" id="btn-load-items" data-tooltip="Sync keys" data-tooltip-pos="bottom">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M13.65 2.35C12.2 0.9 10.21 0 8 0C3.58 0 0.01 3.58 0.01 8C0.01 12.42 3.58 16 8 16C11.73 16 14.84 13.45 15.73 10H13.65C12.83 12.33 10.61 14 8 14C4.69 14 2 11.31 2 8C2 4.69 4.69 2 8 2C9.66 2 11.14 2.69 12.22 3.78L9 7H16V0L13.65 2.35Z" fill="currentColor"/>
       </svg>
@@ -2740,7 +2812,7 @@ function renderIndividualItems(items) {
     const textDiv = document.createElement('div');
     textDiv.className = 'text-preview';
     textDiv.textContent = item.characters;
-    textDiv.title = item.characters;
+    setTooltipIfTruncated(textDiv, item.characters);
     textTd.appendChild(textDiv);
     tr.appendChild(textTd);
 
@@ -2751,18 +2823,18 @@ function renderIndividualItems(items) {
     if (!contentfulItem) {
       statusBadge.className = 'status-badge not-exists';
       statusBadge.textContent = '+';
-      statusBadge.title = 'New - Does not exist in Contentful';
+      setTooltip(statusBadge, 'New - Does not exist in Contentful');
     } else {
       const isEqual = textsAreEqual(item.characters, contentfulItem.value);
       const contentfulText = normalizeText(contentfulItem.value);
       if (!isEqual) {
         statusBadge.className = 'status-badge out-of-sync';
         statusBadge.textContent = '!';
-        statusBadge.title = `Contentful: "${contentfulText}"`;
+        setTooltip(statusBadge, `Contentful: "${contentfulText}"`, 'top', true);
       } else {
         statusBadge.className = 'status-badge synced';
         statusBadge.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.6 3.2L5.6 10.2L2 6.6L3.4 5.2L5.6 7.4L11.2 1.8L12.6 3.2Z" fill="currentColor"/></svg>';
-        statusBadge.title = 'Synced - Matches Contentful';
+        setTooltip(statusBadge, 'Synced - Matches Contentful');
       }
     }
 
@@ -2783,7 +2855,7 @@ function renderIndividualItems(items) {
       saveBtn.innerHTML = contentfulItem
         ? '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 14V2M8 2L4 6M8 2L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
         : '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2V14M2 8H14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
-      saveBtn.title = contentfulItem ? 'Update in Contentful' : 'Create in Contentful';
+      setTooltip(saveBtn, contentfulItem ? 'Update in Contentful' : 'Create in Contentful');
       saveBtn.onclick = () => saveItemToContentful(item, originalIndex);
       buttonContainer.appendChild(saveBtn);
     }
@@ -2792,7 +2864,7 @@ function renderIndividualItems(items) {
     const linkBtn = document.createElement('button');
     linkBtn.className = 'btn-link-to-figma';
     linkBtn.innerHTML = '<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
-    linkBtn.title = 'Show in Figma';
+    setTooltip(linkBtn, 'Show in Figma');
     linkBtn.onclick = (e) => {
       e.stopPropagation();
       showNodeInFigma(item.id);
@@ -2885,7 +2957,7 @@ function renderGroupedItems(filteredItems) {
       link.rel = 'noopener noreferrer';
       link.className = 'contentful-link';
       link.innerHTML = displayName;
-      link.title = 'Open in Contentful';
+      setTooltip(link, 'Open in Contentful');
       link.onclick = (e) => {
         e.stopPropagation(); // Prevent row click handler
       };
@@ -2906,7 +2978,7 @@ function renderGroupedItems(filteredItems) {
     textDiv.className = 'text-preview';
     const textContent = uniqueTexts.join(' | ');
     textDiv.textContent = textContent;
-    textDiv.title = textContent;
+    setTooltipIfTruncated(textDiv, textContent);
     textTd.appendChild(textDiv);
     tr.appendChild(textTd);
 
@@ -2919,7 +2991,7 @@ function renderGroupedItems(filteredItems) {
     if (!contentfulItem) {
       statusBadge.className = 'status-badge not-exists';
       statusBadge.textContent = '+';
-      statusBadge.title = 'New - Does not exist in Contentful';
+      setTooltip(statusBadge, 'New - Does not exist in Contentful');
     } else {
       // Check if any item in the group is out of sync
       let allSynced = true;
@@ -2937,11 +3009,11 @@ function renderGroupedItems(filteredItems) {
       if (!allSynced) {
         statusBadge.className = 'status-badge out-of-sync';
         statusBadge.textContent = '!';
-        statusBadge.title = `Contentful: "${contentfulText}"`;
+        setTooltip(statusBadge, `Contentful: "${contentfulText}"`, 'top', true);
       } else {
         statusBadge.className = 'status-badge synced';
         statusBadge.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.6 3.2L5.6 10.2L2 6.6L3.4 5.2L5.6 7.4L11.2 1.8L12.6 3.2Z" fill="currentColor"/></svg>';
-        statusBadge.title = 'Synced - Matches Contentful';
+        setTooltip(statusBadge, 'Synced - Matches Contentful');
       }
     }
 
@@ -2958,7 +3030,7 @@ function renderGroupedItems(filteredItems) {
       // Show "Resolve Conflict" button
       const resolveBtn = document.createElement('button');
       resolveBtn.className = 'btn-save-item-icon';
-      resolveBtn.title = `Resolve ${uniqueTexts.length} conflicting text variations`;
+      setTooltip(resolveBtn, `Resolve ${uniqueTexts.length} conflicting text variations`);
 
       // Warning triangle icon
       resolveBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 1 L15 14 L1 14 Z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6 v3 M8 11 v1" stroke="var(--figma-accent)" stroke-width="1.5" stroke-linecap="round"/></svg>';
@@ -2989,7 +3061,7 @@ function renderGroupedItems(filteredItems) {
         saveBtn.innerHTML = contentfulItem
           ? '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 14V2M8 2L4 6M8 2L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
           : '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2V14M2 8H14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
-        saveBtn.title = contentfulItem ? 'Update in Contentful' : 'Create in Contentful';
+        setTooltip(saveBtn, contentfulItem ? 'Update in Contentful' : 'Create in Contentful');
         saveBtn.onclick = () => saveItemToContentful(item, originalIndex);
         buttonContainer.appendChild(saveBtn);
       }
@@ -2999,7 +3071,7 @@ function renderGroupedItems(filteredItems) {
         const linkBtn = document.createElement('button');
         linkBtn.className = 'btn-link-to-figma';
         linkBtn.innerHTML = '<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
-        linkBtn.title = 'Show in Figma';
+        setTooltip(linkBtn, 'Show in Figma');
         linkBtn.onclick = (e) => {
           e.stopPropagation();
           showNodeInFigma(item.id);
@@ -3097,6 +3169,12 @@ function renderItemsTable() {
     const countLabel = isFilteringByKey ? 'items' : 'keys';
 
     setWriteStatus(`Ready (${displayCount} ${countLabel})`, 'success');
+
+    // Refresh tooltips after table is fully rendered
+    requestAnimationFrame(() => {
+      refreshTruncatedTooltips();
+    });
+
     isRendering = false;
   } catch (error) {
     console.error('Error rendering items table:', error);
@@ -3245,6 +3323,254 @@ function createSpinnerSvg() {
     </svg>
   `;
 }
+
+/**
+ * Set tooltip for an element
+ * @param {HTMLElement} element - Element to add tooltip to
+ * @param {string} text - Tooltip text
+ * @param {string} position - Position: 'top' (default) or 'bottom'
+ * @param {boolean} multiline - Allow multiline text wrapping
+ */
+function setTooltip(element, text, position = 'top', multiline = false) {
+  if (!element || !text) return;
+
+  element.setAttribute('data-tooltip', text);
+
+  if (position !== 'top') {
+    element.setAttribute('data-tooltip-pos', position);
+  }
+
+  if (multiline) {
+    element.setAttribute('data-tooltip-multiline', '');
+  }
+}
+
+/**
+ * Remove tooltip from an element
+ */
+function removeTooltip(element) {
+  if (!element) return;
+  element.removeAttribute('data-tooltip');
+  element.removeAttribute('data-tooltip-pos');
+  element.removeAttribute('data-tooltip-multiline');
+}
+
+/**
+ * Update tooltip text
+ */
+function updateTooltip(element, newText) {
+  if (!element) return;
+  if (newText) {
+    element.setAttribute('data-tooltip', newText);
+  } else {
+    removeTooltip(element);
+  }
+}
+
+/**
+ * Check if element's text is truncated
+ * Handles both horizontal truncation and line-clamp vertical truncation
+ */
+function isTextTruncated(element) {
+  if (!element) return false;
+
+  // Check for horizontal overflow
+  if (element.scrollWidth > element.clientWidth) {
+    return true;
+  }
+
+  // Check for vertical overflow (line-clamp truncation)
+  if (element.scrollHeight > element.clientHeight) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
+ * Set tooltip only if text is truncated
+ */
+function setTooltipIfTruncated(element, text) {
+  if (!element || !text) return;
+
+  // Wait for element to be fully rendered and dimensions calculated
+  // Use double requestAnimationFrame to ensure layout is complete
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      if (isTextTruncated(element)) {
+        setTooltip(element, text);
+      } else {
+        removeTooltip(element);
+      }
+    });
+  });
+}
+
+/**
+ * Re-evaluate all truncated text and key tooltips
+ * Useful when layout changes (e.g., compact mode toggle)
+ */
+function refreshTruncatedTooltips() {
+  // Find all text-preview elements
+  const textElements = document.querySelectorAll('.text-preview');
+  // Select all links and spans in first column (key column)
+  const keyElements = document.querySelectorAll('td:first-child a.contentful-link, td:first-child span');
+
+  // Process text elements
+  textElements.forEach(element => {
+    const text = element.textContent;
+    if (text) {
+      if (isTextTruncated(element)) {
+        if (element.getAttribute('data-tooltip') !== text) {
+          setTooltip(element, text);
+        }
+      } else {
+        removeTooltip(element);
+      }
+    }
+  });
+
+  // Process key elements
+  keyElements.forEach(element => {
+    // Prefer existing tooltip (clean key name), otherwise extract from text content
+    let text = element.getAttribute('data-tooltip');
+    if (!text) {
+      // Strip any count prefix like "(3) " from the displayed text
+      text = element.textContent.replace(/^\(\d+\)\s*/, '').trim();
+    }
+
+    if (text) {
+      if (isTextTruncated(element)) {
+        if (element.getAttribute('data-tooltip') !== text) {
+          setTooltip(element, text);
+        }
+      } else {
+        removeTooltip(element);
+      }
+    }
+  });
+}
+
+/**
+ * Position tooltip dynamically using fixed positioning
+ * This ensures tooltips always appear above everything and don't get cut off
+ */
+function positionTooltip(element) {
+  if (!element || !element.hasAttribute('data-tooltip')) return;
+
+  const rect = element.getBoundingClientRect();
+  const tooltipText = element.getAttribute('data-tooltip');
+  const padding = 10;
+  const arrowSize = 6;
+
+  // Create temporary element to measure tooltip width
+  // Match the actual tooltip CSS styles exactly
+  const tempTooltip = document.createElement('div');
+  const isMultiline = element.hasAttribute('data-tooltip-multiline');
+  const maxWidth = isMultiline ? '200px' : '300px';
+  tempTooltip.style.cssText = `position:fixed;visibility:hidden;padding:6px 10px;font-size:11px;font-weight:500;line-height:1.4;white-space:normal;max-width:${maxWidth};border-radius:6px;`;
+  tempTooltip.textContent = tooltipText;
+  document.body.appendChild(tempTooltip);
+  const tooltipWidth = tempTooltip.offsetWidth;
+  const tooltipHeight = tempTooltip.offsetHeight;
+  document.body.removeChild(tempTooltip);
+
+  // Check if tooltip should appear below element
+  const position = element.getAttribute('data-tooltip-pos') || 'top';
+
+  // Calculate ideal centered position
+  let tooltipLeft = rect.left + (rect.width / 2) - (tooltipWidth / 2);
+  let tooltipTop;
+  let arrowTop;
+
+  if (position === 'bottom') {
+    // Position below element
+    tooltipTop = rect.bottom + (arrowSize * 2);
+    arrowTop = rect.bottom;
+  } else {
+    // Position above element (default)
+    tooltipTop = rect.top - tooltipHeight - (arrowSize * 2);
+    arrowTop = tooltipTop + tooltipHeight;
+  }
+
+  // Adjust if would overflow left edge
+  if (tooltipLeft < padding) {
+    tooltipLeft = padding;
+  }
+
+  // Adjust if would overflow right edge
+  if (tooltipLeft + tooltipWidth > window.innerWidth - padding) {
+    tooltipLeft = window.innerWidth - tooltipWidth - padding;
+  }
+
+  // Calculate arrow position (centered on element horizontally)
+  let arrowLeft = rect.left + (rect.width / 2) - arrowSize;
+
+  // Apply positions via CSS custom properties
+  element.style.setProperty('--tooltip-left', `${tooltipLeft}px`);
+  element.style.setProperty('--tooltip-top', `${tooltipTop}px`);
+  element.style.setProperty('--arrow-left', `${arrowLeft}px`);
+  element.style.setProperty('--arrow-top', `${arrowTop}px`);
+}
+
+// Track currently visible tooltip to prevent sticking
+let currentTooltipElement = null;
+
+// Hide tooltips immediately when clicking anywhere
+document.addEventListener('click', (e) => {
+  if (currentTooltipElement) {
+    currentTooltipElement.classList.remove('tooltip-visible');
+    currentTooltipElement = null;
+  }
+}, true);
+
+// Add tooltip positioning on hover for all tooltip elements
+// Use event delegation on document
+document.addEventListener('mouseover', (e) => {
+
+  // Check if the target itself or any parent has data-tooltip
+  let tooltipElement = e.target;
+
+  // Walk up the DOM tree to find tooltip element
+  while (tooltipElement && tooltipElement !== document.body) {
+    if (tooltipElement.hasAttribute && tooltipElement.hasAttribute('data-tooltip')) {
+      // Remove previous tooltip if different element
+      if (currentTooltipElement && currentTooltipElement !== tooltipElement) {
+        currentTooltipElement.classList.remove('tooltip-visible');
+      }
+
+      // Add class to make tooltip visible (for elements with child elements like SVGs)
+      tooltipElement.classList.add('tooltip-visible');
+      currentTooltipElement = tooltipElement;
+
+      // Use requestAnimationFrame to ensure element is rendered
+      requestAnimationFrame(() => positionTooltip(tooltipElement));
+      break;
+    }
+    tooltipElement = tooltipElement.parentElement;
+  }
+}, true); // Use capture phase to catch events early
+
+// Remove tooltip visibility class on mouseout
+document.addEventListener('mouseout', (e) => {
+  // Only process if we have a current tooltip
+  if (!currentTooltipElement) return;
+
+  let tooltipElement = e.target;
+
+  // Walk up the DOM tree to find tooltip element
+  while (tooltipElement && tooltipElement !== document.body) {
+    if (tooltipElement.hasAttribute && tooltipElement.hasAttribute('data-tooltip')) {
+      // Check if this is the current tooltip element
+      if (tooltipElement === currentTooltipElement) {
+        tooltipElement.classList.remove('tooltip-visible');
+        currentTooltipElement = null;
+      }
+      break;
+    }
+    tooltipElement = tooltipElement.parentElement;
+  }
+}, true); // Use capture phase
 
 // Bulletproof text normalization and comparison
 function normalizeText(text) {
