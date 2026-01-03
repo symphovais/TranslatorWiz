@@ -719,6 +719,11 @@
     transition: color 0.3s ease;
   }
 
+  .preflight-step .spinner {
+    width: 16px;
+    height: 16px;
+  }
+
   /* Mode Toggle */
   .mode-toggle {
     display: flex;
@@ -1126,7 +1131,7 @@
   .error-modal-title {
     font-size: 16px;
     font-weight: 600;
-    color: #f44336;
+    color: var(--red-500);
   }
 
   .error-modal-close {
@@ -1188,7 +1193,7 @@
   }
 
   .btn-close-modal {
-    background: #0d99ff;
+    background: var(--blue-600);
     color: white;
     border: none;
     padding: 6px 12px;
@@ -1198,7 +1203,7 @@
   }
 
   .btn-close-modal:hover {
-    background: #0b7fd4;
+    background: var(--blue-700);
   }
 
   .btn-save-item {
