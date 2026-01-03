@@ -1699,6 +1699,77 @@
   .btn-save-item:hover {
     background: var(--figma-accent-hover);
   }
+
+  .btn-save-item:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .btn-save-item-icon {
+    padding: 3px;
+    background: var(--figma-accent);
+    color: var(--gray-800);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    min-height: 20px;
+  }
+
+  .btn-save-item-icon svg {
+    width: 12px;
+    height: 12px;
+    pointer-events: none;
+  }
+
+  .btn-save-item-icon:hover {
+    background: var(--figma-accent-hover);
+  }
+
+  .btn-save-item-icon:active {
+    transform: scale(0.95);
+  }
+
+  .btn-save-item-icon:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .btn-link-to-figma {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--figma-text-secondary);
+    transition: color 0.2s ease, background 0.2s ease;
+    border-radius: 4px;
+    width: 24px;
+    height: 24px;
+  }
+
+  .btn-link-to-figma:hover {
+    color: var(--figma-accent);
+    background: var(--figma-bg-secondary);
+  }
+
+  .btn-link-to-figma svg {
+    width: 14px;
+    height: 14px;
+    pointer-events: none;
+  }
+
+  .flex-container {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
 </style>
 
 <!-- Write Mode View (Default) -->
@@ -2621,22 +2692,357 @@ async function loadItemsAndCheckStatus(items) {
   parent.postMessage({ pluginMessage: { type: 'get-all-contentful-items', config } }, '*');
 }
 
+// Prevent concurrent renders
+let isRendering = false;
+
+// Render individual ungrouped items
+function renderIndividualItems(items) {
+  const tbody = document.getElementById('items-table-body');
+  const fragment = document.createDocumentFragment();
+
+  items.forEach((item) => {
+    const originalIndex = findItemIndexById(textItems, item.id);
+
+    if (originalIndex === -1) return;
+
+    const tr = document.createElement('tr');
+    tr.style.cursor = 'pointer';
+
+    // Key column - just the key name (no count prefix)
+    const keyTd = document.createElement('td');
+    const keyName = item.name;
+
+    // Check if this item exists in Contentful
+    const contentfulItem = contentfulItems[keyName];
+
+    if (contentfulItem && contentfulItem.id) {
+      const link = document.createElement('a');
+      const contentfulUrl = buildContentfulUrl(config, contentfulItem.id);
+      link.href = contentfulUrl;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.className = 'contentful-link';
+      link.textContent = keyName;
+      link.title = 'Open in Contentful';
+      link.onclick = (e) => e.stopPropagation();
+      keyTd.appendChild(link);
+    } else {
+      // Wrap in span for consistency with grouped items
+      const keySpan = document.createElement('span');
+      keySpan.textContent = keyName;
+      keySpan.style.fontWeight = '600';
+      keyTd.appendChild(keySpan);
+    }
+    tr.appendChild(keyTd);
+
+    // Text column - individual item's text
+    const textTd = document.createElement('td');
+    const textDiv = document.createElement('div');
+    textDiv.className = 'text-preview';
+    textDiv.textContent = item.characters;
+    textDiv.title = item.characters;
+    textTd.appendChild(textDiv);
+    tr.appendChild(textTd);
+
+    // Status column - check this specific item
+    const statusTd = document.createElement('td');
+    const statusBadge = document.createElement('span');
+
+    if (!contentfulItem) {
+      statusBadge.className = 'status-badge not-exists';
+      statusBadge.textContent = '+';
+      statusBadge.title = 'New - Does not exist in Contentful';
+    } else {
+      const isEqual = textsAreEqual(item.characters, contentfulItem.value);
+      const contentfulText = normalizeText(contentfulItem.value);
+      if (!isEqual) {
+        statusBadge.className = 'status-badge out-of-sync';
+        statusBadge.textContent = '!';
+        statusBadge.title = `Contentful: "${contentfulText}"`;
+      } else {
+        statusBadge.className = 'status-badge synced';
+        statusBadge.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.6 3.2L5.6 10.2L2 6.6L3.4 5.2L5.6 7.4L11.2 1.8L12.6 3.2Z" fill="currentColor"/></svg>';
+        statusBadge.title = 'Synced - Matches Contentful';
+      }
+    }
+
+    statusTd.appendChild(statusBadge);
+    tr.appendChild(statusTd);
+
+    // Action column - Save/Update button + Link icon
+    const actionTd = document.createElement('td');
+
+    const buttonContainer = createFlexContainer();
+
+    // Check if needs update
+    const needsUpdate = !contentfulItem || !textsAreEqual(item.characters, contentfulItem.value);
+
+    if (needsUpdate) {
+      const saveBtn = document.createElement('button');
+      saveBtn.className = 'btn-save-item-icon';
+      saveBtn.innerHTML = contentfulItem
+        ? '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 14V2M8 2L4 6M8 2L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        : '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2V14M2 8H14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+      saveBtn.title = contentfulItem ? 'Update in Contentful' : 'Create in Contentful';
+      saveBtn.onclick = () => saveItemToContentful(item, originalIndex);
+      buttonContainer.appendChild(saveBtn);
+    }
+
+    // Always show link icon for individual items
+    const linkBtn = document.createElement('button');
+    linkBtn.className = 'btn-link-to-figma';
+    linkBtn.innerHTML = '<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
+    linkBtn.title = 'Show in Figma';
+    linkBtn.onclick = (e) => {
+      e.stopPropagation();
+      showNodeInFigma(item.id);
+    };
+    buttonContainer.appendChild(linkBtn);
+
+    actionTd.appendChild(buttonContainer);
+    tr.appendChild(actionTd);
+
+    fragment.appendChild(tr);
+  });
+
+  tbody.innerHTML = '';
+  tbody.appendChild(fragment);
+}
+
+// Render grouped items
+function renderGroupedItems(filteredItems) {
+  const tbody = document.getElementById('items-table-body');
+
+  // Group items by key (name)
+  const groupedItems = {};
+  filteredItems.forEach((item) => {
+    if (!groupedItems[item.name]) {
+      groupedItems[item.name] = [];
+    }
+    groupedItems[item.name].push(item);
+  });
+
+  // Use DocumentFragment for batch DOM insertion (much faster)
+  const fragment = document.createDocumentFragment();
+  const keys = Object.keys(groupedItems);
+
+  // Render grouped items
+  keys.forEach((keyName) => {
+      const items = groupedItems[keyName];
+      const item = items[0]; // Use first item for display
+      const count = items.length;
+
+      const originalIndex = findItemIndexById(textItems, item.id);
+
+      if (originalIndex === -1) {
+        return; // Skip this item
+      }
+    // Detect if there are conflicting text values
+    const uniqueTexts = [...new Set(items.map(i => i.characters))];
+    const hasConflict = count > 1 && uniqueTexts.length > 1;
+
+    const tr = document.createElement('tr');
+
+    // Add click handler to filter by this item
+    tr.style.cursor = 'pointer';
+    tr.onclick = (e) => {
+      // Don't trigger if clicking a button, svg, or inside action/status cells
+      if (e.target.tagName === 'BUTTON' ||
+          e.target.tagName === 'SVG' ||
+          e.target.tagName === 'PATH' ||
+          e.target.closest('button') ||
+          e.target.tagName === 'A') {
+        return;
+      }
+
+      // Filter by this key
+      const searchInput = document.getElementById('search-input');
+      searchInput.value = keyName;
+      searchInput.dispatchEvent(new Event('input'));
+      searchInput.focus();
+    };
+
+    // Key column
+    const keyTd = document.createElement('td');
+    const contentfulItem = contentfulItems[keyName];
+
+    // Display name with count and conflict warning
+    let displayName = count > 1 ? `(${count}) ${keyName}` : keyName;
+
+    // Add warning icon if there's a conflict
+    if (hasConflict) {
+      const warningSvg = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; margin-right: 4px; vertical-align: text-bottom;"><path d="M8 1 L15 14 L1 14 Z" fill="var(--red-500)" stroke="var(--red-500)" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6 v3 M8 11 v1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>';
+      displayName = `${warningSvg}${displayName}`;
+    }
+
+    if (contentfulItem && contentfulItem.id) {
+      // Create clickable link to Contentful
+      const link = document.createElement('a');
+      const contentfulUrl = buildContentfulUrl(config, contentfulItem.id);
+
+      link.href = contentfulUrl;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.className = 'contentful-link';
+      link.innerHTML = displayName;
+      link.title = 'Open in Contentful';
+      link.onclick = (e) => {
+        e.stopPropagation(); // Prevent row click handler
+      };
+      keyTd.appendChild(link);
+    } else {
+      // No link for new items - wrap in span
+      const keySpan = document.createElement('span');
+      keySpan.innerHTML = displayName;
+      keySpan.style.fontWeight = '600';
+      keyTd.appendChild(keySpan);
+    }
+
+    tr.appendChild(keyTd);
+
+    // Text column - show all unique text values
+    const textTd = document.createElement('td');
+    const textDiv = document.createElement('div');
+    textDiv.className = 'text-preview';
+    const textContent = uniqueTexts.join(' | ');
+    textDiv.textContent = textContent;
+    textDiv.title = textContent;
+    textTd.appendChild(textDiv);
+    tr.appendChild(textTd);
+
+    // Status column - check all items in the group
+    const statusTd = document.createElement('td');
+    const statusBadge = document.createElement('span');
+    statusBadge.className = 'status-badge checking';
+    statusBadge.id = `status-${originalIndex}`;
+
+    if (!contentfulItem) {
+      statusBadge.className = 'status-badge not-exists';
+      statusBadge.textContent = '+';
+      statusBadge.title = 'New - Does not exist in Contentful';
+    } else {
+      // Check if any item in the group is out of sync
+      let allSynced = true;
+
+      for (const itm of items) {
+        const isEqual = textsAreEqual(itm.characters, contentfulItem.value);
+        if (!isEqual) {
+          allSynced = false;
+          break; // Early exit when we find first mismatch
+        }
+      }
+
+      const contentfulText = normalizeText(contentfulItem.value);
+
+      if (!allSynced) {
+        statusBadge.className = 'status-badge out-of-sync';
+        statusBadge.textContent = '!';
+        statusBadge.title = `Contentful: "${contentfulText}"`;
+      } else {
+        statusBadge.className = 'status-badge synced';
+        statusBadge.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.6 3.2L5.6 10.2L2 6.6L3.4 5.2L5.6 7.4L11.2 1.8L12.6 3.2Z" fill="currentColor"/></svg>';
+        statusBadge.title = 'Synced - Matches Contentful';
+      }
+    }
+
+    statusTd.appendChild(statusBadge);
+    tr.appendChild(statusTd);
+
+    // Action column
+    const actionTd = document.createElement('td');
+
+    if (hasConflict) {
+      // Use flex container for consistent alignment
+      const buttonContainer = createFlexContainer();
+
+      // Show "Resolve Conflict" button
+      const resolveBtn = document.createElement('button');
+      resolveBtn.className = 'btn-save-item-icon';
+      resolveBtn.title = `Resolve ${uniqueTexts.length} conflicting text variations`;
+
+      // Warning triangle icon
+      resolveBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 1 L15 14 L1 14 Z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6 v3 M8 11 v1" stroke="var(--figma-accent)" stroke-width="1.5" stroke-linecap="round"/></svg>';
+      resolveBtn.onclick = (e) => {
+        e.stopPropagation();
+        showConflictModal(keyName, items, contentfulItem ? contentfulItem.value : null);
+      };
+      buttonContainer.appendChild(resolveBtn);
+      actionTd.appendChild(buttonContainer);
+    } else {
+      // Check if any item in the group needs update
+      let needsUpdate = !contentfulItem;
+      if (!needsUpdate) {
+        for (const itm of items) {
+          if (!textsAreEqual(itm.characters, contentfulItem.value)) {
+            needsUpdate = true;
+            break;
+          }
+        }
+      }
+
+      const buttonContainer = createFlexContainer();
+
+      // Save/Update button
+      if (needsUpdate) {
+        const saveBtn = document.createElement('button');
+        saveBtn.className = 'btn-save-item-icon';
+        saveBtn.innerHTML = contentfulItem
+          ? '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 14V2M8 2L4 6M8 2L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+          : '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2V14M2 8H14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+        saveBtn.title = contentfulItem ? 'Update in Contentful' : 'Create in Contentful';
+        saveBtn.onclick = () => saveItemToContentful(item, originalIndex);
+        buttonContainer.appendChild(saveBtn);
+      }
+
+      // Link icon for single items (non-merged)
+      if (count === 1) {
+        const linkBtn = document.createElement('button');
+        linkBtn.className = 'btn-link-to-figma';
+        linkBtn.innerHTML = '<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
+        linkBtn.title = 'Show in Figma';
+        linkBtn.onclick = (e) => {
+          e.stopPropagation();
+          showNodeInFigma(item.id);
+        };
+        buttonContainer.appendChild(linkBtn);
+      }
+
+      actionTd.appendChild(buttonContainer);
+    }
+
+    tr.appendChild(actionTd);
+      fragment.appendChild(tr);
+    });
+
+  // Batch DOM update - clear table and append all rows at once
+  tbody.innerHTML = '';
+  tbody.appendChild(fragment);
+}
+
 function renderItemsTable() {
+  // Prevent concurrent renders
+  if (isRendering) {
+    return;
+  }
+
   try {
+    isRendering = true;
     const tbody = document.getElementById('items-table-body');
     if (!tbody) {
       console.error('Table body element not found');
+      isRendering = false;
       return;
     }
-    
-    tbody.innerHTML = '';
-    
+
     // Validate textItems array
     if (!Array.isArray(textItems)) {
       console.error('textItems is not an array');
       setWriteStatus('Error: Invalid data structure', 'error');
+      isRendering = false;
       return;
     }
+
+    setWriteStatus('Rendering...', 'loading');
     
     // Get search filter
     const searchInput = document.getElementById('search-input');
@@ -2667,183 +3073,35 @@ function renderItemsTable() {
       return true; // Show all
     });
 
-    // Group items by key (name) to detect conflicts
-    const groupedItems = {};
-    filteredItems.forEach((item) => {
-      if (!groupedItems[item.name]) {
-        groupedItems[item.name] = [];
-      }
-      groupedItems[item.name].push(item);
-    });
+    // Check if we're filtering by a specific key
+    const isFilteringByKey = searchTerm && filteredItems.length > 0 &&
+      filteredItems.every(item => item.name.toLowerCase() === searchTerm);
 
-    // Render grouped items
-    Object.keys(groupedItems).forEach((keyName) => {
-      const items = groupedItems[keyName];
-      const item = items[0]; // Use first item for display
-      const count = items.length;
-
-      // Detect if there are conflicting text values
-      const uniqueTexts = [...new Set(items.map(i => i.characters))];
-      const hasConflict = count > 1 && uniqueTexts.length > 1;
-      const originalIndex = textItems.findIndex(original => 
-        original && original.id === item.id
-      );
-      
-      if (originalIndex === -1) {
-        console.warn('Could not find original index for item:', item.id);
-        return; // Skip this item
-      }
-    const tr = document.createElement('tr');
-    
-    // Add click handler to filter by this item
-    tr.style.cursor = 'pointer';
-    tr.onclick = (e) => {
-      // Don't trigger if clicking a button
-      if (e.target.tagName === 'BUTTON') return;
-      
-      const searchInput = document.getElementById('search-input');
-      searchInput.value = item.name;
-      searchInput.dispatchEvent(new Event('input'));
-      searchInput.focus();
-    };
-    
-    // Key column
-    const keyTd = document.createElement('td');
-    const contentfulItem = contentfulItems[keyName];
-
-    // Display name with count and conflict warning
-    let displayName = count > 1 ? `(${count}) ${keyName}` : keyName;
-
-    // Add warning icon if there's a conflict
-    if (hasConflict) {
-      const warningSvg = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; margin-right: 4px; vertical-align: text-bottom;"><path d="M8 1 L15 14 L1 14 Z" fill="var(--red-500)" stroke="var(--red-500)" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6 v3 M8 11 v1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>';
-      displayName = `${warningSvg}${displayName}`;
-    }
-
-    if (contentfulItem && contentfulItem.id) {
-      // Create clickable link to Contentful
-      // Correct Contentful web app URL format with environment
-      const link = document.createElement('a');
-      const contentfulUrl = `https://app.contentful.com/spaces/${encodeURIComponent(config.SPACE_ID)}/environments/${encodeURIComponent(config.ENVIRONMENT)}/entries/${encodeURIComponent(contentfulItem.id)}`;
-
-      link.href = contentfulUrl;
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-      link.className = 'contentful-link';
-      link.innerHTML = displayName;
-      link.title = 'Open in Contentful';
-      link.onclick = (e) => {
-        e.stopPropagation(); // Prevent row click handler
-      };
-      keyTd.appendChild(link);
+    if (isFilteringByKey) {
+      // Render individual ungrouped rows
+      renderIndividualItems(filteredItems);
     } else {
-      // No link for new items - wrap in span
-      const keySpan = document.createElement('span');
-      keySpan.innerHTML = displayName;
-      keySpan.style.fontWeight = '600';
-      keyTd.appendChild(keySpan);
+      // Render grouped rows
+      renderGroupedItems(filteredItems);
     }
-    
-    tr.appendChild(keyTd);
-    
-    // Text column - show all unique text values
-    const textTd = document.createElement('td');
-    const textDiv = document.createElement('div');
-    textDiv.className = 'text-preview';
-    const textContent = uniqueTexts.join(' | ');
-    textDiv.textContent = textContent;
-    textDiv.title = textContent;
-    textTd.appendChild(textDiv);
-    tr.appendChild(textTd);
-    
-    // Status column
-    const statusTd = document.createElement('td');
-    const statusBadge = document.createElement('span');
-    statusBadge.className = 'status-badge checking';
-    statusBadge.id = `status-${originalIndex}`;
-    if (!contentfulItem) {
-      statusBadge.className = 'status-badge not-exists';
-      statusBadge.textContent = '+';
-      statusBadge.title = 'New - Does not exist in Contentful';
-    } else {
-      // Bulletproof comparison with normalization
-      const figmaText = normalizeText(item.characters);
-      const contentfulText = normalizeText(contentfulItem.value);
-      const isEqual = textsAreEqual(item.characters, contentfulItem.value);
-      
-      console.log(`Comparing "${item.name}":`);
-      console.log('  Figma Raw:', `"${item.characters}"`);
-      console.log('  Figma Normalized:', `"${figmaText}"`);
-      console.log('  Contentful Raw:', `"${contentfulItem.value}"`);
-      console.log('  Contentful Normalized:', `"${contentfulText}"`);
-      console.log('  Equal:', isEqual);
-      console.log('  Lengths:', { figma: figmaText.length, contentful: contentfulText.length });
-      if (!isEqual) {
-        console.log('  Figma Char Codes:', Array.from(figmaText).map(c => c.charCodeAt(0)));
-        console.log('  Contentful Char Codes:', Array.from(contentfulText).map(c => c.charCodeAt(0)));
-      }
-      
-      if (!isEqual) {
-        statusBadge.className = 'status-badge out-of-sync';
-        statusBadge.textContent = '!';
-        statusBadge.title = `Contentful: "${contentfulText}"`;
-      } else {
-        statusBadge.className = 'status-badge synced';
-        statusBadge.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.6 3.2L5.6 10.2L2 6.6L3.4 5.2L5.6 7.4L11.2 1.8L12.6 3.2Z" fill="currentColor"/></svg>';
-        statusBadge.title = 'Synced - Matches Contentful';
-      }
-    }
-    
-    statusTd.appendChild(statusBadge);
-    tr.appendChild(statusTd);
-    
-    // Action column
-    const actionTd = document.createElement('td');
-
-    if (hasConflict) {
-      // Show "Resolve Conflict" button
-      const resolveBtn = document.createElement('button');
-      resolveBtn.className = 'btn-save-item';
-      resolveBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 4px; vertical-align: text-bottom;"><path d="M8 1 L15 14 L1 14 Z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6 v3 M8 11 v1" stroke="var(--figma-accent)" stroke-width="1.5" stroke-linecap="round"/></svg>Resolve';
-      resolveBtn.title = `Resolve ${uniqueTexts.length} conflicting text variations`;
-      resolveBtn.onclick = (e) => {
-        e.stopPropagation();
-        showConflictModal(keyName, items, contentfulItem ? contentfulItem.value : null);
-      };
-      actionTd.appendChild(resolveBtn);
-    } else {
-      // Check if any item in the group needs update
-      let needsUpdate = !contentfulItem;
-      if (!needsUpdate) {
-        for (const itm of items) {
-          if (!textsAreEqual(itm.characters, contentfulItem.value)) {
-            needsUpdate = true;
-            break;
-          }
-        }
-      }
-
-      if (needsUpdate) {
-        const saveBtn = document.createElement('button');
-        saveBtn.className = 'btn-save-item';
-        saveBtn.textContent = contentfulItem ? 'Update' : 'Create';
-        saveBtn.onclick = () => saveItemToContentful(item, originalIndex);
-        actionTd.appendChild(saveBtn);
-      }
-    }
-
-    tr.appendChild(actionTd);
-      tbody.appendChild(tr);
-    });
     
     const tableSection = document.getElementById('items-table-section');
     if (tableSection) {
       tableSection.classList.remove('hidden');
     }
-    setWriteStatus('Ready', 'success');
+
+    // Calculate count for status message
+    const displayCount = isFilteringByKey
+      ? filteredItems.length
+      : Object.keys(filteredItems.reduce((acc, item) => { acc[item.name] = true; return acc; }, {})).length;
+    const countLabel = isFilteringByKey ? 'items' : 'keys';
+
+    setWriteStatus(`Ready (${displayCount} ${countLabel})`, 'success');
+    isRendering = false;
   } catch (error) {
     console.error('Error rendering items table:', error);
     setWriteStatus('Error displaying items', 'error');
+    isRendering = false;
   }
 }
 
