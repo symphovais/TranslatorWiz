@@ -128,6 +128,10 @@
     --figma-hover-overlay: rgba(255, 255, 255, 0.06);
     --figma-icon-bg: rgba(255, 255, 255, 0.1);
     --figma-icon-bg-hover: rgba(255, 255, 255, 0.2);
+
+    /* Dark mode link colors */
+    --figma-link: var(--blue-300);
+    --figma-link-hover: var(--blue-200);
   }
   
   @keyframes fadeIn {
@@ -190,7 +194,6 @@
     border-radius: 0;
     padding: 12px 16px;
     margin-bottom: 0;
-    border-bottom: 1px solid var(--figma-border);
     transition: background 0.2s ease;
   }
   
@@ -252,8 +255,8 @@
   
   select:focus {
     outline: none;
-    border-color: #18a0fb;
-    box-shadow: 0 0 0 2px rgba(24, 160, 251, 0.2);
+    border-color: var(--blue-500);
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
   }
   
   select:disabled {
@@ -283,13 +286,13 @@
   }
   
   #apply-translation {
-    background: #18a0fb;
+    background: var(--blue-500);
     color: white;
     flex: 1;
   }
-  
+
   #apply-translation:hover:not(:disabled) {
-    background: #0d8de0;
+    background: var(--blue-700);
   }
   
   #cancel {
@@ -487,24 +490,28 @@
   
   .btn-primary {
     background: var(--figma-accent);
-    color: #1a1a1a;
-    font-weight: 600;
+    color: var(--gray-800);
+    font-weight: 500;
+    border-radius: 360px;
+    border: 1px solid var(--figma-accent);
   }
 
   .btn-primary:hover:not(:disabled) {
-    background: var(--figma-accent-hover);
+    border-color: var(--figma-border-secondary);
   }
-  
+
   .btn-secondary {
     background: var(--figma-bg);
     color: var(--figma-text);
     border: 1px solid var(--figma-border);
     transition: all 0.2s ease;
     font-weight: 500;
+    border-radius: 360px;
   }
 
   .btn-secondary:hover:not(:disabled) {
     background: var(--figma-bg-secondary);
+    border-color: var(--figma-border-secondary);
   }
   
   .btn-test {
@@ -774,7 +781,7 @@
 
   .btn-small {
     padding: 6px 12px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--figma-accent);
     color: white;
     border: none;
     border-radius: 6px;
@@ -786,7 +793,7 @@
 
   .btn-small:hover {
     transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.4);
   }
 
   .mapping-item {
@@ -867,7 +874,7 @@
   .btn-nav {
     flex: 1;
     padding: 10px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--figma-accent);
     color: white;
     border: none;
     border-radius: 8px;
@@ -879,7 +886,7 @@
 
   .btn-nav:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
   }
 
   .btn-nav:disabled {
