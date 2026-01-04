@@ -224,14 +224,14 @@
     display: block;
     margin-bottom: 4px;
   }
-  
-  .stat-label {
+
+  .stat-card-label {
     font-size: 10px;
     color: var(--figma-text-tertiary);
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
-  
+
   label {
     display: block;
     font-size: 12px;
@@ -534,7 +534,12 @@
   input[type="text"]:focus,
   input[type="password"]:focus {
     outline: none;
-    border-color: var(--figma-accent);
+    border-color: var(--figma-border-secondary);
+  }
+
+  input[type="password"]::placeholder {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    letter-spacing: normal;
   }
   
   input[type="text"]::placeholder,
@@ -548,7 +553,7 @@
   }
 
   .config-field {
-    margin-bottom: 16px;
+    margin-bottom: 4px;
   }
 
   .config-field label {
@@ -792,6 +797,7 @@
   }
 
   .btn-small:hover {
+    background: var(--figma-accent-hover);
     transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(255, 193, 7, 0.4);
   }
@@ -882,9 +888,14 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
   }
 
   .btn-nav:hover:not(:disabled) {
+    background: var(--figma-accent-hover);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
   }
@@ -896,17 +907,13 @@
 
   .contentful-link {
     color: var(--figma-text);
-    text-decoration: none;
+    text-decoration: underline;
     font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
     transition: color 0.2s ease;
   }
-  
+
   .contentful-link:hover {
     color: var(--figma-text-secondary);
-    text-decoration: underline;
   }
 
   .record-data {
@@ -1853,8 +1860,9 @@
 
   .flex-container {
     display: flex;
-    align-items: center;
     gap: 4px;
+    justify-content: flex-start;
+    align-items: center;
   }
 
   /* Tooltip System */
@@ -1971,7 +1979,7 @@
     </button>
 </div>
 
-  <div class="section hidden" id="items-table-section" style="padding: 6px; flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden;">
+  <div class="section hidden" id="items-table-section" style="padding: 6px; flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; z-index: 0;">
     <div class="table-container">
       <table class="write-table">
         <thead>
@@ -2329,8 +2337,8 @@ window.addEventListener('DOMContentLoaded', () => {
     cmaTokenInput.addEventListener('input', validateRequiredFields);
   }
 
-  // Request stored window size state from backend
-  parent.postMessage({ pluginMessage: { type: 'get-window-size-state' } }, '*');
+  // Always start in normal mode (don't request stored window size state)
+  // parent.postMessage({ pluginMessage: { type: 'get-window-size-state' } }, '*');
 });
 
 function switchView(viewName) {
@@ -2883,12 +2891,13 @@ const SIZES = {
   compact: { width: 450, height: 600 }
 };
 
-document.getElementById('btn-load-items').onclick = async () => {
+document.getElementById('btn-load-items').onclick = async function() {
+  this.blur();
   if (!config) {
     setWriteStatus('Please configure Contentful connection first', 'error');
     return;
   }
-  
+
   console.log('Load button clicked - fetching fresh data from Figma and Contentful');
   setWriteStatus('Loading text items...', 'loading');
   
@@ -2998,6 +3007,7 @@ function renderIndividualItems(items) {
 
     // Status column - check this specific item
     const statusTd = document.createElement('td');
+    statusTd.className = 'text-center';
     const statusBadge = document.createElement('span');
 
     if (!contentfulItem) {
@@ -3023,6 +3033,7 @@ function renderIndividualItems(items) {
 
     // Action column - Save/Update button + Link icon
     const actionTd = document.createElement('td');
+    actionTd.className = 'text-center';
 
     const buttonContainer = createFlexContainer();
 
@@ -3185,6 +3196,7 @@ function renderGroupedItems(filteredItems) {
 
     // Status column - check all items in the group
     const statusTd = document.createElement('td');
+    statusTd.className = 'text-center';
     const statusBadge = document.createElement('span');
     statusBadge.className = 'status-badge checking';
     statusBadge.id = `status-${originalIndex}`;
@@ -3223,6 +3235,7 @@ function renderGroupedItems(filteredItems) {
 
     // Action column
     const actionTd = document.createElement('td');
+    actionTd.className = 'text-center';
 
     if (hasConflict) {
       // Use flex container for consistent alignment
@@ -3464,27 +3477,24 @@ if (filterToggle) {
 const btnResize = document.getElementById('btn-resize');
 if (btnResize) {
   btnResize.onclick = () => {
-    console.log('Resize button clicked, current isCompact:', isCompact);
     isCompact = !isCompact;
     const size = isCompact ? SIZES.compact : SIZES.normal;
-    console.log('New size:', size);
 
     // Toggle compact mode class on body (if needed for CSS)
     if (isCompact) {
       document.body.classList.add('compact-mode');
       // Change to expand icon (arrows pointing outward)
       btnResize.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 10v4h4M14 6V2h-4M2 14l4-4M14 2l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-      btnResize.setAttribute('data-tooltip', 'Expand window');
+      setTooltip(btnResize, 'Expand window');
     } else {
       document.body.classList.remove('compact-mode');
       // Change to compress icon (arrows pointing inward)
       btnResize.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 2v4h4M6 14v-4H2M10 6l4-4M6 10l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-      btnResize.setAttribute('data-tooltip', 'Compact window');
+      setTooltip(btnResize, 'Compact window');
     }
 
     // Send resize message to backend (backend will store the state)
-    console.log('Sending resize message:', { type: 'resize-window', width: size.width, height: size.height, isCompact: isCompact });
-    parent.postMessage({ pluginMessage: { type: 'resize-window', width: size.width, height: size.height, isCompact: isCompact } }, '*');
+    parent.postMessage({ pluginMessage: { type: 'resize-window', width: size.width, height: size.height } }, '*');
 
     // Refresh tooltips after layout changes
     setTimeout(() => {
@@ -4520,24 +4530,25 @@ window.onmessage = (event) => {
     });
   }
   
-  if (msg.type === 'window-size-state') {
-    console.log('Received window size state:', msg);
-    const savedIsCompact = msg.isCompact || false;
-    isCompact = savedIsCompact;
-
-    const btnResize = document.getElementById('btn-resize');
-    if (savedIsCompact) {
-      document.body.classList.add('compact-mode');
-      if (btnResize) {
-        btnResize.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 10v4h4M14 6V2h-4M2 14l4-4M14 2l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-        btnResize.setAttribute('data-tooltip', 'Expand window');
-      }
-      parent.postMessage({ pluginMessage: { type: 'resize-window', width: SIZES.compact.width, height: SIZES.compact.height, isCompact: true } }, '*');
-    } else {
-      // Normal size (already set in figma.showUI, but send message anyway to be consistent)
-      parent.postMessage({ pluginMessage: { type: 'resize-window', width: SIZES.normal.width, height: SIZES.normal.height, isCompact: false } }, '*');
-    }
-  }
+  // Removed: window-size-state handler - always start in normal mode
+  // if (msg.type === 'window-size-state') {
+  //   console.log('Received window size state:', msg);
+  //   const savedIsCompact = msg.isCompact || false;
+  //   isCompact = savedIsCompact;
+  //
+  //   const btnResize = document.getElementById('btn-resize');
+  //   if (savedIsCompact) {
+  //     document.body.classList.add('compact-mode');
+  //     if (btnResize) {
+  //       btnResize.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 10v4h4M14 6V2h-4M2 14l4-4M14 2l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  //       setTooltip(btnResize, 'Expand window');
+  //     }
+  //     parent.postMessage({ pluginMessage: { type: 'resize-window', width: SIZES.compact.width, height: SIZES.compact.height } }, '*');
+  //   } else {
+  //     // Normal size (already set in figma.showUI, but send message anyway to be consistent)
+  //     parent.postMessage({ pluginMessage: { type: 'resize-window', width: SIZES.normal.width, height: SIZES.normal.height } }, '*');
+  //   }
+  // }
 
   if (msg.type === 'records-loaded') {
     records = msg.records || [];
