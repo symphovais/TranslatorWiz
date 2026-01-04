@@ -908,13 +908,7 @@
     color: #0052A3;
     text-decoration: underline;
   }
-  
-  .contentful-link::after {
-    content: '↗';
-    font-size: 10px;
-    opacity: 0.5;
-  }
-  
+
   .record-data {
     background: var(--figma-bg);
     border-radius: 8px;
@@ -1060,7 +1054,7 @@
     padding: 6px 12px;
     border-bottom: 1px solid var(--figma-border);
     vertical-align: middle;
-    font-size: 13px;
+    font-size: 12px;
     color: var(--figma-text);
   }
 
@@ -1088,16 +1082,7 @@
     max-width: 300px;
   }
 
-  /* Contentful link styling */
-  .write-table .contentful-link {
-    display: inline-block;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  /* Span elements in key column (non-linked keys) */
+  /* Span elements in key column (non-linked keys) for normal mode */
   .write-table td:nth-child(1) span {
     display: inline-block;
     max-width: 100%;
@@ -1106,6 +1091,21 @@
     white-space: nowrap;
   }
 
+  /* Status column centering */
+  .write-table td:nth-child(3) {
+    text-align: center;
+  }
+
+  /* Contentful link styling */
+  .write-table .contentful-link {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+  }
+
+  /* Span elements in key column (non-linked keys) */
   /* Text centering utility */
   .text-center {
     text-align: center;
@@ -1331,10 +1331,13 @@
   }
 
   .text-preview {
-    max-width: 200px;
+    max-width: 300px;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 1.4;
   }
 
   /* Write Status Footer */
@@ -1885,13 +1888,19 @@
     font-weight: 500;
     line-height: 1.4;
     white-space: normal;
-    max-width: 90vw;
+    max-width: 200px;
     border-radius: 6px;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.15s ease;
     z-index: 999999;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Wider tooltips for key names */
+  [data-tooltip-key]::before {
+    max-width: 80vw;
+    white-space: nowrap;
   }
 
   /* Tooltip arrow - default (top position, arrow points down) */
@@ -1980,8 +1989,8 @@
           <tr>
             <th>Key</th>
             <th>Text</th>
-            <th>Status</th>
-            <th>Action</th>
+            <th style="width: 80px; text-align: center;">Status</th>
+            <th style="width: 80px;">Action</th>
           </tr>
         </thead>
         <tbody id="items-table-body">
@@ -3063,24 +3072,24 @@ function renderIndividualItems(items) {
   tbody.appendChild(fragment);
 
   // Apply tooltips after elements are in DOM and layout is complete
-  setTimeout(() => {
-    tbody.querySelectorAll('a[data-key-name], span[data-key-name]').forEach(element => {
-      const keyName = element.dataset.keyName;
-      // Force reflow to ensure dimensions are calculated
-      void element.offsetWidth;
-      if (isTextTruncated(element)) {
-        setTooltip(element, keyName);
-      }
-    });
+  // Use double requestAnimationFrame to ensure multi-line layout is finalized
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      tbody.querySelectorAll('a[data-key-name], span[data-key-name]').forEach(element => {
+        const keyName = element.dataset.keyName;
+        if (isTextTruncated(element)) {
+          element.setAttribute('data-tooltip-key', '');
+          setTooltip(element, keyName);
+        }
+      });
 
-    tbody.querySelectorAll('.text-preview').forEach(element => {
-      // Force reflow to ensure dimensions are calculated
-      void element.offsetWidth;
-      if (isTextTruncated(element)) {
-        setTooltip(element, element.textContent);
-      }
+      tbody.querySelectorAll('.text-preview').forEach(element => {
+        if (isTextTruncated(element)) {
+          setTooltip(element, element.textContent);
+        }
+      });
     });
-  }, 0);
+  });
 }
 
 // Render grouped items
@@ -3294,24 +3303,24 @@ function renderGroupedItems(filteredItems) {
   tbody.appendChild(fragment);
 
   // Apply tooltips after elements are in DOM and layout is complete
-  setTimeout(() => {
-    tbody.querySelectorAll('a[data-key-name], span[data-key-name]').forEach(element => {
-      const keyName = element.dataset.keyName;
-      // Force reflow to ensure dimensions are calculated
-      void element.offsetWidth;
-      if (isTextTruncated(element)) {
-        setTooltip(element, keyName);
-      }
-    });
+  // Use double requestAnimationFrame to ensure multi-line layout is finalized
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      tbody.querySelectorAll('a[data-key-name], span[data-key-name]').forEach(element => {
+        const keyName = element.dataset.keyName;
+        if (isTextTruncated(element)) {
+          element.setAttribute('data-tooltip-key', '');
+          setTooltip(element, keyName);
+        }
+      });
 
-    tbody.querySelectorAll('.text-preview').forEach(element => {
-      // Force reflow to ensure dimensions are calculated
-      void element.offsetWidth;
-      if (isTextTruncated(element)) {
-        setTooltip(element, element.textContent);
-      }
+      tbody.querySelectorAll('.text-preview').forEach(element => {
+        if (isTextTruncated(element)) {
+          setTooltip(element, element.textContent);
+        }
+      });
     });
-  }, 0);
+  });
 }
 
 function renderItemsTable() {
@@ -3666,8 +3675,8 @@ function setTooltipIfTruncated(element, text) {
 function refreshTruncatedTooltips() {
   // Find all text-preview elements
   const textElements = document.querySelectorAll('.text-preview');
-  // Select all links and spans with data-key-name (key column)
-  const keyElements = document.querySelectorAll('a[data-key-name], span[data-key-name]');
+  // Select all links and spans in first column (key column)
+  const keyElements = document.querySelectorAll('td:first-child a.contentful-link, td:first-child span');
 
   // Process text elements
   textElements.forEach(element => {
@@ -3686,6 +3695,7 @@ function refreshTruncatedTooltips() {
     const keyName = element.dataset.keyName;
     if (keyName) {
       if (isTextTruncated(element)) {
+        element.setAttribute('data-tooltip-key', '');
         setTooltip(element, keyName);
       } else {
         removeTooltip(element);
@@ -3710,7 +3720,7 @@ function positionTooltip(element) {
   // Match the actual tooltip CSS styles exactly
   const tempTooltip = document.createElement('div');
   const isMultiline = element.hasAttribute('data-tooltip-multiline');
-  const maxWidth = isMultiline ? '200px' : '90vw';
+  const maxWidth = isMultiline ? '200px' : '300px';
   tempTooltip.style.cssText = `position:fixed;visibility:hidden;padding:6px 10px;font-size:11px;font-weight:500;line-height:1.4;white-space:normal;max-width:${maxWidth};border-radius:6px;`;
   tempTooltip.textContent = tooltipText;
   document.body.appendChild(tempTooltip);
