@@ -111,9 +111,7 @@ function validateConfig(config: ContentfulConfig): string | null {
 }
 
 // Selection change listener disabled to prevent unwanted auto-refresh and search field population
-// This was causing the plugin to refresh when adding any element and auto-fill search when adding text
-// Users can manually search for text nodes using the search field
-/*
+// Listen for selection changes in Figma
 figma.on('selectionchange', () => {
   try {
     if (!figma.currentPage) return;
@@ -143,7 +141,6 @@ figma.on('selectionchange', () => {
     // Don't crash the plugin
   }
 });
-*/
 
 // Document change auto-refresh disabled to prevent unwanted refreshes when adding elements
 // Users can manually refresh using the refresh button if needed
