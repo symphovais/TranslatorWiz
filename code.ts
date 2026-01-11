@@ -39,6 +39,72 @@ interface TextNodeInfo {
   characters: string;
 }
 
+// UI message types
+interface UIMessage {
+  type: string;
+  config?: ContentfulConfig;
+  locale?: string;
+  contentType?: string;
+  contentTypes?: string[];
+  mappings?: FieldMapping[];
+  recordFields?: Record<string, unknown>;
+  item?: unknown;
+  items?: unknown[];
+  nodeId?: string;
+  nodeIds?: string[];
+  newText?: string;
+  width?: number;
+  height?: number;
+  isCompact?: boolean;
+  [key: string]: unknown;
+}
+
+// Contentful API types
+interface ContentfulField {
+  id: string;
+  name: string;
+  type: string;
+}
+
+interface ContentfulRecord {
+  id: string;
+  fields: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
+interface ContentfulLocaleItem {
+  code: string;
+  name: string;
+}
+
+interface ContentfulTranslationItem {
+  fields: {
+    [key: string]: string;
+  };
+}
+
+interface ContentfulSaveItem {
+  key: string;
+  value: string;
+  isUpdate?: boolean;
+  entryId?: string;
+}
+
+interface ContentfulSaveResult {
+  success: boolean;
+  error?: string;
+  errorDetails?: {
+    status?: number;
+    response?: string;
+    operation?: string;
+    entryId?: string;
+    version?: number;
+    key?: string;
+    exception?: string;
+    [key: string]: unknown;
+  };
+}
+
 // Network timeout for API calls (10 seconds)
 const API_TIMEOUT = 10000;
 
@@ -175,7 +241,7 @@ let lastMessageType: string | null = null;
 let lastMessageTime: number = 0;
 const DUPLICATE_THRESHOLD_MS = 200;
 
-figma.ui.onmessage = async (msg: any) => {
+figma.ui.onmessage = async (msg: UIMessage) => {
   const handlerStartTime = Date.now();
 
   // Prevent duplicate processing of the same message type within 200ms
@@ -298,7 +364,7 @@ figma.ui.onmessage = async (msg: any) => {
         
         // Verify required fields exist
         const fields = Array.isArray(data.fields) ? data.fields : [];
-        const fieldNames = fields.map((f: any) => (f && typeof f.id === 'string') ? f.id : '');
+        const fieldNames = fields.map((f: ContentfulField) => (f && typeof f.id === 'string') ? f.id : '');
         
         if (!fieldNames.includes(msg.config.KEY_FIELD)) {
           throw new Error(`Key field not found in content type`);
@@ -439,8 +505,8 @@ figma.ui.onmessage = async (msg: any) => {
       }
       
       try {
-        const recordsByContentType: { [key: string]: any[] } = {};
-        
+        const recordsByContentType: { [key: string]: ContentfulRecord[] } = {};
+
         // Load records from each content type
         for (const contentType of msg.contentTypes) {
           const records = await fetchRecords(msg.config, contentType);
@@ -524,13 +590,14 @@ figma.ui.onmessage = async (msg: any) => {
         figma.ui.postMessage({ type: 'error', message: 'Configuration or item missing' });
         return;
       }
-      
+
       try {
-        const result = await saveItemToContentful(msg.config, msg.item);
+        const itemToSave = msg.item as ContentfulSaveItem;
+        const result = await saveItemToContentful(msg.config, itemToSave);
 
         figma.ui.postMessage({
           type: 'item-saved',
-          key: msg.item.key,
+          key: itemToSave.key,
           success: result.success,
           error: result.error,
           errorDetails: result.errorDetails
@@ -538,9 +605,10 @@ figma.ui.onmessage = async (msg: any) => {
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
         const errorDetails = error instanceof Error ? { exception: error.name, stack: error.stack } : { exception: String(error) };
-        figma.ui.postMessage({ 
-          type: 'item-saved', 
-          key: msg.item.key,
+        const itemToSave = msg.item as ContentfulSaveItem;
+        figma.ui.postMessage({
+          type: 'item-saved',
+          key: itemToSave.key,
           success: false,
           error: errorMessage,
           errorDetails
@@ -579,7 +647,8 @@ figma.ui.onmessage = async (msg: any) => {
 
     if (msg.type === 'update-multiple-nodes') {
       try {
-        const { nodeIds, newText } = msg;
+        const nodeIds = msg.nodeIds as string[];
+        const newText = msg.newText as string;
 
         if (!nodeIds || !Array.isArray(nodeIds) || nodeIds.length === 0) {
           figma.ui.postMessage({
@@ -652,7 +721,7 @@ figma.ui.onmessage = async (msg: any) => {
 
     if (msg.type === 'select-node') {
       try {
-        const { nodeId } = msg;
+        const nodeId = msg.nodeId as string;
         const node = await figma.getNodeByIdAsync(nodeId);
         if (node && 'type' in node) {
           figma.currentPage.selection = [node as SceneNode];
@@ -701,12 +770,18 @@ function getTranslatableNodeCount(config: ContentfulConfig): number {
   }
 }
 
-async function fetchWithTimeout(url: string, options?: any, timeout: number = API_TIMEOUT): Promise<any> {
+interface FetchOptions {
+  headers?: { [key: string]: string };
+  method?: string;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function fetchWithTimeout(url: string, options?: FetchOptions, timeout: number = API_TIMEOUT): Promise<any> {
   return new Promise((resolve, reject) => {
     const timeoutId = setTimeout(() => {
       reject(new Error('Request timeout - please check your network connection'));
     }, timeout);
-    
+
     fetch(url, options)
       .then(response => {
         clearTimeout(timeoutId);
@@ -749,7 +824,7 @@ async function fetchLocales(config: ContentfulConfig): Promise<Locale[]> {
     }
     
     return data.items
-      .map((item: any) => ({
+      .map((item: ContentfulLocaleItem) => ({
         code: (item && typeof item.code === 'string') ? item.code : '',
         name: (item && typeof item.name === 'string') ? item.name : ''
       }))
@@ -800,7 +875,7 @@ async function fetchTranslations(config: ContentfulConfig, locale: string): Prom
     }
     
     return data.items
-      .map((item: any) => {
+      .map((item: ContentfulTranslationItem) => {
         const fields = (item && typeof item.fields === 'object') ? item.fields : {};
         return {
           key: (typeof fields[config.KEY_FIELD] === 'string') ? fields[config.KEY_FIELD] : '',
@@ -894,6 +969,7 @@ async function applyTranslations(translations: Translation[], config: Contentful
 
 // ========== Content Preview Mode Functions ==========
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function fetchContentTypes(config: ContentfulConfig): Promise<any[]> {
   const spaceId = encodeURIComponent(config.SPACE_ID);
   const environment = encodeURIComponent(config.ENVIRONMENT);
@@ -945,6 +1021,7 @@ function getAllTextNodes(): TextNodeInfo[] {
   }));
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function fetchRecords(config: ContentfulConfig, contentType: string): Promise<any[]> {
   const spaceId = encodeURIComponent(config.SPACE_ID);
   const environment = encodeURIComponent(config.ENVIRONMENT);
@@ -985,12 +1062,12 @@ async function fetchRecords(config: ContentfulConfig, contentType: string): Prom
   }
 }
 
-async function applyRecordToNodes(mappings: FieldMapping[], recordFields: any): Promise<void> {
+async function applyRecordToNodes(mappings: FieldMapping[], recordFields: Record<string, unknown>): Promise<void> {
   const errors: string[] = [];
-  
+
   for (const mapping of mappings) {
     try {
-      const node = figma.getNodeById(mapping.node) as TextNode | null;
+      const node = await figma.getNodeByIdAsync(mapping.node) as TextNode | null;
       
       if (!node || node.type !== 'TEXT') {
         errors.push(`Node not found: ${mapping.node}`);
@@ -1138,7 +1215,7 @@ async function fetchAllContentfulItems(config: ContentfulConfig): Promise<{ [key
   }
 }
 
-async function saveItemToContentful(config: ContentfulConfig, item: any): Promise<{ success: boolean; error?: string; errorDetails?: any }> {
+async function saveItemToContentful(config: ContentfulConfig, item: ContentfulSaveItem): Promise<ContentfulSaveResult> {
   const spaceId = encodeURIComponent(config.SPACE_ID);
   const environment = encodeURIComponent(config.ENVIRONMENT);
   const contentType = config.CONTENT_TYPE;
