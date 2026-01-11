@@ -505,12 +505,19 @@
     background: var(--figma-accent);
     color: var(--gray-800);
     font-weight: 500;
-    border-radius: 360px;
+    border-radius: 6px;
     border: 1px solid var(--figma-accent);
+    transition: all 0.2s ease;
   }
 
   .btn-primary:hover:not(:disabled) {
     border-color: var(--figma-border-secondary);
+    filter: brightness(0.95);
+  }
+
+  .btn-primary:focus-visible {
+    outline: 2px solid var(--figma-accent);
+    outline-offset: 2px;
   }
 
   .btn-secondary {
@@ -519,12 +526,37 @@
     border: 1px solid var(--figma-border);
     transition: all 0.2s ease;
     font-weight: 500;
-    border-radius: 360px;
+    border-radius: 6px;
   }
 
   .btn-secondary:hover:not(:disabled) {
     background: var(--figma-bg-secondary);
     border-color: var(--figma-border-secondary);
+  }
+
+  .btn-secondary:focus-visible {
+    outline: 2px solid var(--figma-text);
+    outline-offset: 2px;
+  }
+
+  .btn-tertiary {
+    background: transparent;
+    color: var(--figma-text);
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .btn-tertiary:hover:not(:disabled) {
+    background: var(--figma-hover-overlay);
+    color: var(--figma-text);
+  }
+
+  .btn-tertiary:focus-visible {
+    outline: 2px solid var(--figma-text);
+    outline-offset: 2px;
+    background: var(--figma-hover-overlay);
   }
   
   .btn-test {
@@ -1729,30 +1761,12 @@
     gap: 8px;
   }
 
+  /* Conflict modal buttons now use btn-secondary */
   .btn-show-in-figma,
   .btn-use-this-version {
     flex: 1;
-    background: var(--figma-bg-secondary);
-    color: var(--figma-text);
-    border: 1px solid var(--figma-border);
     padding: 8px 14px;
-    border-radius: 6px;
-    cursor: pointer;
     font-size: 12px;
-    font-weight: 500;
-    transition: all 0.15s ease;
-  }
-
-  .btn-show-in-figma:hover,
-  .btn-use-this-version:hover {
-    background: var(--figma-bg);
-    border-color: var(--figma-text);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-  }
-
-  .btn-use-this-version:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
   }
 
   .conflict-version-error {
@@ -1819,21 +1833,16 @@
     background: var(--figma-bg-secondary);
   }
 
+  /* Conflict cancel button now uses btn-tertiary */
   .btn-cancel-conflict {
-    background: transparent;
-    color: var(--figma-text-secondary);
-    border: none;
     padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
     font-size: 12px;
-    font-weight: 500;
-    transition: all 0.15s ease;
   }
 
-  .btn-cancel-conflict:hover {
-    background: var(--figma-hover-overlay);
-    color: var(--figma-text);
+  /* Reset config button now uses btn-tertiary */
+  .btn-reset-config {
+    padding: 8px 12px;
+    font-size: 12px;
   }
 
   .btn-save-item {
@@ -2252,9 +2261,9 @@
       </div>
     </div>
 
-    <!-- Reset link -->
+    <!-- Reset button -->
     <div style="margin-top: 24px; text-align: right;">
-      <a href="#" id="reset-config" style="font-size: 12px; color: var(--figma-text-secondary); text-decoration: none;">Reset all fields to default</a>
+      <button class="btn-tertiary btn-reset-config" id="reset-config">Reset all fields to default</button>
     </div>
 
     <!-- Action bar with navigation and save -->
@@ -2602,10 +2611,10 @@ function showConflictModal(keyName, items, contentfulValue) {
       <div class="conflict-version-text">${escapeHtml(text)}</div>
       <div class="conflict-version-meta">${count > 1 ? `${count} instances with this text` : '1 instance'}</div>
       <div class="conflict-version-actions">
-        <button class="btn-show-in-figma" onclick="event.stopPropagation(); showNodeInFigma('${firstItem.id}')">
+        <button class="btn-secondary btn-show-in-figma" onclick="event.stopPropagation(); showNodeInFigma('${firstItem.id}')">
           Show in Figma
         </button>
-        <button class="btn-use-this-version" onclick="event.stopPropagation(); useThisVersionByText('${escapedText}', this)">
+        <button class="btn-secondary btn-use-this-version" onclick="event.stopPropagation(); useThisVersionByText('${escapedText}', this)">
           Change All to This
         </button>
       </div>
@@ -5269,7 +5278,7 @@ function createPreflightSteps() {
       <div id="conflict-versions-container"></div>
     </div>
     <div class="conflict-modal-footer">
-      <button class="btn-conflict-action btn-cancel-conflict" onclick="hideConflictModal()">Cancel</button>
+      <button class="btn-tertiary btn-cancel-conflict" onclick="hideConflictModal()">Cancel</button>
     </div>
   </div>
 </div>
