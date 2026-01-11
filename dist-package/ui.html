@@ -368,6 +368,19 @@
     border-radius: 50%;
     animation: spin 0.6s linear infinite;
   }
+
+  /* Larger spinner for centered loading overlay */
+  #loading-overlay .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid rgba(0,0,0,0.1);
+    border-top-color: var(--figma-text);
+  }
+
+  body.figma-dark #loading-overlay .spinner {
+    border: 3px solid rgba(255,255,255,0.1);
+    border-top-color: var(--figma-text);
+  }
   
   .hidden {
     display: none !important;
@@ -1347,7 +1360,12 @@
   }
 
   #write-status:empty {
-    display: none;
+    /* Keep visible but don't show dot when empty - maintains layout stability */
+  }
+
+  #write-status:empty::before,
+  #write-status:empty::after {
+    display: none; /* Hide dot and spinner when empty */
   }
 
   #write-status.success {
@@ -1384,6 +1402,24 @@
 
   #write-status.loading::before {
     animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  /* Add spinner after loading text */
+  #write-status.loading::after {
+    content: '';
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid rgba(0,0,0,0.1);
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    margin-left: 2px;
+  }
+
+  body.figma-dark #write-status.loading::after {
+    border: 2px solid rgba(255,255,255,0.1);
+    border-top-color: currentColor;
   }
 
   /* Reset Confirmation Modal */
@@ -1979,6 +2015,12 @@
     </button>
 </div>
 
+  <!-- Centered loading overlay (shown on initial load) -->
+  <div id="loading-overlay" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;">
+    <div class="spinner"></div>
+    <div id="loading-message" style="font-size: 13px; color: var(--figma-text-secondary);">Initializing...</div>
+  </div>
+
   <div class="section hidden" id="items-table-section" style="padding: 6px; flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; z-index: 0;">
     <div class="table-container">
       <table class="write-table">
@@ -1999,7 +2041,7 @@
 
   <div class="status-container">
     <div id="write-status"></div>
-    <div class="stats-compact">
+    <div class="stats-compact" style="margin-left: auto;">
       <span class="stat-item">
         <span class="stat-label">Total:</span>
         <span class="stat-value" id="stat-total">-</span>
@@ -2257,10 +2299,49 @@ applyFigmaTheme();
 
 // Watch for theme changes
 const observer = new MutationObserver(applyFigmaTheme);
-observer.observe(document.documentElement, { 
-  attributes: true, 
-  attributeFilter: ['style'] 
+observer.observe(document.documentElement, {
+  attributes: true,
+  attributeFilter: ['style']
 });
+
+// Loading overlay management
+let isInitialLoad = true;
+
+function setLoadingMessage(message) {
+  const loadingMessageEl = document.getElementById('loading-message');
+  if (loadingMessageEl) {
+    loadingMessageEl.textContent = message;
+  }
+}
+
+function hideLoadingOverlay() {
+  const loadingOverlay = document.getElementById('loading-overlay');
+  const tableSection = document.getElementById('items-table-section');
+
+  if (loadingOverlay) {
+    loadingOverlay.classList.add('hidden');
+  }
+  if (tableSection) {
+    tableSection.classList.remove('hidden');
+  }
+  isInitialLoad = false;
+}
+
+function showLoadingOverlay(message = 'Loading...') {
+  const loadingOverlay = document.getElementById('loading-overlay');
+  const tableSection = document.getElementById('items-table-section');
+
+  if (loadingOverlay) {
+    loadingOverlay.classList.remove('hidden');
+    setLoadingMessage(message);
+  }
+  if (tableSection) {
+    tableSection.classList.add('hidden');
+  }
+}
+
+// Show initial loading overlay
+showLoadingOverlay('Initializing...');
 
 // Request config and start auto-load on startup
 parent.postMessage({ pluginMessage: { type: 'init' } }, '*');
@@ -2303,15 +2384,14 @@ function refreshData() {
   }
 }
 
-// Start auto-refresh on load
-startAutoRefresh();
+// Auto-refresh disabled to allow 5-minute cache to work effectively
+// startAutoRefresh();
 
 // View switching - wait for DOM to be ready
 window.addEventListener('DOMContentLoaded', () => {
   const settingsBtn = document.getElementById('settings-toggle-inline');
   if (settingsBtn) {
     settingsBtn.onclick = () => {
-      console.log('Settings button clicked');
       switchView('settings');
     };
   } else {
@@ -2342,27 +2422,22 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function switchView(viewName) {
-  console.log('switchView called with:', viewName);
-  
   const targetView = document.getElementById(`${viewName}-view`);
-  console.log('Target view element:', targetView);
-  
+
   if (!targetView) {
     console.error(`View "${viewName}-view" not found!`);
     return;
   }
-  
+
   // Remove active from all views
   document.querySelectorAll('.view').forEach(v => {
-    console.log('Removing active from:', v.id, v.classList.contains('active'));
     v.classList.remove('active');
     v.style.display = 'none'; // Force hide
   });
-  
+
   // Activate target view
   targetView.classList.add('active');
   targetView.style.display = 'block'; // Force show
-  console.log('Activated view:', targetView.id, targetView.classList.contains('active'));
   
   if (viewName === 'settings') {
     loadConfigIntoEditor();
@@ -2899,13 +2974,21 @@ document.getElementById('btn-load-items').onclick = async function() {
   }
 
   console.log('Load button clicked - fetching fresh data from Figma and Contentful');
-  setWriteStatus('Loading text items...', 'loading');
-  
+
+  // On initial load, use centered overlay; on manual sync, use footer status
+  if (isInitialLoad) {
+    setLoadingMessage('Loading text items...');
+  } else {
+    setWriteStatus('Loading text items...', 'loading');
+  }
+
   // Clear existing data to force fresh fetch
   textItems = [];
   contentfulItems = {};
-  
-  // Fetch text nodes from Figma
+
+  // Fetch text nodes from Figma (uses 30s cache) and fresh Contentful data (delta sync)
+  // Note: We don't use forceRefresh here because scanning all Figma nodes is slow (30s)
+  // The 30s node cache is acceptable for manual syncs
   parent.postMessage({ pluginMessage: { type: 'get-translatable-nodes', config } }, '*');
 };
 
@@ -2916,14 +2999,13 @@ function setWriteStatus(text, type = 'info') {
 }
 
 async function loadItemsAndCheckStatus(items) {
-  console.log('📝 Loaded', items.length, 'text items from Figma');
   textItems = items;
-  
+
   if (items.length === 0) {
     setWriteStatus('No translatable text items found', 'info');
     return;
   }
-  
+
   // Check for duplicate names
   const nameCount = {};
   const duplicates = [];
@@ -2933,22 +3015,20 @@ async function loadItemsAndCheckStatus(items) {
       duplicates.push(item.name);
     }
   });
-  
+
   if (duplicates.length > 0) {
-    console.warn('DUPLICATE NODE NAMES DETECTED:');
-    duplicates.forEach(name => {
-      console.warn(`  - "${name}" appears ${nameCount[name]} times`);
-      const dupeItems = items.filter(item => item.name === name);
-      dupeItems.forEach((item, idx) => {
-        console.warn(`    ${idx + 1}. ID: ${item.id}, Text: "${item.characters.substring(0, 50)}..."`);
-      });
-    });
-    setWriteStatus(`Warning: ${duplicates.length} duplicate name(s) found - check console`, 'error');
+    console.warn(`DUPLICATE NODE NAMES DETECTED: ${duplicates.length} duplicate name(s) - ${duplicates.join(', ')}`);
+    // Note: Duplicate names are expected when you have multiple instances of the same text
+    // The warning is logged to console for debugging, but we don't show it in the UI
   }
-  
+
   // Always fetch fresh data from Contentful to get the latest state
-  console.log('Fetching fresh data from Contentful...');
-  setWriteStatus('Fetching from Contentful...', 'loading');
+  // On initial load, use centered overlay; on manual sync, use footer status
+  if (isInitialLoad) {
+    setLoadingMessage('Fetching from Contentful...');
+  } else {
+    setWriteStatus('Fetching from Contentful...', 'loading');
+  }
   parent.postMessage({ pluginMessage: { type: 'get-all-contentful-items', config } }, '*');
 }
 
@@ -3092,7 +3172,277 @@ function renderIndividualItems(items) {
   });
 }
 
-// Render grouped items
+// Progressive rendering configuration
+const PROGRESSIVE_BATCH_SIZE = 25; // Render 25 grouped keys at a time
+const PROGRESSIVE_THRESHOLD = 100; // Only use progressive rendering if more than 100 keys
+
+// Render grouped items (smart progressive rendering)
+async function renderGroupedItemsProgressive(filteredItems) {
+  const tbody = document.getElementById('items-table-body');
+  tbody.innerHTML = ''; // Clear table
+
+  // Group items by key (name)
+  const groupedItems = {};
+  filteredItems.forEach((item) => {
+    if (!groupedItems[item.name]) {
+      groupedItems[item.name] = [];
+    }
+    groupedItems[item.name].push(item);
+  });
+
+  const keys = Object.keys(groupedItems);
+  const totalKeys = keys.length;
+
+  // For small datasets, render all at once (faster)
+  if (totalKeys <= PROGRESSIVE_THRESHOLD) {
+    // Only show rendering status on manual sync (not initial load with overlay)
+    if (!isInitialLoad) {
+      setWriteStatus('Rendering...', 'loading');
+    }
+    const fragment = document.createDocumentFragment();
+
+    keys.forEach(keyName => {
+      const items = groupedItems[keyName];
+      const row = createGroupedRow(keyName, items);
+      if (row) fragment.appendChild(row);
+    });
+
+    tbody.appendChild(fragment);
+  } else {
+    // For large datasets, render progressively
+    for (let i = 0; i < keys.length; i += PROGRESSIVE_BATCH_SIZE) {
+      const batchKeys = keys.slice(i, i + PROGRESSIVE_BATCH_SIZE);
+      const fragment = document.createDocumentFragment();
+
+      // Update status - only on manual sync
+      if (!isInitialLoad) {
+        const progress = Math.min(i + PROGRESSIVE_BATCH_SIZE, totalKeys);
+        setWriteStatus(`Rendering... (${progress}/${totalKeys} keys)`, 'loading');
+      }
+
+      // Render this batch
+      batchKeys.forEach(keyName => {
+        const items = groupedItems[keyName];
+        const row = createGroupedRow(keyName, items);
+        if (row) fragment.appendChild(row);
+      });
+
+      tbody.appendChild(fragment);
+
+      // Yield to browser to keep UI responsive
+      await new Promise(resolve => setTimeout(resolve, 0));
+    }
+  }
+
+  // Apply tooltips after all rendering is complete
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      tbody.querySelectorAll('a[data-key-name], span[data-key-name]').forEach(element => {
+        const keyName = element.dataset.keyName;
+        if (isTextTruncated(element)) {
+          element.setAttribute('data-tooltip-key', '');
+          setTooltip(element, keyName);
+        }
+      });
+
+      tbody.querySelectorAll('.text-preview').forEach(element => {
+        if (isTextTruncated(element)) {
+          setTooltip(element, element.textContent);
+        }
+      });
+    });
+  });
+}
+
+// Create a single grouped row (extracted from renderGroupedItems)
+function createGroupedRow(keyName, items) {
+  const item = items[0]; // Use first item for display
+  const count = items.length;
+
+  const originalIndex = findItemIndexById(textItems, item.id);
+  if (originalIndex === -1) return null;
+
+  // Detect if there are conflicting text values
+  const uniqueTexts = [...new Set(items.map(i => i.characters))];
+  const hasConflict = count > 1 && uniqueTexts.length > 1;
+
+  const tr = document.createElement('tr');
+
+  // Add click handler to filter by this item
+  tr.style.cursor = 'pointer';
+  tr.onclick = (e) => {
+    // Don't trigger if clicking a button, svg, or inside action/status cells
+    if (e.target.tagName === 'BUTTON' ||
+        e.target.tagName === 'SVG' ||
+        e.target.tagName === 'PATH' ||
+        e.target.closest('button') ||
+        e.target.tagName === 'A') {
+      return;
+    }
+
+    // Filter by this key
+    const searchInput = document.getElementById('search-input');
+    searchInput.value = keyName;
+    searchInput.dispatchEvent(new Event('input'));
+    searchInput.focus();
+  };
+
+  // Key column
+  const keyTd = document.createElement('td');
+  const contentfulItem = contentfulItems[keyName];
+
+  // Display name with count and conflict warning
+  let displayName = count > 1 ? `(${count}) ${keyName}` : keyName;
+
+  // Add warning icon if there's a conflict
+  if (hasConflict) {
+    const warningSvg = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; margin-right: 4px; vertical-align: text-bottom;"><path d="M8 1 L15 14 L1 14 Z" fill="var(--red-500)" stroke="var(--red-500)" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6 v3 M8 11 v1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>';
+    displayName = `${warningSvg}${displayName}`;
+  }
+
+  if (contentfulItem && contentfulItem.id) {
+    // Create clickable link to Contentful
+    const link = document.createElement('a');
+    const contentfulUrl = buildContentfulUrl(config, contentfulItem.id);
+
+    link.href = contentfulUrl;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.className = 'contentful-link';
+    link.innerHTML = displayName;
+    setTooltip(link, 'Open in Contentful');
+    link.onclick = (e) => {
+      e.stopPropagation(); // Prevent row click handler
+    };
+    link.dataset.keyName = keyName;
+    keyTd.appendChild(link);
+  } else {
+    // No link for new items - wrap in span
+    const keySpan = document.createElement('span');
+    keySpan.innerHTML = displayName;
+    keySpan.style.fontWeight = '600';
+    keySpan.dataset.keyName = keyName;
+    keyTd.appendChild(keySpan);
+  }
+
+  tr.appendChild(keyTd);
+
+  // Text column - show all unique text values
+  const textTd = document.createElement('td');
+  const textDiv = document.createElement('div');
+  textDiv.className = 'text-preview';
+  const textContent = uniqueTexts.join(' | ');
+  textDiv.textContent = textContent;
+  textTd.appendChild(textDiv);
+  tr.appendChild(textTd);
+
+  // Status column - check all items in the group
+  const statusTd = document.createElement('td');
+  statusTd.className = 'text-center';
+  const statusBadge = document.createElement('span');
+  statusBadge.className = 'status-badge checking';
+  statusBadge.id = `status-${originalIndex}`;
+
+  if (!contentfulItem) {
+    statusBadge.className = 'status-badge not-exists';
+    statusBadge.innerHTML = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+    setTooltip(statusBadge, 'New - Does not exist in Contentful');
+  } else {
+    // Check if any item in the group is out of sync
+    let allSynced = true;
+
+    for (const itm of items) {
+      const isEqual = textsAreEqual(itm.characters, contentfulItem.value);
+      if (!isEqual) {
+        allSynced = false;
+        break; // Early exit when we find first mismatch
+      }
+    }
+
+    const contentfulText = normalizeText(contentfulItem.value);
+
+    if (!allSynced) {
+      statusBadge.className = 'status-badge out-of-sync';
+      statusBadge.innerHTML = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4v5M8 11v1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+      setTooltip(statusBadge, `Contentful: "${contentfulText}"`, 'top', true);
+    } else {
+      statusBadge.className = 'status-badge synced';
+      statusBadge.innerHTML = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8 L7 12 L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      setTooltip(statusBadge, 'Synced - Matches Contentful');
+    }
+  }
+
+  statusTd.appendChild(statusBadge);
+  tr.appendChild(statusTd);
+
+  // Action column
+  const actionTd = document.createElement('td');
+  actionTd.className = 'text-center';
+
+  if (hasConflict) {
+    // Use flex container for consistent alignment
+    const buttonContainer = createFlexContainer();
+
+    // Show "Resolve Conflict" button
+    const resolveBtn = document.createElement('button');
+    resolveBtn.className = 'btn-save-item-icon';
+    setTooltip(resolveBtn, `Resolve ${uniqueTexts.length} conflicting text variations`);
+
+    // Warning triangle icon
+    resolveBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 1 L15 14 L1 14 Z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6 v3 M8 11 v1" stroke="var(--figma-accent)" stroke-width="1.5" stroke-linecap="round"/></svg>';
+    resolveBtn.onclick = (e) => {
+      e.stopPropagation();
+      showConflictModal(keyName, items, contentfulItem ? contentfulItem.value : null);
+    };
+    buttonContainer.appendChild(resolveBtn);
+    actionTd.appendChild(buttonContainer);
+  } else {
+    // Check if any item in the group needs update
+    let needsUpdate = !contentfulItem;
+    if (!needsUpdate) {
+      for (const itm of items) {
+        if (!textsAreEqual(itm.characters, contentfulItem.value)) {
+          needsUpdate = true;
+          break;
+        }
+      }
+    }
+
+    const buttonContainer = createFlexContainer();
+
+    // Save/Update button
+    if (needsUpdate) {
+      const saveBtn = document.createElement('button');
+      saveBtn.className = 'btn-save-item-icon';
+      saveBtn.innerHTML = contentfulItem
+        ? '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 14V2M8 2L4 6M8 2L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        : '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2V14M2 8H14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+      setTooltip(saveBtn, contentfulItem ? 'Update in Contentful' : 'Create in Contentful');
+      saveBtn.onclick = () => saveItemToContentful(item, originalIndex);
+      buttonContainer.appendChild(saveBtn);
+    }
+
+    // Link icon for single items (non-merged)
+    if (count === 1) {
+      const linkBtn = document.createElement('button');
+      linkBtn.className = 'btn-link-to-figma';
+      linkBtn.innerHTML = '<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
+      setTooltip(linkBtn, 'Show in Figma');
+      linkBtn.onclick = (e) => {
+        e.stopPropagation();
+        showNodeInFigma(item.id);
+      };
+      buttonContainer.appendChild(linkBtn);
+    }
+
+    actionTd.appendChild(buttonContainer);
+  }
+
+  tr.appendChild(actionTd);
+  return tr;
+}
+
+// Render grouped items (legacy synchronous version - keep for compatibility)
 function renderGroupedItems(filteredItems) {
   const tbody = document.getElementById('items-table-body');
 
@@ -3325,7 +3675,7 @@ function renderGroupedItems(filteredItems) {
   });
 }
 
-function renderItemsTable() {
+async function renderItemsTable() {
   // Prevent concurrent renders
   if (isRendering) {
     return;
@@ -3348,8 +3698,8 @@ function renderItemsTable() {
       return;
     }
 
-    setWriteStatus('Rendering...', 'loading');
-    
+    setWriteStatus('Preparing data...', 'loading');
+
     // Get search filter
     const searchInput = document.getElementById('search-input');
     const searchTerm = (searchInput?.value || '').toLowerCase().trim();
@@ -3384,13 +3734,13 @@ function renderItemsTable() {
       filteredItems.every(item => item.name.toLowerCase() === searchTerm);
 
     if (isFilteringByKey) {
-      // Render individual ungrouped rows
+      // Render individual ungrouped rows (synchronous)
       renderIndividualItems(filteredItems);
     } else {
-      // Render grouped rows
-      renderGroupedItems(filteredItems);
+      // Render grouped rows (progressive)
+      await renderGroupedItemsProgressive(filteredItems);
     }
-    
+
     const tableSection = document.getElementById('items-table-section');
     if (tableSection) {
       tableSection.classList.remove('hidden');
@@ -3824,15 +4174,41 @@ document.addEventListener('mouseout', (e) => {
   }
 }, true); // Use capture phase
 
-// Bulletproof text normalization and comparison
+// Step 10b: Memoization cache for text normalization
+const normalizeCache = new Map();
+let normalizeCacheCounter = 0;
+const CACHE_CHECK_INTERVAL = 1000; // Only check cache size every 1000 calls
+
+// Bulletproof text normalization and comparison with memoization
 function normalizeText(text) {
   if (!text) return '';
-  return text
+
+  // Check cache first
+  if (normalizeCache.has(text)) {
+    return normalizeCache.get(text);
+  }
+
+  // Perform normalization
+  const normalized = text
     .trim()                           // Remove leading/trailing whitespace
     .replace(/\s+/g, ' ')             // Normalize multiple spaces to single space
     .replace(/\u00A0/g, ' ')          // Replace non-breaking spaces with regular spaces
     .replace(/[\u200B-\u200D\uFEFF]/g, '') // Remove zero-width characters
     .normalize('NFC');                // Unicode normalization (canonical composition)
+
+  // Store in cache
+  normalizeCache.set(text, normalized);
+
+  // Only check cache size periodically to avoid performance impact
+  normalizeCacheCounter++;
+  if (normalizeCacheCounter >= CACHE_CHECK_INTERVAL) {
+    normalizeCacheCounter = 0;
+    if (normalizeCache.size > 5000) {
+      normalizeCache.clear();
+    }
+  }
+
+  return normalized;
 }
 
 function textsAreEqual(text1, text2) {
@@ -3865,14 +4241,7 @@ function saveItemToContentful(item, index) {
 }
 
 function updateItemStatus(key, success, errorMsg, errorDetails) {
-  console.log('=== updateItemStatus called ===');
-  console.log('Key:', key);
-  console.log('Success:', success);
-  console.log('Error:', errorMsg);
-  console.log('Error Details:', errorDetails);
-  
   if (success) {
-    console.log('Save successful, refreshing from Contentful...');
 
     // Instead of updating cache manually, re-fetch from Contentful to get the REAL state
     setWriteStatus(`${key} saved, refreshing...`, 'success');
@@ -3935,12 +4304,17 @@ window.onmessage = (event) => {
     }
     
     // Config is complete - automatically load text items
-    setWriteStatus('Loading text items...', 'loading');
-    
+    // Use loading overlay for initial load
+    if (isInitialLoad) {
+      setLoadingMessage('Loading text items...');
+    } else {
+      setWriteStatus('Loading text items...', 'loading');
+    }
+
     // Clear existing data to force fresh fetch
     textItems = [];
     contentfulItems = {};
-    
+
     // Automatically fetch text nodes from Figma
     parent.postMessage({ pluginMessage: { type: 'get-translatable-nodes', config } }, '*');
   }
@@ -4484,13 +4858,10 @@ function createCombinedRecords(recordsByType) {
 }
 
 // Message handler additions for content preview
-const originalOnMessage = window.onmessage;
-window.onmessage = (event) => {
-  // Call original handler first
-  if (originalOnMessage) {
-    originalOnMessage(event);
-  }
-  
+// NOTE: The main handler at line 3937 already processes all messages.
+// This section only handles additional preview-specific messages.
+// DO NOT call the original handler here or messages will be processed twice!
+window.addEventListener('message', (event) => {
   if (!event || !event.data || !event.data.pluginMessage) return;
   const msg = event.data.pluginMessage;
   
@@ -4591,31 +4962,38 @@ window.onmessage = (event) => {
   if (msg.type === 'translatable-nodes-loaded') {
     loadItemsAndCheckStatus(msg.nodes || []);
   }
-  
-  if (msg.type === 'contentful-items-loaded') {
-    console.log('📥 Contentful items loaded from server:', Object.keys(msg.items || {}).length, 'items');
-    contentfulItems = msg.items || {};
 
-    // Log what we got from Contentful for debugging
-    Object.keys(contentfulItems).forEach(key => {
-      console.log(`  - ${key}: "${contentfulItems[key].value.substring(0, 50)}..." (ID: ${contentfulItems[key].id})`);
-    });
+  if (msg.type === 'contentful-items-loaded') {
+    contentfulItems = msg.items || {};
 
     renderItemsTable();
     updateStats();
-    setWriteStatus('Ready', 'success');
+
+    // Hide loading overlay on initial load, show table
+    if (isInitialLoad) {
+      hideLoadingOverlay();
+    }
+
+    // Update footer status - count unique keys
+    const groupedItems = {};
+    textItems.forEach((item) => {
+      if (!groupedItems[item.name]) {
+        groupedItems[item.name] = [];
+      }
+      groupedItems[item.name].push(item);
+    });
+    const uniqueKeys = Object.keys(groupedItems).length;
+    setWriteStatus(`Ready (${uniqueKeys} keys)`, 'success');
   }
   
   if (msg.type === 'item-saved') {
-    console.log('Received item-saved message:', msg);
     updateItemStatus(msg.key, msg.success, msg.error, msg.errorDetails);
   }
-  
+
   // Handle text node selection in Figma canvas
   if (msg.type === 'text-node-selected') {
     const searchInput = document.getElementById('search-input');
     if (searchInput && msg.nodeName) {
-      console.log('Text node selected in Figma:', msg.nodeName);
       searchInput.value = msg.nodeName;
       searchInput.dispatchEvent(new Event('input'));
     }
@@ -4625,7 +5003,7 @@ window.onmessage = (event) => {
   if (msg.type === 'auto-refresh-trigger') {
     refreshData();
   }
-};
+});
 
 // Error Modal Functions
 function showErrorModal(title, message, details) {

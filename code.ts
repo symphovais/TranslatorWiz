@@ -110,7 +110,10 @@ function validateConfig(config: ContentfulConfig): string | null {
   return null;
 }
 
-// Listen for selection changes in Figma
+// Selection change listener disabled to prevent unwanted auto-refresh and search field population
+// This was causing the plugin to refresh when adding any element and auto-fill search when adding text
+// Users can manually search for text nodes using the search field
+/*
 figma.on('selectionchange', () => {
   try {
     if (!figma.currentPage) return;
@@ -140,8 +143,11 @@ figma.on('selectionchange', () => {
     // Don't crash the plugin
   }
 });
+*/
 
-// Listen for document changes and trigger auto-refresh
+// Document change auto-refresh disabled to prevent unwanted refreshes when adding elements
+// Users can manually refresh using the refresh button if needed
+/*
 let lastRefreshTrigger = 0;
 const REFRESH_THROTTLE = 5000; // 5 seconds minimum between triggers
 
@@ -165,8 +171,25 @@ figma.on('documentchange', () => {
     // Don't crash the plugin
   }
 });
+*/
+
+// Track last message to prevent duplicate processing within short time window
+let lastMessageType: string | null = null;
+let lastMessageTime: number = 0;
+const DUPLICATE_THRESHOLD_MS = 200;
 
 figma.ui.onmessage = async (msg: any) => {
+  const handlerStartTime = Date.now();
+
+  // Prevent duplicate processing of the same message type within 200ms
+  const timeSinceLastMessage = handlerStartTime - lastMessageTime;
+  if (msg?.type === lastMessageType && timeSinceLastMessage < DUPLICATE_THRESHOLD_MS) {
+    return;
+  }
+
+  lastMessageType = msg?.type;
+  lastMessageTime = handlerStartTime;
+
   try {
     // Validate message structure
     if (!msg || typeof msg !== 'object' || typeof msg.type !== 'string') {
@@ -359,8 +382,9 @@ figma.ui.onmessage = async (msg: any) => {
       }
       
       const count = await applyTranslations(translations, msg.config);
+
       figma.ui.postMessage({ type: 'translation-applied', count });
-      
+
       // Update node count after translation
       const updatedNodeCount = getTranslatableNodeCount(msg.config);
       figma.ui.postMessage({ type: 'node-count', count: updatedNodeCount });
@@ -456,19 +480,24 @@ figma.ui.onmessage = async (msg: any) => {
         figma.ui.postMessage({ type: 'error', message: 'Configuration missing' });
         return;
       }
-      
+
       try {
-        const pattern = new RegExp(msg.config.NODE_NAME_PATTERN);
-        const textNodes = figma.currentPage.findAll(
-          (n) => n.type === 'TEXT' && pattern.test(n.name)
+        const pattern = msg.config.NODE_NAME_PATTERN;
+        const regex = new RegExp(pattern);
+
+        // Use findAll with filter to get all TEXT nodes matching the pattern
+        // This ensures we find all nodes, including those in instances and components
+        const textNodes = figma.currentPage.findAll((n) =>
+          n.type === 'TEXT' && regex.test(n.name)
         ) as TextNode[];
-        
-        const nodes = textNodes.map(node => ({
+
+        // Map to node info
+        const nodes: TextNodeInfo[] = textNodes.map(node => ({
           id: node.id,
           name: node.name,
           characters: node.characters
         }));
-        
+
         figma.ui.postMessage({ type: 'translatable-nodes-loaded', nodes });
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
@@ -482,7 +511,7 @@ figma.ui.onmessage = async (msg: any) => {
         figma.ui.postMessage({ type: 'error', message: 'Configuration missing' });
         return;
       }
-      
+
       try {
         const items = await fetchAllContentfulItems(msg.config);
         figma.ui.postMessage({ type: 'contentful-items-loaded', items });
@@ -501,8 +530,9 @@ figma.ui.onmessage = async (msg: any) => {
       
       try {
         const result = await saveItemToContentful(msg.config, msg.item);
-        figma.ui.postMessage({ 
-          type: 'item-saved', 
+
+        figma.ui.postMessage({
+          type: 'item-saved',
           key: msg.item.key,
           success: result.success,
           error: result.error,
@@ -657,15 +687,16 @@ figma.ui.onmessage = async (msg: any) => {
 function getTranslatableNodeCount(config: ContentfulConfig): number {
   try {
     if (!figma.currentPage) return 0;
-    
+
     const pattern = new RegExp(config.NODE_NAME_PATTERN);
-    const textNodes = figma.currentPage.findAll(
-      (n) => {
-        if (!n || n.type !== 'TEXT') return false;
-        if (!n.name) return false;
-        return pattern.test(n.name);
-      }
-    ) as TextNode[];
+
+    // Use findAllWithCriteria for faster search
+    const allTextNodes = figma.currentPage.findAllWithCriteria({
+      types: ['TEXT']
+    }) as TextNode[];
+
+    // Filter by pattern
+    const textNodes = allTextNodes.filter(n => n.name && pattern.test(n.name));
     return textNodes.length;
   } catch (error) {
     console.error('Error counting translatable nodes:', error);
@@ -797,9 +828,13 @@ async function applyTranslations(translations: Translation[], config: Contentful
   }
 
   const pattern = new RegExp(config.NODE_NAME_PATTERN);
-  const textNodes = figma.currentPage.findAll(
-    (n) => n.type === 'TEXT' && pattern.test(n.name)
-  ) as TextNode[];
+
+  // Use findAllWithCriteria for faster search
+  const allTextNodes = figma.currentPage.findAllWithCriteria({
+    types: ['TEXT']
+  }) as TextNode[];
+
+  const textNodes = allTextNodes.filter(n => pattern.test(n.name));
 
   if (textNodes.length === 0) {
     throw new Error('No translatable text nodes found on current page');
@@ -901,10 +936,11 @@ async function fetchContentTypes(config: ContentfulConfig): Promise<any[]> {
 }
 
 function getAllTextNodes(): TextNodeInfo[] {
-  const textNodes = figma.currentPage.findAll(
-    (n) => n.type === 'TEXT'
-  ) as TextNode[];
-  
+  // Use findAllWithCriteria for faster search
+  const textNodes = figma.currentPage.findAllWithCriteria({
+    types: ['TEXT']
+  }) as TextNode[];
+
   return textNodes.map(node => ({
     id: node.id,
     name: node.name,
@@ -1013,60 +1049,89 @@ async function fetchAllContentfulItems(config: ContentfulConfig): Promise<{ [key
   const spaceId = encodeURIComponent(config.SPACE_ID);
   const environment = encodeURIComponent(config.ENVIRONMENT);
   const contentType = encodeURIComponent(config.CONTENT_TYPE);
-  
-  const url = `https://api.contentful.com/spaces/${spaceId}/environments/${environment}/entries?content_type=${contentType}&limit=1000`;
+
+  const limit = 1000; // Contentful max per request
+
   const options = {
     headers: {
       'Authorization': `Bearer ${config.CMA_TOKEN}`
     }
   };
-  
+
   try {
-    const response = await fetchWithTimeout(url, options, API_TIMEOUT);
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch Contentful items');
+    // Fetch all entries with parallel pagination
+    const firstUrl = `https://api.contentful.com/spaces/${spaceId}/environments/${environment}/entries?content_type=${contentType}&limit=${limit}`;
+    const firstResponse = await fetchWithTimeout(firstUrl, options, API_TIMEOUT);
+
+    if (!firstResponse.ok) {
+      throw new Error(`HTTP ${firstResponse.status}: ${firstResponse.statusText}`);
     }
-    
-    const data = await response.json();
+
+    const firstData = await firstResponse.json();
+    const total = firstData.total || 0;
+
+    const allPages = [firstData];
+
+    if (total > limit) {
+      const remainingPages = Math.ceil((total - limit) / limit);
+      const pageRequests = [];
+
+      for (let page = 1; page <= remainingPages; page++) {
+        const skip = page * limit;
+        const pageUrl = `https://api.contentful.com/spaces/${spaceId}/environments/${environment}/entries?content_type=${contentType}&limit=${limit}&skip=${skip}`;
+
+        pageRequests.push(
+          fetchWithTimeout(pageUrl, options, API_TIMEOUT)
+            .then(r => r.json())
+            .catch(err => {
+              console.error(`Failed to fetch page ${page}:`, err);
+              return { items: [] };
+            })
+        );
+      }
+
+      const remainingData = await Promise.all(pageRequests);
+      allPages.push(...remainingData);
+    }
+
+    // Process all items from all pages
     const items: { [key: string]: { value: string; id: string } } = {};
-    
-    if (data.items && Array.isArray(data.items)) {
-      for (const item of data.items) {
-        // Skip archived entries only (unpublished entries are OK)
-        const isArchived = item.sys.archivedVersion !== undefined;
-        
-        if (isArchived) {
-          console.log(`Skipping archived entry ${item.sys.id}`);
-          continue;
-        }
-        
-        const fields = item.fields || {};
-        // CMA API returns fields in localized format: { 'en-US': 'value' }
-        const keyField = fields[config.KEY_FIELD];
-        const valueField = fields[config.VALUE_FIELD];
-        
-        // Get the actual value from the locale (default to 'en-US' or first available locale)
-        let key: string | null = null;
-        let value: string | null = null;
-        
-        if (keyField && typeof keyField === 'object') {
-          key = keyField['en-US'] || keyField[Object.keys(keyField)[0]];
-        }
-        
-        if (valueField && typeof valueField === 'object') {
-          value = valueField['en-US'] || valueField[Object.keys(valueField)[0]];
-        }
-        
-        if (key && value) {
-          items[key] = {
-            value: value,
-            id: item.sys.id
-          };
+
+    for (const pageData of allPages) {
+      if (pageData.items && Array.isArray(pageData.items)) {
+        for (const item of pageData.items) {
+          // Skip archived entries only (unpublished entries are OK)
+          if (item.sys.archivedVersion !== undefined) {
+            continue;
+          }
+
+          const fields = item.fields || {};
+
+          // Simple locale extraction
+          const keyField = fields[config.KEY_FIELD];
+          const valueField = fields[config.VALUE_FIELD];
+
+          let key: string | null = null;
+          let value: string | null = null;
+
+          if (keyField && typeof keyField === 'object') {
+            key = keyField['en-US'] || keyField[Object.keys(keyField)[0]];
+          }
+
+          if (valueField && typeof valueField === 'object') {
+            value = valueField['en-US'] || valueField[Object.keys(valueField)[0]];
+          }
+
+          if (key && value) {
+            items[key] = {
+              value: value,
+              id: item.sys.id
+            };
+          }
         }
       }
     }
-    
+
     return items;
   } catch (error) {
     if (error instanceof Error) {
