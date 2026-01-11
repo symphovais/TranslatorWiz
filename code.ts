@@ -317,9 +317,9 @@ figma.ui.onmessage = async (msg: UIMessage) => {
           throw new Error('No locales found');
         }
         
-        figma.ui.postMessage({ 
-          type: 'preflight-locales-result', 
-          result: { success: true, message: `Found ${locales.length} locale(s) ✓` }
+        figma.ui.postMessage({
+          type: 'preflight-locales-result',
+          result: { success: true, message: `Found ${locales.length} locale(s)` }
         });
       } catch (error) {
         const errorMsg = error instanceof Error ? error.message : 'Failed to fetch locales';
@@ -373,9 +373,9 @@ figma.ui.onmessage = async (msg: UIMessage) => {
           throw new Error(`Value field not found in content type`);
         }
         
-        figma.ui.postMessage({ 
-          type: 'preflight-content-result', 
-          result: { success: true, message: `Content type validated ✓` }
+        figma.ui.postMessage({
+          type: 'preflight-content-result',
+          result: { success: true, message: `Content type validated` }
         });
       } catch (error) {
         const errorMsg = error instanceof Error ? error.message : 'Content type check failed';
