@@ -2287,7 +2287,7 @@
     </div>
 
     <!-- Reset button -->
-    <div style="margin-top: 24px; text-align: right;">
+    <div style="margin-top: 24px;">
       <button class="btn-tertiary btn-reset-config" id="reset-config">Reset all fields to default</button>
     </div>
 
@@ -2301,6 +2301,12 @@
       </button>
       <button class="btn-primary" id="save-config" style="flex: 0 0 auto;">Save & Validate</button>
   </div>
+
+    <!-- Version -->
+    <div id="plugin-version" style="margin-top: 16px; text-align: center; font-size: 11px; color: var(--figma-text-tertiary);">
+      Version ...
+    </div>
+
   </div>
 </div>
 
@@ -4426,6 +4432,14 @@ window.onmessage = (event) => {
       return;
     }
     config = msg.config;
+
+    // Update version display if provided
+    if (msg.version) {
+      const versionEl = document.getElementById('plugin-version');
+      if (versionEl) {
+        versionEl.textContent = `Version ${msg.version}`;
+      }
+    }
     
     // Check if configuration is complete (has Space ID and CMA Token)
     if (!isConfigComplete(config)) {

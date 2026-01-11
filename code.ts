@@ -1,5 +1,9 @@
 // ConteFi - Figma plugin for Contentful-based translations
 
+// IMPORTANT: Plugin version - must match version in package.json
+// When releasing a new version, update both files
+const PLUGIN_VERSION = "1.0.0";
+
 figma.showUI(__html__, { width: 800, height: 500, themeColors: true });
 
 // Load all pages to enable documentchange listener
@@ -293,7 +297,7 @@ figma.ui.onmessage = async (msg: UIMessage) => {
       configData = await loadConfigFromStorage();
 
       // Always send config to UI (even if incomplete) so UI can show onboarding
-      figma.ui.postMessage({ type: 'config-loaded', config: configData });
+      figma.ui.postMessage({ type: 'config-loaded', config: configData, version: PLUGIN_VERSION });
 
       // Count translatable nodes and send to UI (only if config is valid)
       const configError = validateConfig(configData);
@@ -328,12 +332,13 @@ figma.ui.onmessage = async (msg: UIMessage) => {
       configData = msg.config;
       
       figma.ui.postMessage({ type: 'config-saved', config: configData });
-      
+
       // Reload locales with new config
       const nodeCount = getTranslatableNodeCount(configData);
       figma.ui.postMessage({ type: 'node-count', count: nodeCount });
       return;
     }
+
 
     // Preflight check: Test by fetching locales (validates credentials, space, and environment)
     if (msg.type === 'preflight-test-locales') {
