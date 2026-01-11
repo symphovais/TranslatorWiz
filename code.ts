@@ -2,7 +2,7 @@
 
 // IMPORTANT: Plugin version - must match version in package.json
 // When releasing a new version, update both files
-const PLUGIN_VERSION = "1.0.0";
+const PLUGIN_VERSION = "2.0.0";
 
 figma.showUI(__html__, { width: 800, height: 500, themeColors: true });
 
