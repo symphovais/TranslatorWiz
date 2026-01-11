@@ -3063,7 +3063,6 @@ function renderIndividualItems(items) {
       link.rel = 'noopener noreferrer';
       link.className = 'contentful-link';
       link.textContent = keyName;
-      link.title = 'Open in Contentful';
       link.onclick = (e) => e.stopPropagation();
       link.dataset.keyName = keyName;
       keyTd.appendChild(link);
@@ -3310,7 +3309,6 @@ function createGroupedRow(keyName, items) {
     link.rel = 'noopener noreferrer';
     link.className = 'contentful-link';
     link.innerHTML = displayName;
-    setTooltip(link, 'Open in Contentful');
     link.onclick = (e) => {
       e.stopPropagation(); // Prevent row click handler
     };
@@ -3518,7 +3516,6 @@ function renderGroupedItems(filteredItems) {
       link.rel = 'noopener noreferrer';
       link.className = 'contentful-link';
       link.innerHTML = displayName;
-      setTooltip(link, 'Open in Contentful');
       link.onclick = (e) => {
         e.stopPropagation(); // Prevent row click handler
       };
