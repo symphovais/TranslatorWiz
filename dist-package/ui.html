@@ -5060,6 +5060,10 @@ window.addEventListener('message', (event) => {
     // Hide loading overlay on initial load, show table
     if (isInitialLoad) {
       hideLoadingOverlay();
+
+      // Signal to backend that UI initialization is complete
+      // This enables selection tracking without performance impact
+      parent.postMessage({ pluginMessage: { type: 'plugin-ready' } }, '*');
     }
 
     // Update footer status - count unique keys

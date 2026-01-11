@@ -176,37 +176,66 @@ function validateConfig(config: ContentfulConfig): string | null {
   return null;
 }
 
-// Selection change listener disabled to prevent unwanted auto-refresh and search field population
-// Listen for selection changes in Figma
-figma.on('selectionchange', () => {
-  try {
-    if (!figma.currentPage) return;
+// Selection tracking state
+let isSelectionTrackingEnabled = false;
+let selectionDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+const SELECTION_DEBOUNCE_MS = 300; // Debounce selection events to improve performance
 
-    const selection = figma.currentPage.selection;
+// Enable selection tracking after plugin initialization completes
+function enableSelectionTracking() {
+  if (isSelectionTrackingEnabled) return; // Already enabled
 
-    if (selection.length === 1 && selection[0] && selection[0].type === 'TEXT') {
-      const textNode = selection[0] as TextNode;
+  figma.on('selectionchange', () => {
+    // Debounce to prevent rapid-fire events during initialization or multi-selection
+    if (selectionDebounceTimer) clearTimeout(selectionDebounceTimer);
 
-      // Safely access characters
-      let characters = '';
+    selectionDebounceTimer = setTimeout(() => {
       try {
-        characters = textNode.characters;
-      } catch (e) {
-        console.warn('Could not read text node characters:', e);
-        characters = '[Unable to read text]';
-      }
+        if (!figma.currentPage) return;
 
-      figma.ui.postMessage({
-        type: 'text-node-selected',
-        nodeName: textNode.name || '[Unnamed]',
-        nodeText: characters
-      });
-    }
-  } catch (error) {
-    console.error('Selection change handler error:', error);
-    // Don't crash the plugin
-  }
-});
+        const selection = figma.currentPage.selection;
+
+        if (selection.length === 1 && selection[0] && selection[0].type === 'TEXT') {
+          const textNode = selection[0] as TextNode;
+
+          // Check if node name matches the configured pattern
+          if (configData && configData.NODE_NAME_PATTERN) {
+            try {
+              const pattern = new RegExp(configData.NODE_NAME_PATTERN);
+              if (!pattern.test(textNode.name)) {
+                // Node name doesn't match pattern - ignore this selection
+                return;
+              }
+            } catch (e) {
+              console.warn('Invalid regex pattern in config:', e);
+              return;
+            }
+          }
+
+          // Safely access characters
+          let characters = '';
+          try {
+            characters = textNode.characters;
+          } catch (e) {
+            console.warn('Could not read text node characters:', e);
+            characters = '[Unable to read text]';
+          }
+
+          figma.ui.postMessage({
+            type: 'text-node-selected',
+            nodeName: textNode.name || '[Unnamed]',
+            nodeText: characters
+          });
+        }
+      } catch (error) {
+        console.error('Selection change handler error:', error);
+        // Don't crash the plugin
+      }
+    }, SELECTION_DEBOUNCE_MS);
+  });
+
+  isSelectionTrackingEnabled = true;
+}
 
 // Document change auto-refresh disabled to prevent unwanted refreshes when adding elements
 // Users can manually refresh using the refresh button if needed
@@ -262,16 +291,22 @@ figma.ui.onmessage = async (msg: UIMessage) => {
     if (msg.type === 'init') {
       // Load config from storage
       configData = await loadConfigFromStorage();
-      
+
       // Always send config to UI (even if incomplete) so UI can show onboarding
       figma.ui.postMessage({ type: 'config-loaded', config: configData });
-      
+
       // Count translatable nodes and send to UI (only if config is valid)
       const configError = validateConfig(configData);
       if (!configError) {
         const nodeCount = getTranslatableNodeCount(configData);
         figma.ui.postMessage({ type: 'node-count', count: nodeCount });
       }
+      return;
+    }
+
+    if (msg.type === 'plugin-ready') {
+      // Enable selection tracking after UI initialization completes
+      enableSelectionTracking();
       return;
     }
 
