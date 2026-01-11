@@ -192,7 +192,7 @@
   .section {
     background: var(--figma-bg);
     border-radius: 0;
-    padding: 12px 16px;
+    padding: 12px 12px;
     margin-bottom: 0;
     transition: background 0.2s ease;
   }
@@ -313,7 +313,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 16px;
+    padding: 8px 12px;
     gap: 16px;
     border-top: 1px solid var(--figma-border);
   }
@@ -628,7 +628,7 @@
 
   /* Compact mode - reduce header spacing */
   body.compact-mode .section {
-    padding: 8px 12px !important;
+    padding: 12px 12px !important;
     gap: 6px !important;
   }
 
@@ -687,6 +687,31 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 140px;
+  }
+
+  /* Compact mode with scrollbar - reduced column widths */
+  body.compact-mode.has-scrollbar .write-table th:nth-child(1),
+  body.compact-mode.has-scrollbar .write-table td:nth-child(1) {
+    width: 125px;
+    max-width: 125px;
+  }
+
+  body.compact-mode.has-scrollbar .write-table th:nth-child(2),
+  body.compact-mode.has-scrollbar .write-table td:nth-child(2) {
+    width: 165px;
+    max-width: 165px;
+  }
+
+  body.compact-mode.has-scrollbar .write-table .text-preview {
+    max-width: 125px;
+  }
+
+  body.compact-mode.has-scrollbar .write-table .contentful-link {
+    max-width: 125px;
+  }
+
+  body.compact-mode.has-scrollbar .write-table td:nth-child(1) span {
+    max-width: 125px;
   }
 
   /* Clear search button */
@@ -2053,7 +2078,7 @@
     <div id="loading-message" style="font-size: 13px; color: var(--figma-text-secondary);">Initializing...</div>
   </div>
 
-  <div class="section hidden" id="items-table-section" style="padding: 6px; flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; z-index: 0;">
+  <div class="section hidden" id="items-table-section" style="padding: 12px; flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; z-index: 0;">
     <div class="table-container">
       <table class="write-table">
         <thead>
@@ -3340,6 +3365,9 @@ async function renderGroupedItemsProgressive(filteredItems) {
           setTooltip(element, element.textContent);
         }
       });
+
+      // Check if scrollbar is visible and update class
+      updateScrollbarClass();
     });
   });
 }
@@ -3759,6 +3787,9 @@ function renderGroupedItems(filteredItems) {
           setTooltip(element, element.textContent);
         }
       });
+
+      // Check if scrollbar is visible and update class
+      updateScrollbarClass();
     });
   });
 }
@@ -3934,9 +3965,10 @@ if (btnResize) {
     // Send resize message to backend (backend will store the state)
     parent.postMessage({ pluginMessage: { type: 'resize-window', width: size.width, height: size.height } }, '*');
 
-    // Refresh tooltips after layout changes
+    // Refresh tooltips and check scrollbar after layout changes
     setTimeout(() => {
       refreshTruncatedTooltips();
+      updateScrollbarClass();
     }, 100);
   };
 } else {
@@ -3946,6 +3978,21 @@ if (btnResize) {
 // ============================================================
 // UTILITY FUNCTIONS
 // ============================================================
+
+/**
+ * Check if table container has scrollbar and update body class
+ */
+function updateScrollbarClass() {
+  const tableContainer = document.querySelector('.table-container');
+  if (tableContainer) {
+    const hasScrollbar = tableContainer.scrollHeight > tableContainer.clientHeight;
+    if (hasScrollbar) {
+      document.body.classList.add('has-scrollbar');
+    } else {
+      document.body.classList.remove('has-scrollbar');
+    }
+  }
+}
 
 /**
  * Build Contentful entry URL
