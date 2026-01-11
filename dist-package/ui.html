@@ -361,8 +361,8 @@
   
   .spinner {
     display: inline-block;
-    width: 14px;
-    height: 14px;
+    width: 20px;
+    height: 20px;
     border: 2px solid rgba(0,0,0,0.1);
     border-top-color: currentColor;
     border-radius: 50%;
@@ -4307,15 +4307,15 @@ function textsAreEqual(text1, text2) {
 
 function saveItemToContentful(item, index) {
   const statusBadge = document.getElementById(`status-${index}`);
-  statusBadge.className = 'status-badge checking';
-  statusBadge.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 0C3.13401 0 0 3.13401 0 7C0 10.866 3.13401 14 7 14C10.866 14 14 10.866 14 7C14 3.13401 10.866 0 7 0ZM7 12.25C4.10051 12.25 1.75 9.89949 1.75 7C1.75 4.10051 4.10051 1.75 7 1.75C9.89949 1.75 12.25 4.10051 12.25 7C12.25 9.89949 9.89949 12.25 7 12.25Z" fill="currentColor"/><path d="M7 3.5C6.51675 3.5 6.125 3.89175 6.125 4.375V7.36493L4.63128 8.85866C4.28333 9.20661 4.28333 9.76839 4.63128 10.1163C4.97923 10.4643 5.54101 10.4643 5.88896 10.1163L7.62896 8.37634C7.78281 8.22249 7.875 8.01676 7.875 7.80117V4.375C7.875 3.89175 7.48325 3.5 7 3.5Z" fill="currentColor"/></svg>';
+  statusBadge.className = 'spinner';
+  statusBadge.innerHTML = '';
   statusBadge.title = 'Saving...';
-  
+
   const isUpdate = !!contentfulItems[item.name];
   const entryId = isUpdate ? contentfulItems[item.name].id : null;
-  
-  parent.postMessage({ 
-    pluginMessage: { 
+
+  parent.postMessage({
+    pluginMessage: {
       type: 'save-contentful-item',
       config,
       item: {
@@ -4324,7 +4324,7 @@ function saveItemToContentful(item, index) {
         entryId: entryId,
         isUpdate: isUpdate
       }
-    } 
+    }
   }, '*');
 }
 
