@@ -1755,6 +1755,29 @@
     cursor: not-allowed;
   }
 
+  .conflict-version-error {
+    display: none;
+    background: #fee;
+    border: 1px solid #fcc;
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-top: 12px;
+    gap: 10px;
+    align-items: flex-start;
+    color: #c00;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .conflict-version-error svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .conflict-version-error.show {
+    display: flex;
+  }
+
   .conflict-contentful-section {
     background: var(--figma-bg-secondary);
     border: 1px solid var(--figma-border);
@@ -2582,9 +2605,16 @@ function showConflictModal(keyName, items, contentfulValue) {
         <button class="btn-show-in-figma" onclick="event.stopPropagation(); showNodeInFigma('${firstItem.id}')">
           Show in Figma
         </button>
-        <button class="btn-use-this-version" onclick="event.stopPropagation(); useThisVersionByText('${escapedText}')">
+        <button class="btn-use-this-version" onclick="event.stopPropagation(); useThisVersionByText('${escapedText}', this)">
           Change All to This
         </button>
+      </div>
+      <div class="conflict-version-error" style="display: none;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M8 4v5M8 11v1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span class="conflict-version-error-text"></span>
       </div>
     `;
 
@@ -2608,6 +2638,12 @@ function showConflictModal(keyName, items, contentfulValue) {
 function hideConflictModal() {
   document.getElementById('conflict-modal').classList.remove('show');
   currentConflictData = null;
+
+  // Clear all errors from version cards
+  document.querySelectorAll('.conflict-version-error').forEach(error => {
+    error.classList.remove('show');
+    error.style.display = 'none';
+  });
 }
 
 function showNodeInFigma(nodeId) {
@@ -2619,7 +2655,7 @@ function showNodeInFigma(nodeId) {
   }, '*');
 }
 
-function useThisVersionByText(selectedText) {
+function useThisVersionByText(selectedText, buttonElement) {
   if (!currentConflictData) return;
 
   // Unescape HTML entities
@@ -2635,8 +2671,8 @@ function useThisVersionByText(selectedText) {
     return;
   }
 
-  // Use the existing handleUpdateAllInFigma logic
-  handleUpdateAllInFigma(versionIndex);
+  // Use the existing handleUpdateAllInFigma logic, passing the button element
+  handleUpdateAllInFigma(versionIndex, buttonElement);
 }
 
 function useThisVersion(versionIndex) {
@@ -2644,11 +2680,17 @@ function useThisVersion(versionIndex) {
   handleUpdateAllInFigma(versionIndex);
 }
 
-async function handleUpdateAllInFigma(versionIndex) {
+async function handleUpdateAllInFigma(versionIndex, buttonElement = null) {
   if (!currentConflictData) return;
 
   const selectedItem = currentConflictData.items[versionIndex];
   const nodeIds = currentConflictData.items.map(item => item.id);
+
+  // Clear all previous errors from all version cards
+  document.querySelectorAll('.conflict-version-error').forEach(error => {
+    error.classList.remove('show');
+    error.style.display = 'none';
+  });
 
   // Disable all "Use This Version" buttons
   const allButtons = document.querySelectorAll('.btn-use-this-version');
@@ -2707,7 +2749,47 @@ async function handleUpdateAllInFigma(versionIndex) {
     }
   } catch (error) {
     console.error('Error updating nodes:', error);
-    setWriteStatus(`Error: ${error.message}`, 'error');
+
+    // Extract a clean error message
+    let errorMessage = error.message;
+
+    // If the error contains the key name prefix (e.g., "jend_home_button_learnMore: Missing font"),
+    // extract just the meaningful part after the colon
+    if (errorMessage.includes(':')) {
+      const parts = errorMessage.split(':');
+      if (parts.length >= 2) {
+        errorMessage = parts.slice(1).join(':').trim();
+      }
+    }
+
+    // Create a helpful, user-friendly error message
+    let userFriendlyMessage = errorMessage;
+    if (errorMessage.toLowerCase().includes('missing font')) {
+      userFriendlyMessage = `Action failed: The font used in this text is not installed on your system. Please install the required font to make changes.`;
+    } else if (errorMessage.toLowerCase().includes('permission')) {
+      userFriendlyMessage = `Action failed: You don't have permission to edit this text. ${errorMessage}`;
+    } else if (errorMessage.toLowerCase().includes('locked')) {
+      userFriendlyMessage = `Action failed: This text layer is locked. Please unlock it in Figma before making changes.`;
+    } else {
+      userFriendlyMessage = `Action failed: ${errorMessage}`;
+    }
+
+    // Show error in the footer
+    setWriteStatus(`Error: ${currentConflictData.keyName}: ${errorMessage}`, 'error');
+
+    // Show error directly under the clicked button if we have the button element
+    if (buttonElement) {
+      const versionCard = buttonElement.closest('.conflict-version');
+      if (versionCard) {
+        const errorElement = versionCard.querySelector('.conflict-version-error');
+        const errorText = versionCard.querySelector('.conflict-version-error-text');
+        if (errorElement && errorText) {
+          errorText.textContent = userFriendlyMessage;
+          errorElement.style.display = 'flex';
+          errorElement.classList.add('show');
+        }
+      }
+    }
 
     // Re-enable buttons on error
     const allButtons = document.querySelectorAll('.btn-use-this-version');
