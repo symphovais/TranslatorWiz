@@ -1,6 +1,15 @@
 // ConteFi - Figma plugin for Contentful-based translations
 
-figma.showUI(__html__, { width: 900, height: 500, themeColors: true });
+// IMPORTANT: Plugin version - must match version in package.json
+// When releasing a new version, update both files
+const PLUGIN_VERSION = "2.0.0";
+
+figma.showUI(__html__, { width: 800, height: 500, themeColors: true });
+
+// Load all pages to enable documentchange listener
+(async () => {
+  await figma.loadAllPagesAsync();
+})();
 
 interface ContentfulConfig {
   SPACE_ID: string;
@@ -32,6 +41,72 @@ interface TextNodeInfo {
   id: string;
   name: string;
   characters: string;
+}
+
+// UI message types
+interface UIMessage {
+  type: string;
+  config?: ContentfulConfig;
+  locale?: string;
+  contentType?: string;
+  contentTypes?: string[];
+  mappings?: FieldMapping[];
+  recordFields?: Record<string, unknown>;
+  item?: unknown;
+  items?: unknown[];
+  nodeId?: string;
+  nodeIds?: string[];
+  newText?: string;
+  width?: number;
+  height?: number;
+  isCompact?: boolean;
+  [key: string]: unknown;
+}
+
+// Contentful API types
+interface ContentfulField {
+  id: string;
+  name: string;
+  type: string;
+}
+
+interface ContentfulRecord {
+  id: string;
+  fields: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
+interface ContentfulLocaleItem {
+  code: string;
+  name: string;
+}
+
+interface ContentfulTranslationItem {
+  fields: {
+    [key: string]: string;
+  };
+}
+
+interface ContentfulSaveItem {
+  key: string;
+  value: string;
+  isUpdate?: boolean;
+  entryId?: string;
+}
+
+interface ContentfulSaveResult {
+  success: boolean;
+  error?: string;
+  errorDetails?: {
+    status?: number;
+    response?: string;
+    operation?: string;
+    entryId?: string;
+    version?: number;
+    key?: string;
+    exception?: string;
+    [key: string]: unknown;
+  };
 }
 
 // Network timeout for API calls (10 seconds)
@@ -105,38 +180,84 @@ function validateConfig(config: ContentfulConfig): string | null {
   return null;
 }
 
-// Listen for selection changes in Figma
-figma.on('selectionchange', () => {
-  try {
-    if (!figma.currentPage) return;
-    
-    const selection = figma.currentPage.selection;
-    
-    if (selection.length === 1 && selection[0] && selection[0].type === 'TEXT') {
-      const textNode = selection[0] as TextNode;
-      
-      // Safely access characters
-      let characters = '';
-      try {
-        characters = textNode.characters;
-      } catch (e) {
-        console.warn('Could not read text node characters:', e);
-        characters = '[Unable to read text]';
-      }
-      
-      figma.ui.postMessage({
-        type: 'text-node-selected',
-        nodeName: textNode.name || '[Unnamed]',
-        nodeText: characters
-      });
-    }
-  } catch (error) {
-    console.error('Selection change handler error:', error);
-    // Don't crash the plugin
-  }
-});
+// Selection tracking state
+let isSelectionTrackingEnabled = false;
+let selectionDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+const SELECTION_DEBOUNCE_MS = 300; // Debounce selection events to improve performance
 
-figma.ui.onmessage = async (msg: any) => {
+// Enable selection tracking after plugin initialization completes
+function enableSelectionTracking() {
+  if (isSelectionTrackingEnabled) return; // Already enabled
+
+  figma.on('selectionchange', () => {
+    // Debounce to prevent rapid-fire events during initialization or multi-selection
+    if (selectionDebounceTimer) clearTimeout(selectionDebounceTimer);
+
+    selectionDebounceTimer = setTimeout(() => {
+      try {
+        if (!figma.currentPage) return;
+
+        const selection = figma.currentPage.selection;
+
+        if (selection.length === 1 && selection[0] && selection[0].type === 'TEXT') {
+          const textNode = selection[0] as TextNode;
+
+          // Check if node name matches the configured pattern
+          if (configData && configData.NODE_NAME_PATTERN) {
+            try {
+              const pattern = new RegExp(configData.NODE_NAME_PATTERN);
+              if (!pattern.test(textNode.name)) {
+                // Node name doesn't match pattern - ignore this selection
+                return;
+              }
+            } catch (e) {
+              console.warn('Invalid regex pattern in config:', e);
+              return;
+            }
+          }
+
+          // Safely access characters
+          let characters = '';
+          try {
+            characters = textNode.characters;
+          } catch (e) {
+            console.warn('Could not read text node characters:', e);
+            characters = '[Unable to read text]';
+          }
+
+          figma.ui.postMessage({
+            type: 'text-node-selected',
+            nodeName: textNode.name || '[Unnamed]',
+            nodeText: characters
+          });
+        }
+      } catch (error) {
+        console.error('Selection change handler error:', error);
+        // Don't crash the plugin
+      }
+    }, SELECTION_DEBOUNCE_MS);
+  });
+
+  isSelectionTrackingEnabled = true;
+}
+
+// Track last message to prevent duplicate processing within short time window
+let lastMessageType: string | null = null;
+let lastMessageTime: number = 0;
+const DUPLICATE_THRESHOLD_MS = 200;
+
+figma.ui.onmessage = async (msg: UIMessage) => {
+  const handlerStartTime = Date.now();
+
+  // Prevent duplicate processing of the same message type within 200ms
+  const timeSinceLastMessage = handlerStartTime - lastMessageTime;
+  if (msg?.type === lastMessageType && timeSinceLastMessage < DUPLICATE_THRESHOLD_MS) {
+    return;
+  }
+
+  lastMessageType = msg?.type;
+  lastMessageTime = handlerStartTime;
+
   try {
     // Validate message structure
     if (!msg || typeof msg !== 'object' || typeof msg.type !== 'string') {
@@ -146,16 +267,22 @@ figma.ui.onmessage = async (msg: any) => {
     if (msg.type === 'init') {
       // Load config from storage
       configData = await loadConfigFromStorage();
-      
+
       // Always send config to UI (even if incomplete) so UI can show onboarding
-      figma.ui.postMessage({ type: 'config-loaded', config: configData });
-      
+      figma.ui.postMessage({ type: 'config-loaded', config: configData, version: PLUGIN_VERSION });
+
       // Count translatable nodes and send to UI (only if config is valid)
       const configError = validateConfig(configData);
       if (!configError) {
         const nodeCount = getTranslatableNodeCount(configData);
         figma.ui.postMessage({ type: 'node-count', count: nodeCount });
       }
+      return;
+    }
+
+    if (msg.type === 'plugin-ready') {
+      // Enable selection tracking after UI initialization completes
+      enableSelectionTracking();
       return;
     }
 
@@ -177,12 +304,13 @@ figma.ui.onmessage = async (msg: any) => {
       configData = msg.config;
       
       figma.ui.postMessage({ type: 'config-saved', config: configData });
-      
+
       // Reload locales with new config
       const nodeCount = getTranslatableNodeCount(configData);
       figma.ui.postMessage({ type: 'node-count', count: nodeCount });
       return;
     }
+
 
     // Preflight check: Test by fetching locales (validates credentials, space, and environment)
     if (msg.type === 'preflight-test-locales') {
@@ -201,9 +329,9 @@ figma.ui.onmessage = async (msg: any) => {
           throw new Error('No locales found');
         }
         
-        figma.ui.postMessage({ 
-          type: 'preflight-locales-result', 
-          result: { success: true, message: `Found ${locales.length} locale(s) ✓` }
+        figma.ui.postMessage({
+          type: 'preflight-locales-result',
+          result: { success: true, message: `Found ${locales.length} locale(s)` }
         });
       } catch (error) {
         const errorMsg = error instanceof Error ? error.message : 'Failed to fetch locales';
@@ -248,7 +376,7 @@ figma.ui.onmessage = async (msg: any) => {
         
         // Verify required fields exist
         const fields = Array.isArray(data.fields) ? data.fields : [];
-        const fieldNames = fields.map((f: any) => (f && typeof f.id === 'string') ? f.id : '');
+        const fieldNames = fields.map((f: ContentfulField) => (f && typeof f.id === 'string') ? f.id : '');
         
         if (!fieldNames.includes(msg.config.KEY_FIELD)) {
           throw new Error(`Key field not found in content type`);
@@ -257,9 +385,9 @@ figma.ui.onmessage = async (msg: any) => {
           throw new Error(`Value field not found in content type`);
         }
         
-        figma.ui.postMessage({ 
-          type: 'preflight-content-result', 
-          result: { success: true, message: `Content type validated ✓` }
+        figma.ui.postMessage({
+          type: 'preflight-content-result',
+          result: { success: true, message: `Content type validated` }
         });
       } catch (error) {
         const errorMsg = error instanceof Error ? error.message : 'Content type check failed';
@@ -329,8 +457,9 @@ figma.ui.onmessage = async (msg: any) => {
       }
       
       const count = await applyTranslations(translations, msg.config);
+
       figma.ui.postMessage({ type: 'translation-applied', count });
-      
+
       // Update node count after translation
       const updatedNodeCount = getTranslatableNodeCount(msg.config);
       figma.ui.postMessage({ type: 'node-count', count: updatedNodeCount });
@@ -388,8 +517,8 @@ figma.ui.onmessage = async (msg: any) => {
       }
       
       try {
-        const recordsByContentType: { [key: string]: any[] } = {};
-        
+        const recordsByContentType: { [key: string]: ContentfulRecord[] } = {};
+
         // Load records from each content type
         for (const contentType of msg.contentTypes) {
           const records = await fetchRecords(msg.config, contentType);
@@ -426,19 +555,24 @@ figma.ui.onmessage = async (msg: any) => {
         figma.ui.postMessage({ type: 'error', message: 'Configuration missing' });
         return;
       }
-      
+
       try {
-        const pattern = new RegExp(msg.config.NODE_NAME_PATTERN);
-        const textNodes = figma.currentPage.findAll(
-          (n) => n.type === 'TEXT' && pattern.test(n.name)
+        const pattern = msg.config.NODE_NAME_PATTERN;
+        const regex = new RegExp(pattern);
+
+        // Use findAll with filter to get all TEXT nodes matching the pattern
+        // This ensures we find all nodes, including those in instances and components
+        const textNodes = figma.currentPage.findAll((n) =>
+          n.type === 'TEXT' && regex.test(n.name)
         ) as TextNode[];
-        
-        const nodes = textNodes.map(node => ({
+
+        // Map to node info
+        const nodes: TextNodeInfo[] = textNodes.map(node => ({
           id: node.id,
           name: node.name,
           characters: node.characters
         }));
-        
+
         figma.ui.postMessage({ type: 'translatable-nodes-loaded', nodes });
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
@@ -452,7 +586,7 @@ figma.ui.onmessage = async (msg: any) => {
         figma.ui.postMessage({ type: 'error', message: 'Configuration missing' });
         return;
       }
-      
+
       try {
         const items = await fetchAllContentfulItems(msg.config);
         figma.ui.postMessage({ type: 'contentful-items-loaded', items });
@@ -468,12 +602,14 @@ figma.ui.onmessage = async (msg: any) => {
         figma.ui.postMessage({ type: 'error', message: 'Configuration or item missing' });
         return;
       }
-      
+
       try {
-        const result = await saveItemToContentful(msg.config, msg.item);
-        figma.ui.postMessage({ 
-          type: 'item-saved', 
-          key: msg.item.key,
+        const itemToSave = msg.item as ContentfulSaveItem;
+        const result = await saveItemToContentful(msg.config, itemToSave);
+
+        figma.ui.postMessage({
+          type: 'item-saved',
+          key: itemToSave.key,
           success: result.success,
           error: result.error,
           errorDetails: result.errorDetails
@@ -481,13 +617,126 @@ figma.ui.onmessage = async (msg: any) => {
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
         const errorDetails = error instanceof Error ? { exception: error.name, stack: error.stack } : { exception: String(error) };
-        figma.ui.postMessage({ 
-          type: 'item-saved', 
-          key: msg.item.key,
+        const itemToSave = msg.item as ContentfulSaveItem;
+        figma.ui.postMessage({
+          type: 'item-saved',
+          key: itemToSave.key,
           success: false,
           error: errorMessage,
           errorDetails
         });
+      }
+      return;
+    }
+
+    if (msg.type === 'get-window-size-state') {
+      const isCompact = await figma.clientStorage.getAsync('window-size-compact');
+      figma.ui.postMessage({ type: 'window-size-state', isCompact: isCompact || false });
+      return;
+    }
+
+    if (msg.type === 'resize-window') {
+      if (msg.width && msg.height) {
+        try {
+          figma.ui.resize(msg.width, msg.height);
+
+          // Store the compact state
+          if (msg.isCompact !== undefined) {
+            await figma.clientStorage.setAsync('window-size-compact', msg.isCompact);
+          }
+        } catch (error) {
+          console.error('Failed to resize window:', error);
+        }
+      } else {
+        console.error('Invalid resize dimensions:', msg.width, msg.height);
+      }
+      return;
+    }
+
+    if (msg.type === 'update-multiple-nodes') {
+      try {
+        const nodeIds = msg.nodeIds as string[];
+        const newText = msg.newText as string;
+
+        if (!nodeIds || !Array.isArray(nodeIds) || nodeIds.length === 0) {
+          figma.ui.postMessage({
+            type: 'update-multiple-nodes-result',
+            success: false,
+            error: 'Invalid node IDs'
+          });
+          return;
+        }
+
+        let successCount = 0;
+        const errors: string[] = [];
+
+        for (const nodeId of nodeIds) {
+          try {
+            const node = await figma.getNodeByIdAsync(nodeId);
+
+            if (!node || !('type' in node) || node.type !== 'TEXT') {
+              errors.push(`Node ${nodeId}: Not found or not a text node`);
+              continue;
+            }
+
+            const textNode = node as TextNode;
+
+            if (textNode.hasMissingFont) {
+              errors.push(`${node.name}: Missing font`);
+              continue;
+            }
+
+            // Load fonts (handle mixed fonts like applyTranslations)
+            const fontName = textNode.fontName;
+            if (fontName === figma.mixed) {
+              // Text has mixed fonts, load all ranges
+              for (let i = 0; i < textNode.characters.length; i++) {
+                const font = textNode.getRangeFontName(i, i + 1) as FontName;
+                await figma.loadFontAsync(font);
+              }
+            } else {
+              await figma.loadFontAsync(fontName as FontName);
+            }
+
+            // Update the text
+            textNode.characters = newText;
+            successCount++;
+
+          } catch (nodeError) {
+            const errorMsg = nodeError instanceof Error ? nodeError.message : String(nodeError);
+            errors.push(`Node ${nodeId}: ${errorMsg}`);
+          }
+        }
+
+        figma.ui.postMessage({
+          type: 'update-multiple-nodes-result',
+          success: successCount > 0,
+          count: successCount,
+          errors: errors.length > 0 ? errors : undefined,
+          error: successCount === 0 ? errors[0] : undefined
+        });
+
+      } catch (error) {
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        figma.ui.postMessage({
+          type: 'update-multiple-nodes-result',
+          success: false,
+          error: errorMsg
+        });
+      }
+      return;
+    }
+
+    if (msg.type === 'select-node') {
+      try {
+        const nodeId = msg.nodeId as string;
+        const node = await figma.getNodeByIdAsync(nodeId);
+        if (node && 'type' in node) {
+          figma.currentPage.selection = [node as SceneNode];
+          figma.viewport.scrollAndZoomIntoView([node as SceneNode]);
+        }
+      } catch (error) {
+        console.error('Error selecting node:', error);
       }
       return;
     }
@@ -512,15 +761,16 @@ figma.ui.onmessage = async (msg: any) => {
 function getTranslatableNodeCount(config: ContentfulConfig): number {
   try {
     if (!figma.currentPage) return 0;
-    
+
     const pattern = new RegExp(config.NODE_NAME_PATTERN);
-    const textNodes = figma.currentPage.findAll(
-      (n) => {
-        if (!n || n.type !== 'TEXT') return false;
-        if (!n.name) return false;
-        return pattern.test(n.name);
-      }
-    ) as TextNode[];
+
+    // Use findAllWithCriteria for faster search
+    const allTextNodes = figma.currentPage.findAllWithCriteria({
+      types: ['TEXT']
+    }) as TextNode[];
+
+    // Filter by pattern
+    const textNodes = allTextNodes.filter(n => n.name && pattern.test(n.name));
     return textNodes.length;
   } catch (error) {
     console.error('Error counting translatable nodes:', error);
@@ -528,12 +778,18 @@ function getTranslatableNodeCount(config: ContentfulConfig): number {
   }
 }
 
-async function fetchWithTimeout(url: string, options?: any, timeout: number = API_TIMEOUT): Promise<any> {
+interface FetchOptions {
+  headers?: { [key: string]: string };
+  method?: string;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function fetchWithTimeout(url: string, options?: FetchOptions, timeout: number = API_TIMEOUT): Promise<any> {
   return new Promise((resolve, reject) => {
     const timeoutId = setTimeout(() => {
       reject(new Error('Request timeout - please check your network connection'));
     }, timeout);
-    
+
     fetch(url, options)
       .then(response => {
         clearTimeout(timeoutId);
@@ -576,7 +832,7 @@ async function fetchLocales(config: ContentfulConfig): Promise<Locale[]> {
     }
     
     return data.items
-      .map((item: any) => ({
+      .map((item: ContentfulLocaleItem) => ({
         code: (item && typeof item.code === 'string') ? item.code : '',
         name: (item && typeof item.name === 'string') ? item.name : ''
       }))
@@ -627,7 +883,7 @@ async function fetchTranslations(config: ContentfulConfig, locale: string): Prom
     }
     
     return data.items
-      .map((item: any) => {
+      .map((item: ContentfulTranslationItem) => {
         const fields = (item && typeof item.fields === 'object') ? item.fields : {};
         return {
           key: (typeof fields[config.KEY_FIELD] === 'string') ? fields[config.KEY_FIELD] : '',
@@ -652,9 +908,13 @@ async function applyTranslations(translations: Translation[], config: Contentful
   }
 
   const pattern = new RegExp(config.NODE_NAME_PATTERN);
-  const textNodes = figma.currentPage.findAll(
-    (n) => n.type === 'TEXT' && pattern.test(n.name)
-  ) as TextNode[];
+
+  // Use findAllWithCriteria for faster search
+  const allTextNodes = figma.currentPage.findAllWithCriteria({
+    types: ['TEXT']
+  }) as TextNode[];
+
+  const textNodes = allTextNodes.filter(n => pattern.test(n.name));
 
   if (textNodes.length === 0) {
     throw new Error('No translatable text nodes found on current page');
@@ -717,6 +977,7 @@ async function applyTranslations(translations: Translation[], config: Contentful
 
 // ========== Content Preview Mode Functions ==========
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function fetchContentTypes(config: ContentfulConfig): Promise<any[]> {
   const spaceId = encodeURIComponent(config.SPACE_ID);
   const environment = encodeURIComponent(config.ENVIRONMENT);
@@ -756,10 +1017,11 @@ async function fetchContentTypes(config: ContentfulConfig): Promise<any[]> {
 }
 
 function getAllTextNodes(): TextNodeInfo[] {
-  const textNodes = figma.currentPage.findAll(
-    (n) => n.type === 'TEXT'
-  ) as TextNode[];
-  
+  // Use findAllWithCriteria for faster search
+  const textNodes = figma.currentPage.findAllWithCriteria({
+    types: ['TEXT']
+  }) as TextNode[];
+
   return textNodes.map(node => ({
     id: node.id,
     name: node.name,
@@ -767,6 +1029,7 @@ function getAllTextNodes(): TextNodeInfo[] {
   }));
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function fetchRecords(config: ContentfulConfig, contentType: string): Promise<any[]> {
   const spaceId = encodeURIComponent(config.SPACE_ID);
   const environment = encodeURIComponent(config.ENVIRONMENT);
@@ -807,12 +1070,12 @@ async function fetchRecords(config: ContentfulConfig, contentType: string): Prom
   }
 }
 
-async function applyRecordToNodes(mappings: FieldMapping[], recordFields: any): Promise<void> {
+async function applyRecordToNodes(mappings: FieldMapping[], recordFields: Record<string, unknown>): Promise<void> {
   const errors: string[] = [];
-  
+
   for (const mapping of mappings) {
     try {
-      const node = figma.getNodeById(mapping.node) as TextNode | null;
+      const node = await figma.getNodeByIdAsync(mapping.node) as TextNode | null;
       
       if (!node || node.type !== 'TEXT') {
         errors.push(`Node not found: ${mapping.node}`);
@@ -868,60 +1131,89 @@ async function fetchAllContentfulItems(config: ContentfulConfig): Promise<{ [key
   const spaceId = encodeURIComponent(config.SPACE_ID);
   const environment = encodeURIComponent(config.ENVIRONMENT);
   const contentType = encodeURIComponent(config.CONTENT_TYPE);
-  
-  const url = `https://api.contentful.com/spaces/${spaceId}/environments/${environment}/entries?content_type=${contentType}&limit=1000`;
+
+  const limit = 1000; // Contentful max per request
+
   const options = {
     headers: {
       'Authorization': `Bearer ${config.CMA_TOKEN}`
     }
   };
-  
+
   try {
-    const response = await fetchWithTimeout(url, options, API_TIMEOUT);
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch Contentful items');
+    // Fetch all entries with parallel pagination
+    const firstUrl = `https://api.contentful.com/spaces/${spaceId}/environments/${environment}/entries?content_type=${contentType}&limit=${limit}`;
+    const firstResponse = await fetchWithTimeout(firstUrl, options, API_TIMEOUT);
+
+    if (!firstResponse.ok) {
+      throw new Error(`HTTP ${firstResponse.status}: ${firstResponse.statusText}`);
     }
-    
-    const data = await response.json();
+
+    const firstData = await firstResponse.json();
+    const total = firstData.total || 0;
+
+    const allPages = [firstData];
+
+    if (total > limit) {
+      const remainingPages = Math.ceil((total - limit) / limit);
+      const pageRequests = [];
+
+      for (let page = 1; page <= remainingPages; page++) {
+        const skip = page * limit;
+        const pageUrl = `https://api.contentful.com/spaces/${spaceId}/environments/${environment}/entries?content_type=${contentType}&limit=${limit}&skip=${skip}`;
+
+        pageRequests.push(
+          fetchWithTimeout(pageUrl, options, API_TIMEOUT)
+            .then(r => r.json())
+            .catch(err => {
+              console.error(`Failed to fetch page ${page}:`, err);
+              return { items: [] };
+            })
+        );
+      }
+
+      const remainingData = await Promise.all(pageRequests);
+      allPages.push(...remainingData);
+    }
+
+    // Process all items from all pages
     const items: { [key: string]: { value: string; id: string } } = {};
-    
-    if (data.items && Array.isArray(data.items)) {
-      for (const item of data.items) {
-        // Skip archived entries only (unpublished entries are OK)
-        const isArchived = item.sys.archivedVersion !== undefined;
-        
-        if (isArchived) {
-          console.log(`Skipping archived entry ${item.sys.id}`);
-          continue;
-        }
-        
-        const fields = item.fields || {};
-        // CMA API returns fields in localized format: { 'en-US': 'value' }
-        const keyField = fields[config.KEY_FIELD];
-        const valueField = fields[config.VALUE_FIELD];
-        
-        // Get the actual value from the locale (default to 'en-US' or first available locale)
-        let key: string | null = null;
-        let value: string | null = null;
-        
-        if (keyField && typeof keyField === 'object') {
-          key = keyField['en-US'] || keyField[Object.keys(keyField)[0]];
-        }
-        
-        if (valueField && typeof valueField === 'object') {
-          value = valueField['en-US'] || valueField[Object.keys(valueField)[0]];
-        }
-        
-        if (key && value) {
-          items[key] = {
-            value: value,
-            id: item.sys.id
-          };
+
+    for (const pageData of allPages) {
+      if (pageData.items && Array.isArray(pageData.items)) {
+        for (const item of pageData.items) {
+          // Skip archived entries only (unpublished entries are OK)
+          if (item.sys.archivedVersion !== undefined) {
+            continue;
+          }
+
+          const fields = item.fields || {};
+
+          // Simple locale extraction
+          const keyField = fields[config.KEY_FIELD];
+          const valueField = fields[config.VALUE_FIELD];
+
+          let key: string | null = null;
+          let value: string | null = null;
+
+          if (keyField && typeof keyField === 'object') {
+            key = keyField['en-US'] || keyField[Object.keys(keyField)[0]];
+          }
+
+          if (valueField && typeof valueField === 'object') {
+            value = valueField['en-US'] || valueField[Object.keys(valueField)[0]];
+          }
+
+          if (key && value) {
+            items[key] = {
+              value: value,
+              id: item.sys.id
+            };
+          }
         }
       }
     }
-    
+
     return items;
   } catch (error) {
     if (error instanceof Error) {
@@ -931,7 +1223,7 @@ async function fetchAllContentfulItems(config: ContentfulConfig): Promise<{ [key
   }
 }
 
-async function saveItemToContentful(config: ContentfulConfig, item: any): Promise<{ success: boolean; error?: string; errorDetails?: any }> {
+async function saveItemToContentful(config: ContentfulConfig, item: ContentfulSaveItem): Promise<ContentfulSaveResult> {
   const spaceId = encodeURIComponent(config.SPACE_ID);
   const environment = encodeURIComponent(config.ENVIRONMENT);
   const contentType = config.CONTENT_TYPE;

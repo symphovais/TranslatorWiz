@@ -3,12 +3,6 @@
   "id": "1558089998326222257",
   "api": "1.0.0",
   "main": "code.js",
-  "menu": [
-    {
-      "name": "ConteFi",
-      "command": "open"
-    }
-  ],
   "capabilities": [],
   "enableProposedApi": false,
   "documentAccess": "dynamic-page",

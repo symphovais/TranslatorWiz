@@ -1,6 +1,7 @@
 {
   "name": "ConteFi",
-  "version": "1.0.0",
+  "version": "2.0.0",
+  "_comment": "When updating version, also update PLUGIN_VERSION constant in code.ts",
   "description": "Your Figma Plugin",
   "main": "code.js",
   "scripts": {
@@ -15,7 +16,7 @@
   "license": "",
   "devDependencies": {
     "@figma/eslint-plugin-figma-plugins": "*",
-    "@figma/plugin-typings": "*",
+    "@figma/plugin-typings": "^1.121.0",
     "@typescript-eslint/eslint-plugin": "^6.12.0",
     "@typescript-eslint/parser": "^6.12.0",
     "eslint": "^8.54.0",

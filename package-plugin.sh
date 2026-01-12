@@ -4,9 +4,16 @@
 
 echo "📦 Building ConteFi Plugin Package..."
 
+# Create distribution folder
+echo ""
+echo "1. Creating distribution folder..."
+DIST_FOLDER="dist-package"
+rm -rf "$DIST_FOLDER"
+mkdir -p "$DIST_FOLDER"
+
 # Build the plugin
 echo ""
-echo "1. Building TypeScript..."
+echo "2. Building TypeScript..."
 npm run build
 
 if [ $? -ne 0 ]; then
@@ -14,18 +21,10 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Create distribution folder
-echo ""
-echo "2. Creating distribution folder..."
-DIST_FOLDER="dist-package"
-rm -rf "$DIST_FOLDER"
-mkdir -p "$DIST_FOLDER"
-
 # Copy required files
 echo ""
 echo "3. Copying files..."
 cp manifest.json "$DIST_FOLDER/"
-cp code.js "$DIST_FOLDER/"
 cp ui.html "$DIST_FOLDER/"
 cp DISTRIBUTION.md "$DIST_FOLDER/README.md"
 

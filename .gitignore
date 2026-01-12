@@ -5,4 +5,6 @@ node_modules
 
 out/
 dist/
+dist-package/
 code.js
+.claude/

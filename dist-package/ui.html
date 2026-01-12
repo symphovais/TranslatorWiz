@@ -6,32 +6,132 @@
   }
   
   :root {
-    /* Clean light theme colors */
-    --figma-bg: #ffffff;
-    --figma-bg-secondary: #f8f9fa;
-    --figma-text: #1a1a1a;
-    --figma-text-secondary: #4a4a4a;
-    --figma-text-tertiary: #8a8a8a;
-    --figma-border: #e5e5e5;
-    --figma-accent: #FFC107;
-    --figma-accent-hover: #FFB300;
-    --figma-danger: #FF6B6B;
-    --figma-success: #51CF66;
+    /* 8-Step Color Scales - Perceptually Balanced */
+    /* All colors at same step number have same luminance for visual consistency */
+
+    /* Gray Scale */
+    --gray-50: #fafafa;   /* ~95% luminance */
+    --gray-100: #f5f5f5;  /* ~85% */
+    --gray-200: #eeeeee;  /* ~75% */
+    --gray-300: #e0e0e0;  /* ~65% */
+    --gray-400: #bdbdbd;  /* ~55% */
+    --gray-500: #9e9e9e;  /* ~50% */
+    --gray-600: #757575;  /* ~40% */
+    --gray-700: #616161;  /* ~30% */
+    --gray-800: #424242;  /* ~20% */
+
+    /* Blue Scale */
+    --blue-50: #e3f2fd;   /* ~95% */
+    --blue-100: #bbdefb;  /* ~85% */
+    --blue-200: #90caf9;  /* ~75% */
+    --blue-300: #64b5f6;  /* ~65% */
+    --blue-400: #42a5f5;  /* ~55% */
+    --blue-500: #2196f3;  /* ~50% - base */
+    --blue-600: #1e88e5;  /* ~40% */
+    --blue-700: #1976d2;  /* ~30% */
+    --blue-800: #1565c0;  /* ~20% */
+
+    /* Green Scale */
+    --green-50: #e8f5e9;   /* ~95% */
+    --green-100: #c8e6c9;  /* ~85% */
+    --green-200: #a5d6a7;  /* ~75% */
+    --green-300: #81c784;  /* ~65% */
+    --green-400: #66bb6a;  /* ~55% */
+    --green-500: #4caf50;  /* ~50% - base */
+    --green-600: #43a047;  /* ~40% */
+    --green-700: #388e3c;  /* ~30% */
+    --green-800: #2e7d32;  /* ~20% */
+
+    /* Yellow Scale */
+    --yellow-50: #fffde7;  /* ~95% */
+    --yellow-100: #fff9c4; /* ~85% */
+    --yellow-200: #fff59d; /* ~75% */
+    --yellow-300: #fff176; /* ~65% */
+    --yellow-400: #ffee58; /* ~55% */
+    --yellow-500: #ffeb3b; /* ~50% - base */
+    --yellow-600: #fdd835; /* ~40% */
+    --yellow-700: #fbc02d; /* ~30% */
+    --yellow-800: #f9a825; /* ~20% */
+
+    /* Orange Scale */
+    --orange-50: #fff3e0;  /* ~95% */
+    --orange-100: #ffe0b2; /* ~85% */
+    --orange-200: #ffcc80; /* ~75% */
+    --orange-300: #ffb74d; /* ~65% */
+    --orange-400: #ffa726; /* ~55% */
+    --orange-500: #ff9800; /* ~50% - base */
+    --orange-600: #fb8c00; /* ~40% */
+    --orange-700: #f57c00; /* ~30% */
+    --orange-800: #ef6c00; /* ~20% */
+
+    /* Red Scale */
+    --red-50: #ffebee;     /* ~95% */
+    --red-100: #ffcdd2;    /* ~85% */
+    --red-200: #ef9a9a;    /* ~75% */
+    --red-300: #e57373;    /* ~65% */
+    --red-400: #ef5350;    /* ~55% */
+    --red-500: #f44336;    /* ~50% - base */
+    --red-600: #e53935;    /* ~40% */
+    --red-700: #d32f2f;    /* ~30% */
+    --red-800: #c62828;    /* ~20% */
+
+    /* Pure Black & White (for absolute values) */
+    --white: #ffffff;
+    --black: #000000;
+
+    /* Semantic Aliases - map to color scales */
+    --figma-bg: var(--white);
+    --figma-bg-secondary: var(--gray-50);
+
+    --figma-border: var(--gray-300);
+    --figma-border-secondary: var(--gray-500);
+
+    --figma-text: var(--gray-800);
+    --figma-text-secondary: var(--gray-600);
+    --figma-text-tertiary: var(--gray-500);
+
+
+    --figma-accent: var(--yellow-600);
+    --figma-accent-hover: var(--yellow-700);
+    --figma-danger: var(--red-500);
+    --figma-success: var(--green-500);
+
+    --figma-blue: var(--blue-500);
+    --figma-blue-hover: var(--blue-700);
+
+    /* Link Colors - use blue scale */
+    --figma-link: var(--blue-700);
+    --figma-link-hover: var(--blue-800);
+
+    /* Special Use */
     --figma-hover-overlay: rgba(0, 0, 0, 0.04);
     --figma-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   }
 
   /* Dark theme */
   body.figma-dark {
-    --figma-bg: #2c2c2c;
-    --figma-bg-secondary: #1e1e1e;
-    --figma-text: #ffffff;
-    --figma-text-secondary: #cccccc;
-    --figma-text-tertiary: #999999;
-    --figma-border: #3c3c3c;
+    /* In dark mode, grays invert (lightest becomes darkest) */
+    --gray-50: #1e1e1e;
+    --gray-100: #2c2c2c;
+    --gray-200: #3c3c3c;
+    --gray-300: #4a4a4a;
+    --gray-400: #666666;
+    --gray-500: #999999;
+    --gray-600: #cccccc;
+    --gray-700: #e5e5e5;
+    --gray-800: #ffffff;
+
+    /* Background switches to dark gray in dark mode */
+    --figma-bg: var(--gray-100);
+
+    /* Dark mode specific overrides */
     --figma-hover-overlay: rgba(255, 255, 255, 0.06);
     --figma-icon-bg: rgba(255, 255, 255, 0.1);
     --figma-icon-bg-hover: rgba(255, 255, 255, 0.2);
+
+    /* Dark mode link colors */
+    --figma-link: var(--blue-300);
+    --figma-link-hover: var(--blue-200);
   }
   
   @keyframes fadeIn {
@@ -92,9 +192,8 @@
   .section {
     background: var(--figma-bg);
     border-radius: 0;
-    padding: 12px 16px;
+    padding: 12px 12px;
     margin-bottom: 0;
-    border-bottom: 1px solid var(--figma-border);
     transition: background 0.2s ease;
   }
   
@@ -125,14 +224,14 @@
     display: block;
     margin-bottom: 4px;
   }
-  
-  .stat-label {
+
+  .stat-card-label {
     font-size: 10px;
     color: var(--figma-text-tertiary);
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
-  
+
   label {
     display: block;
     font-size: 12px;
@@ -156,8 +255,8 @@
   
   select:focus {
     outline: none;
-    border-color: #18a0fb;
-    box-shadow: 0 0 0 2px rgba(24, 160, 251, 0.2);
+    border-color: var(--blue-500);
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
   }
   
   select:disabled {
@@ -187,13 +286,13 @@
   }
   
   #apply-translation {
-    background: #18a0fb;
+    background: var(--blue-500);
     color: white;
     flex: 1;
   }
-  
+
   #apply-translation:hover:not(:disabled) {
-    background: #0d8de0;
+    background: var(--blue-700);
   }
   
   #cancel {
@@ -211,6 +310,12 @@
   .status-container {
     position: relative;
     min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    gap: 16px;
+    border-top: 1px solid var(--figma-border);
   }
   
   #status {
@@ -256,12 +361,25 @@
   
   .spinner {
     display: inline-block;
-    width: 14px;
-    height: 14px;
+    width: 20px;
+    height: 20px;
     border: 2px solid rgba(0,0,0,0.1);
     border-top-color: currentColor;
     border-radius: 50%;
     animation: spin 0.6s linear infinite;
+  }
+
+  /* Larger spinner for centered loading overlay */
+  #loading-overlay .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid rgba(0,0,0,0.1);
+    border-top-color: var(--figma-text);
+  }
+
+  body.figma-dark #loading-overlay .spinner {
+    border: 3px solid rgba(255,255,255,0.1);
+    border-top-color: var(--figma-text);
   }
   
   .hidden {
@@ -299,30 +417,64 @@
     color: var(--figma-text-secondary);
     border: 1px solid var(--figma-border);
     border-radius: 4px;
-    padding: 8px;
+    padding: 6px 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s ease;
-    min-width: 32px;
-    min-height: 32px;
+    transition: all 0.2s;
+    min-width: 28px;
+    min-height: 28px;
   }
-  
+
   .btn-icon:hover {
     background: var(--figma-bg-secondary);
-    border-color: var(--figma-text-tertiary);
-    color: var(--figma-text);
+    border-color: var(--figma-border-secondary);
   }
-  
+
+  .btn-icon.active {
+    background: var(--figma-accent);
+    color: var(--gray-800);
+    border-color: transparent;
+  }
+
   .btn-icon:active {
     transform: scale(0.95);
   }
-  
+
   .btn-icon svg {
     display: block;
   }
-  
+
+  .stats-compact {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    padding: 0 12px;
+    font-size: 12px;
+  }
+
+  .stat-label {
+    color: var(--figma-text-secondary);
+    font-weight: 500;
+    margin-right: 4px;
+  }
+
+  .stat-value {
+    color: var(--figma-text);
+    font-weight: 600;
+    min-width: 20px;
+    text-align: right;
+  }
+
+  .stat-value.stat-new {
+    color: var(--yellow-800);
+  }
+
+  .stat-value.stat-changed {
+    color: var(--red-500);
+  }
+
   textarea {
     width: 100%;
     min-height: 200px;
@@ -339,7 +491,7 @@
   
   textarea:focus {
     outline: none;
-    border-color: #18a0fb;
+    border-color: var(--blue-500);
     box-shadow: 0 0 0 2px rgba(24, 160, 251, 0.2);
   }
   
@@ -351,28 +503,64 @@
   
   .btn-primary {
     background: var(--figma-accent);
-    color: #1a1a1a;
-    font-weight: 600;
+    color: var(--gray-800);
+    font-weight: 500;
+    border-radius: 6px;
+    border: 1px solid var(--figma-accent);
+    transition: all 0.2s ease;
   }
 
   .btn-primary:hover:not(:disabled) {
-    background: var(--figma-accent-hover);
+    border-color: var(--figma-border-secondary);
+    filter: brightness(0.95);
   }
-  
+
+  .btn-primary:focus-visible {
+    outline: 2px solid var(--figma-accent);
+    outline-offset: 2px;
+  }
+
   .btn-secondary {
     background: var(--figma-bg);
     color: var(--figma-text);
     border: 1px solid var(--figma-border);
     transition: all 0.2s ease;
     font-weight: 500;
+    border-radius: 6px;
   }
 
   .btn-secondary:hover:not(:disabled) {
     background: var(--figma-bg-secondary);
+    border-color: var(--figma-border-secondary);
+  }
+
+  .btn-secondary:focus-visible {
+    outline: 2px solid var(--figma-text);
+    outline-offset: 2px;
+  }
+
+  .btn-tertiary {
+    background: transparent;
+    color: var(--figma-text);
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .btn-tertiary:hover:not(:disabled) {
+    background: var(--figma-hover-overlay);
+    color: var(--figma-text);
+  }
+
+  .btn-tertiary:focus-visible {
+    outline: 2px solid var(--figma-text);
+    outline-offset: 2px;
+    background: var(--figma-hover-overlay);
   }
   
   .btn-test {
-    background: #18a0fb;
+    background: var(--blue-500);
     color: white;
   }
 
@@ -391,7 +579,12 @@
   input[type="text"]:focus,
   input[type="password"]:focus {
     outline: none;
-    border-color: var(--figma-accent);
+    border-color: var(--figma-border-secondary);
+  }
+
+  input[type="password"]::placeholder {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    letter-spacing: normal;
   }
   
   input[type="text"]::placeholder,
@@ -405,12 +598,148 @@
   }
 
   .config-field {
-    margin-bottom: 16px;
+    margin-bottom: 4px;
   }
 
   .config-field label {
     display: block;
     margin-bottom: 6px;
+  }
+
+  .search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+  }
+
+  /* Search bar sizing */
+  #search-input {
+    width: 450px;
+    max-width: 450px;
+    padding-right: 32px !important; /* Make room for clear button */
+  }
+
+  /* Compact mode - larger search bar */
+  body.compact-mode #search-input {
+    width: 280px;
+    max-width: 280px;
+  }
+
+  /* Compact mode - reduce header spacing */
+  body.compact-mode .section {
+    padding: 12px 12px !important;
+    gap: 6px !important;
+  }
+
+  body.compact-mode .write-table th:nth-child(1) {
+    width: 140px;
+    max-width: 140px;
+  }
+
+  body.compact-mode .write-table td:nth-child(1) {
+    width: 140px;
+    max-width: 140px;
+  }
+
+  body.compact-mode .write-table th:nth-child(2),
+  body.compact-mode .write-table td:nth-child(2) {
+    width: 180px;
+    max-width: 180px;
+  }
+
+  body.compact-mode .write-table .text-preview {
+    max-width: 140px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 1.4;
+  }
+
+  /* Status column (3rd column) */
+  body.compact-mode .write-table th:nth-child(3),
+  body.compact-mode .write-table td:nth-child(3) {
+    width: 50px !important;
+    max-width: 50px !important;
+  }
+
+  /* Action column (4th column) */
+  body.compact-mode .write-table th:nth-child(4),
+  body.compact-mode .write-table td:nth-child(4) {
+    width: 60px !important;
+    max-width: 60px !important;
+  }
+
+  body.compact-mode .write-table .contentful-link {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 140px;
+  }
+
+  /* Span elements in key column for compact mode */
+  body.compact-mode .write-table td:nth-child(1) span {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 140px;
+  }
+
+  /* Compact mode with scrollbar - reduced column widths */
+  body.compact-mode.has-scrollbar .write-table th:nth-child(1),
+  body.compact-mode.has-scrollbar .write-table td:nth-child(1) {
+    width: 125px;
+    max-width: 125px;
+  }
+
+  body.compact-mode.has-scrollbar .write-table th:nth-child(2),
+  body.compact-mode.has-scrollbar .write-table td:nth-child(2) {
+    width: 165px;
+    max-width: 165px;
+  }
+
+  body.compact-mode.has-scrollbar .write-table .text-preview {
+    max-width: 125px;
+  }
+
+  body.compact-mode.has-scrollbar .write-table .contentful-link {
+    max-width: 125px;
+  }
+
+  body.compact-mode.has-scrollbar .write-table td:nth-child(1) span {
+    max-width: 125px;
+  }
+
+  /* Clear search button */
+  .search-clear-btn {
+    position: absolute;
+    right: 10px;
+    background: var(--figma-text);
+    border: none;
+    color: var(--figma-bg);
+    cursor: pointer;
+    padding: 0;
+    display: none; /* Hidden by default */
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+    width: 16px;
+    height: 16px;
+    pointer-events: auto;
+    z-index: 10;
+  }
+
+  .search-clear-btn:hover {
+    background: var(--figma-text-secondary);
+  }
+
+  .search-clear-btn.visible {
+    display: flex;
   }
 
   .preflight-container {
@@ -435,32 +764,43 @@
     background: var(--figma-bg-secondary);
     border-radius: 6px;
     border: 2px solid var(--figma-border);
-    transition: all 0.3s;
+    transition: all 0.3s ease;
+    min-height: 44px;
   }
 
   .preflight-step.checking {
-    border-color: #18a0fb;
+    border-color: var(--blue-500);
     background: var(--figma-bg-secondary);
   }
 
   .preflight-step.success {
-    border-color: #0fa958;
+    border-color: var(--green-600);
     background: var(--figma-bg-secondary);
-    animation: success 0.4s ease-out;
   }
 
   .preflight-step.error {
-    border-color: #f24822;
+    border-color: var(--red-600);
     background: var(--figma-bg-secondary);
   }
 
   .preflight-icon {
     width: 24px;
     height: 24px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 16px;
+  }
+
+  .preflight-icon svg {
+    width: 20px;
+    height: 20px;
+    transition: all 0.2s ease;
+  }
+
+  .preflight-icon .spinner {
+    animation: spin 0.8s linear infinite;
   }
 
   .preflight-text {
@@ -516,8 +856,8 @@
 
   .btn-small {
     padding: 6px 12px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: var(--figma-accent);
+    color: var(--gray-800);
     border: none;
     border-radius: 6px;
     font-size: 12px;
@@ -527,8 +867,9 @@
   }
 
   .btn-small:hover {
+    background: var(--figma-accent-hover);
     transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.4);
   }
 
   .mapping-item {
@@ -573,7 +914,7 @@
 
   .btn-remove {
     padding: 8px 12px;
-    background: #ff5252;
+    background: var(--red-700);
     color: white;
     border: none;
     border-radius: 6px;
@@ -583,7 +924,7 @@
   }
 
   .btn-remove:hover {
-    background: #ff1744;
+    background: var(--red-800);
     transform: translateY(-1px);
   }
 
@@ -609,19 +950,24 @@
   .btn-nav {
     flex: 1;
     padding: 10px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: var(--figma-accent);
+    color: var(--gray-800);
     border: none;
     border-radius: 8px;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
   }
 
   .btn-nav:hover:not(:disabled) {
+    background: var(--figma-accent-hover);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
   }
 
   .btn-nav:disabled {
@@ -630,26 +976,16 @@
   }
 
   .contentful-link {
-    color: #0066CC;
-    text-decoration: none;
+    color: var(--figma-text);
+    text-decoration: underline;
     font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
     transition: color 0.2s ease;
   }
-  
+
   .contentful-link:hover {
-    color: #0052A3;
-    text-decoration: underline;
+    color: var(--figma-text-secondary);
   }
-  
-  .contentful-link::after {
-    content: '↗';
-    font-size: 10px;
-    opacity: 0.5;
-  }
-  
+
   .record-data {
     background: var(--figma-bg);
     border-radius: 8px;
@@ -684,17 +1020,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-
-  .btn-primary {
-    background: linear-gradient(135deg, #00c853 0%, #00a844 100%);
-    color: white;
-    flex: 1;
-  }
-
-  .btn-primary:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 200, 83, 0.4);
   }
 
   .content-type-badge {
@@ -736,7 +1061,7 @@
 
   .btn-remove-group {
     padding: 6px 10px;
-    background: #ff5252;
+    background: var(--red-700);
     color: white;
     border: none;
     border-radius: 6px;
@@ -746,7 +1071,7 @@
   }
 
   .btn-remove-group:hover {
-    background: #ff1744;
+    background: var(--red-800);
     transform: translateY(-1px);
   }
 
@@ -763,9 +1088,9 @@
   }
 
   .add-field-btn:hover {
-    border-color: var(--figma-gradient-1);
-    color: var(--figma-gradient-1);
-    background: rgba(102, 126, 234, 0.05);
+    border-color: var(--blue-500);
+    color: var(--blue-500);
+    background: var(--blue-50);
   }
 
   /* Write Mode Styles */
@@ -773,16 +1098,17 @@
     width: 100%;
     border-collapse: collapse;
     margin-top: 0;
-    font-size: 13px;
+    font-size: 12px;
+    table-layout: fixed;
   }
 
   .write-table th {
     background: var(--figma-bg-secondary);
-    color: var(--figma-text-secondary);
-    padding: 12px 16px;
+    color: var(--figma-text);
+    padding: 6px 12px;
     text-align: left;
-    font-weight: 600;
-    font-size: 12px;
+    font-weight: 700;
+    font-size: 11px;
     border-bottom: 1px solid var(--figma-border);
     position: sticky;
     top: 0;
@@ -791,10 +1117,10 @@
   }
 
   .write-table td {
-    padding: 12px 16px;
+    padding: 6px 12px;
     border-bottom: 1px solid var(--figma-border);
     vertical-align: middle;
-    font-size: 13px;
+    font-size: 12px;
     color: var(--figma-text);
   }
 
@@ -806,34 +1132,80 @@
     transition: background 0.15s ease;
   }
 
+  /* Column widths for normal mode */
+  .write-table th:nth-child(1),
+  .write-table td:nth-child(1) {
+    width: 280px;
+    max-width: 280px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .write-table th:nth-child(2),
+  .write-table td:nth-child(2) {
+    width: 300px;
+    max-width: 300px;
+  }
+
+  /* Span elements in key column (non-linked keys) for normal mode */
+  .write-table td:nth-child(1) span {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Status column centering */
+  .write-table td:nth-child(3) {
+    text-align: center;
+  }
+
+  /* Contentful link styling */
+  .write-table .contentful-link {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+  }
+
+  /* Span elements in key column (non-linked keys) */
+  /* Text centering utility */
+  .text-center {
+    text-align: center;
+  }
+
   .status-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
-    font-size: 16px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 13px;
     font-weight: 600;
     transition: all 0.2s ease;
   }
 
   .status-badge.not-exists {
-    background: #FFF9E6;
-    color: #F59E0B;
-    border: 1px solid #FDE68A;
+    background: var(--yellow-100);
+    color: var(--yellow-800);
+    border: 1px solid var(--yellow-500);
+    line-height: 1;
   }
 
   .status-badge.out-of-sync {
-    background: #FEE2E2;
-    color: #DC2626;
-    border: 1px solid #FECACA;
+    background: var(--red-50);
+    color: var(--red-600);
+    border: 1px solid var(--red-100);
   }
 
   .status-badge.synced {
-    background: #D1FAE5;
-    color: #059669;
-    border: 1px solid #A7F3D0;
+    background: var(--green-50);
+    color: var(--green-600);
+    border: 1px solid var(--green-100);
   }
 
   .status-badge.checking {
@@ -882,7 +1254,7 @@
   .error-modal-title {
     font-size: 16px;
     font-weight: 600;
-    color: #f44336;
+    color: var(--red-500);
   }
 
   .error-modal-close {
@@ -944,7 +1316,7 @@
   }
 
   .btn-close-modal {
-    background: #0d99ff;
+    background: var(--blue-600);
     color: white;
     border: none;
     padding: 6px 12px;
@@ -954,13 +1326,13 @@
   }
 
   .btn-close-modal:hover {
-    background: #0b7fd4;
+    background: var(--blue-700);
   }
 
   .btn-save-item {
     padding: 6px 16px;
     background: var(--figma-accent);
-    color: #1a1a1a;
+    color: var(--gray-800);
     border: none;
     border-radius: 4px;
     font-size: 12px;
@@ -990,7 +1362,7 @@
   }
   
   body.figma-dark .table-container {
-    background: #2c2c2c;
+    background: var(--gray-700);
     border: none;
   }
 
@@ -1014,38 +1386,43 @@
   }
 
   .mode-switch-btn.active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: var(--figma-accent);
+    color: var(--gray-800);
     border-color: transparent;
   }
 
   .mode-switch-btn:hover:not(.active) {
-    border-color: var(--figma-gradient-1);
-    background: rgba(102, 126, 234, 0.05);
+    border-color: var(--figma-accent);
+    background: rgba(255, 193, 7, 0.05);
   }
 
   .text-preview {
-    max-width: 200px;
+    max-width: 300px;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 1.4;
   }
 
   /* Write Status Footer */
   #write-status {
-    padding: 10px 16px;
     font-size: 12px;
     color: var(--figma-text-secondary);
-    background: var(--figma-bg-secondary);
-    border-top: 1px solid var(--figma-border);
     display: flex;
     align-items: center;
     gap: 6px;
-    min-height: 36px;
+    flex: 1;
   }
 
   #write-status:empty {
-    display: none;
+    /* Keep visible but don't show dot when empty - maintains layout stability */
+  }
+
+  #write-status:empty::before,
+  #write-status:empty::after {
+    display: none; /* Hide dot and spinner when empty */
   }
 
   #write-status.success {
@@ -1083,34 +1460,612 @@
   #write-status.loading::before {
     animation: pulse 1.5s ease-in-out infinite;
   }
+
+  /* Add spinner after loading text */
+  #write-status.loading::after {
+    content: '';
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid rgba(0,0,0,0.1);
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    margin-left: 2px;
+  }
+
+  body.figma-dark #write-status.loading::after {
+    border: 2px solid rgba(255,255,255,0.1);
+    border-top-color: currentColor;
+  }
+
+  /* Reset Confirmation Modal */
+  .reset-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .reset-modal.show {
+    display: flex;
+  }
+
+  .reset-modal-content {
+    background: var(--figma-bg);
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .reset-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .reset-modal-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--figma-text);
+  }
+
+  .reset-modal-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: var(--figma-text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .reset-modal-close:hover {
+    color: var(--figma-text);
+  }
+
+  .reset-modal-body {
+    margin-bottom: 20px;
+    color: var(--figma-text);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .reset-modal-footer {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+
+  .btn-danger {
+    background: var(--red-500);
+    color: var(--white);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+
+  .btn-danger:hover {
+    background: var(--red-600);
+  }
+
+  /* Validation Modal */
+  .validation-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .validation-modal.show {
+    display: flex;
+  }
+
+  .validation-modal-content {
+    background: var(--figma-bg);
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 600px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .validation-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-shrink: 0;
+  }
+
+  .validation-modal-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--figma-text);
+  }
+
+  .validation-modal-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: var(--figma-text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .validation-modal-close:hover {
+    color: var(--figma-text);
+  }
+
+  .validation-modal-body {
+    color: var(--figma-text);
+    font-size: 13px;
+    line-height: 1.5;
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1;
+    min-height: 0;
+    padding-right: 4px;
+  }
+
+  .validation-modal-body::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .validation-modal-body::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .validation-modal-body::-webkit-scrollbar-thumb {
+    background: var(--figma-border);
+    border-radius: 4px;
+  }
+
+  .validation-modal-body::-webkit-scrollbar-thumb:hover {
+    background: var(--figma-border-secondary);
+  }
+
+  #validation-steps-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #validation-steps-container .preflight-step:last-child {
+    margin-bottom: 0;
+  }
+
+  .validation-modal-footer {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 16px;
+    flex-shrink: 0;
+  }
+
+  /* Conflict Resolution Modal */
+  .conflict-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .conflict-modal.show {
+    display: flex;
+  }
+
+  .conflict-modal-content {
+    background: var(--figma-bg);
+    border-radius: 12px;
+    padding: 0;
+    max-width: 560px;
+    width: 90%;
+    max-height: 85vh;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  }
+
+  .conflict-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--figma-border);
+  }
+
+  .conflict-modal-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--figma-text);
+    letter-spacing: -0.01em;
+  }
+
+  .conflict-modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--figma-text-tertiary);
+    padding: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .conflict-modal-close:hover {
+    background: var(--figma-hover-overlay);
+    color: var(--figma-text);
+  }
+
+  .conflict-modal-body {
+    padding: 24px;
+    max-height: calc(85vh - 140px);
+    overflow-y: auto;
+  }
+
+  .conflict-key-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--figma-text);
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+
+  .conflict-instance-count {
+    font-size: 13px;
+    color: var(--figma-text-secondary);
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  .conflict-version {
+    background: var(--figma-bg);
+    border: 1px solid var(--figma-border);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+    transition: all 0.15s ease;
+  }
+
+  .conflict-version:hover {
+    border-color: var(--figma-border-secondary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  .conflict-version-text {
+    font-size: 13px;
+    color: var(--figma-text);
+    line-height: 1.6;
+    margin-bottom: 8px;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+  }
+
+  .conflict-version-meta {
+    font-size: 11px;
+    color: var(--figma-text-secondary);
+    margin-bottom: 10px;
+    font-style: italic;
+  }
+
+  .conflict-version-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  /* Conflict modal buttons now use btn-secondary */
+  .btn-show-in-figma,
+  .btn-use-this-version {
+    flex: 1;
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+
+  .conflict-version-error {
+    display: none;
+    background: #fee;
+    border: 1px solid #fcc;
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-top: 12px;
+    gap: 10px;
+    align-items: flex-start;
+    color: #c00;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .conflict-version-error svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .conflict-version-error.show {
+    display: flex;
+  }
+
+  .conflict-contentful-section {
+    background: var(--figma-bg-secondary);
+    border: 1px solid var(--figma-border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 24px;
+  }
+
+  .conflict-contentful-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--figma-text-tertiary);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .conflict-contentful-text {
+    font-size: 13px;
+    color: var(--figma-text);
+    line-height: 1.6;
+  }
+
+  .conflict-versions-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--figma-text-tertiary);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .conflict-modal-footer {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    padding: 16px 24px;
+    border-top: 1px solid var(--figma-border);
+    background: var(--figma-bg-secondary);
+  }
+
+  /* Conflict cancel button now uses btn-tertiary */
+  .btn-cancel-conflict {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+
+  /* Reset config button now uses btn-tertiary */
+  .btn-reset-config {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .btn-save-item-icon {
+    padding: 3px;
+    background: var(--figma-accent);
+    color: var(--gray-800);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    min-height: 20px;
+  }
+
+  .btn-save-item-icon svg {
+    width: 12px;
+    height: 12px;
+    pointer-events: none;
+  }
+
+  .btn-save-item-icon:hover {
+    background: var(--figma-accent-hover);
+  }
+
+  .btn-save-item-icon:active {
+    transform: scale(0.95);
+  }
+
+  .btn-save-item-icon:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .btn-link-to-figma {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--figma-text-secondary);
+    transition: color 0.2s ease, background 0.2s ease;
+    border-radius: 4px;
+    width: 24px;
+    height: 24px;
+  }
+
+  .btn-link-to-figma:hover {
+    color: var(--figma-accent);
+    background: var(--figma-bg-secondary);
+  }
+
+  .btn-link-to-figma svg {
+    width: 14px;
+    height: 14px;
+    pointer-events: none;
+  }
+
+  .flex-container {
+    display: flex;
+    gap: 4px;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  /* Tooltip System */
+  /* Ensure SVG children don't block tooltip hover events */
+  [data-tooltip] svg,
+  [data-tooltip] svg * {
+    pointer-events: none;
+  }
+
+  /* Tooltip body */
+  [data-tooltip]::before {
+    content: attr(data-tooltip);
+    position: fixed;
+    left: var(--tooltip-left, -9999px);
+    top: var(--tooltip-top, -9999px);
+    padding: 6px 10px;
+    background: #18181B;
+    color: #FFFFFF;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.4;
+    white-space: normal;
+    max-width: 200px;
+    border-radius: 6px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    z-index: 999999;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Wider tooltips for key names */
+  [data-tooltip-key]::before {
+    max-width: 80vw;
+    white-space: nowrap;
+  }
+
+  /* Tooltip arrow - default (top position, arrow points down) */
+  [data-tooltip]::after {
+    content: '';
+    position: fixed;
+    left: var(--arrow-left, -9999px);
+    top: var(--arrow-top, -9999px);
+    width: 0;
+    height: 0;
+    border: 6px solid transparent;
+    border-top-color: #18181B;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    z-index: 999999;
+  }
+
+  /* Bottom tooltip arrow (points upward) */
+  [data-tooltip-pos="bottom"]::after {
+    border-top-color: transparent;
+    border-bottom-color: #18181B;
+  }
+
+  /* Show tooltip on hover */
+  [data-tooltip]:hover::before,
+  [data-tooltip]:hover::after,
+  [data-tooltip].tooltip-visible::before,
+  [data-tooltip].tooltip-visible::after {
+    opacity: 1;
+  }
+
+  /* Long tooltip text - allow wrapping */
+  [data-tooltip-multiline]::before {
+    white-space: normal;
+    max-width: 200px;
+    text-align: center;
+  }
+
+  /* Disabled state tooltips */
+  [data-tooltip][disabled]::before,
+  [data-tooltip][disabled]::after {
+    display: none;
+  }
 </style>
 
 <!-- Write Mode View (Default) -->
 <div class="container view active" id="write-view" style="height: 100vh; display: flex; flex-direction: column;">
   <div class="section" style="padding: 12px 16px; display: flex; align-items: center; gap: 8px;">
-    <button class="btn-icon" id="btn-load-items" title="Sync keys">
+    <button class="btn-icon" id="btn-load-items" data-tooltip="Sync keys" data-tooltip-pos="bottom">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M13.65 2.35C12.2 0.9 10.21 0 8 0C3.58 0 0.01 3.58 0.01 8C0.01 12.42 3.58 16 8 16C11.73 16 14.84 13.45 15.73 10H13.65C12.83 12.33 10.61 14 8 14C4.69 14 2 11.31 2 8C2 4.69 4.69 2 8 2C9.66 2 11.14 2.69 12.22 3.78L9 7H16V0L13.65 2.35Z" fill="currentColor"/>
       </svg>
     </button>
-    <input type="text" id="search-input" placeholder="Search keys or text..." 
-           style="flex: 1; padding: 8px 12px; border: 1px solid var(--figma-border); border-radius: 4px; font-size: 13px; background: var(--figma-bg-secondary); color: var(--figma-text); box-sizing: border-box;" />
-    <button class="btn-icon" id="settings-toggle-inline" title="Settings">
+    <div class="search-container">
+      <input type="text" id="search-input" placeholder="Search keys or text..."
+             style="padding: 8px 12px; border: 1px solid var(--figma-border); border-radius: 4px; font-size: 13px; background: var(--figma-bg-secondary); color: var(--figma-text); box-sizing: border-box;" />
+      <button class="search-clear-btn" id="search-clear-btn">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 3L3 9M3 3L9 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+    <button class="btn-icon" id="filter-toggle" data-tooltip="Show changes only" data-tooltip-pos="bottom">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 2L8 7V14L8 7L13 2H3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <div style="flex: 1;"></div>
+    <button class="btn-icon" id="btn-resize" data-tooltip="Compact window" data-tooltip-pos="bottom">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 2v4h4M6 14v-4H2M10 6l4-4M6 10l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <button class="btn-icon" id="settings-toggle-inline" data-tooltip="Settings" data-tooltip-pos="bottom">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M13.5 8C13.5 8.17 13.49 8.34 13.47 8.51L15.04 9.7C15.18 9.81 15.22 10.01 15.13 10.17L13.63 12.83C13.54 12.99 13.35 13.05 13.18 12.99L11.34 12.27C10.97 12.55 10.56 12.78 10.12 12.95L9.84 14.91C9.82 15.09 9.66 15.22 9.47 15.22H6.47C6.28 15.22 6.12 15.09 6.1 14.91L5.82 12.95C5.38 12.78 4.97 12.55 4.6 12.27L2.76 12.99C2.59 13.05 2.4 12.99 2.31 12.83L0.81 10.17C0.72 10.01 0.76 9.81 0.9 9.7L2.47 8.51C2.45 8.34 2.44 8.17 2.44 8C2.44 7.83 2.45 7.66 2.47 7.49L0.9 6.3C0.76 6.19 0.72 5.99 0.81 5.83L2.31 3.17C2.4 3.01 2.59 2.95 2.76 3.01L4.6 3.73C4.97 3.45 5.38 3.22 5.82 3.05L6.1 1.09C6.12 0.91 6.28 0.78 6.47 0.78H9.47C9.66 0.78 9.82 0.91 9.84 1.09L10.12 3.05C10.56 3.22 10.97 3.45 11.34 3.73L13.18 3.01C13.35 2.95 13.54 3.01 13.63 3.17L15.13 5.83C15.22 5.99 15.18 6.19 15.04 6.3L13.47 7.49C13.49 7.66 13.5 7.83 13.5 8ZM8 5.5C6.62 5.5 5.5 6.62 5.5 8C5.5 9.38 6.62 10.5 8 10.5C9.38 10.5 10.5 9.38 10.5 8C10.5 6.62 9.38 5.5 8 5.5Z" fill="currentColor"/>
       </svg>
     </button>
 </div>
 
-  <div class="section hidden" id="items-table-section" style="padding: 6px; flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden;">
+  <!-- Centered loading overlay (shown on initial load) -->
+  <div id="loading-overlay" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;">
+    <div class="spinner"></div>
+    <div id="loading-message" style="font-size: 13px; color: var(--figma-text-secondary);">Initializing...</div>
+  </div>
+
+  <div class="section hidden" id="items-table-section" style="padding: 12px; flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; z-index: 0;">
     <div class="table-container">
       <table class="write-table">
         <thead>
           <tr>
             <th>Key</th>
             <th>Text</th>
-            <th>Status</th>
-            <th>Action</th>
+            <th style="width: 80px; text-align: center;">Status</th>
+            <th style="width: 80px;">Action</th>
           </tr>
         </thead>
         <tbody id="items-table-body">
@@ -1122,12 +2077,31 @@
 
   <div class="status-container">
     <div id="write-status"></div>
+    <div class="stats-compact" style="margin-left: auto;">
+      <span class="stat-item">
+        <span class="stat-label">Total:</span>
+        <span class="stat-value" id="stat-total">-</span>
+      </span>
+      <span class="stat-item">
+        <span class="stat-label">New:</span>
+        <span class="stat-value stat-new" id="stat-new">-</span>
+      </span>
+      <span class="stat-item">
+        <span class="stat-label">Changed:</span>
+        <span class="stat-value stat-changed" id="stat-changed">-</span>
+      </span>
+    </div>
   </div>
 </div>
 
 <!-- Read Mode View -->
 <div class="container view" id="read-view">
-  <h2>✨ ConteFi</h2>
+  <h2>
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-right: 4px;">
+      <path d="M10 0L12.245 6.90983L19.5106 6.90983L13.6328 11.1803L15.8779 18.0902L10 13.8197L4.12215 18.0902L6.36729 11.1803L0.489435 6.90983L7.755 6.90983L10 0Z" fill="currentColor"/>
+    </svg>
+    ConteFi
+  </h2>
   <div class="subtitle">Contentful-powered translation magic</div>
 
   <div class="stats">
@@ -1142,7 +2116,12 @@
   </div>
 
   <div class="section">
-    <label>🌍 Select Language</label>
+    <label>
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-right: 4px;">
+        <path d="M7 0C3.13401 0 0 3.13401 0 7C0 10.866 3.13401 14 7 14C10.866 14 14 10.866 14 7C14 3.13401 10.866 0 7 0ZM11.5513 4.2H9.60315C9.36519 3.21207 8.99645 2.27614 8.51367 1.43004C9.89895 1.87982 11.0315 2.88889 11.5513 4.2ZM7 1.4245C7.63492 2.33333 8.12188 3.33403 8.4224 4.2H5.5776C5.87812 3.33403 6.36508 2.33333 7 1.4245ZM1.53242 8.4C1.43403 8.01287 1.4 7.61736 1.4 7C1.4 6.38264 1.43403 5.98713 1.53242 5.6H3.80091C3.75849 5.99551 3.73333 6.39102 3.73333 7C3.73333 7.60898 3.75849 8.00449 3.80091 8.4H1.53242ZM2.44869 9.8H4.39685C4.63481 10.7879 5.00355 11.7239 5.48633 12.57C4.10105 12.1202 2.96849 11.1111 2.44869 9.8ZM4.39685 4.2H2.44869C2.96849 2.88889 4.10105 1.87982 5.48633 1.43004C5.00355 2.27614 4.63481 3.21207 4.39685 4.2ZM7 12.5755C6.36508 11.6667 5.87812 10.666 5.5776 9.8H8.4224C8.12188 10.666 7.63492 11.6667 7 12.5755ZM8.6968 8.4H5.3032C5.25239 8.00449 5.23333 7.60898 5.23333 7C5.23333 6.39102 5.25239 5.99551 5.3032 5.6H8.6968C8.74761 5.99551 8.76667 6.39102 8.76667 7C8.76667 7.60898 8.74761 8.00449 8.6968 8.4ZM8.51367 12.57C8.99645 11.7239 9.36519 10.7879 9.60315 9.8H11.5513C11.0315 11.1111 9.89895 12.1202 8.51367 12.57ZM10.1991 8.4C10.2415 8.00449 10.2667 7.60898 10.2667 7C10.2667 6.39102 10.2415 5.99551 10.1991 5.6H12.4676C12.566 5.98713 12.6 6.38264 12.6 7C12.6 7.61736 12.566 8.01287 12.4676 8.4H10.1991Z" fill="currentColor"/>
+      </svg>
+      Select Language
+    </label>
     <select id="locale" disabled>
       <option value="">Loading locales...</option>
     </select>
@@ -1164,11 +2143,23 @@
 
 <!-- Content Preview View -->
 <div class="container view" id="preview-view">
-  <h2>📋 Content Preview</h2>
+  <h2>
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-right: 4px;">
+      <path d="M15 0H3C1.34315 0 0 1.34315 0 3V15C0 16.6569 1.34315 18 3 18H15C16.6569 18 18 16.6569 18 15V3C18 1.34315 16.6569 0 15 0Z" fill="currentColor" opacity="0.2"/>
+      <path d="M4.5 4.5H13.5M4.5 7.5H13.5M4.5 10.5H10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    Content Preview
+  </h2>
   <div class="subtitle">Map and preview Contentful records</div>
 
   <div class="section">
-    <label>📦 Select Content Type</label>
+    <label>
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-right: 4px;">
+        <path d="M12 0H2C0.895431 0 0 0.895431 0 2V12C0 13.1046 0.895431 14 2 14H12C13.1046 14 14 13.1046 14 12V2C14 0.895431 13.1046 0 12 0Z" fill="currentColor" opacity="0.2"/>
+        <path d="M4 4H10M4 7H10M4 10H8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+      Select Content Type
+    </label>
     <select id="content-type-select" disabled>
       <option value="">Loading content types...</option>
     </select>
@@ -1177,7 +2168,12 @@
 
   <div class="section hidden" id="mapping-section">
     <div class="mapping-header">
-      <label>🔗 Field Mappings</label>
+      <label>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-right: 4px;">
+          <path d="M5.5 0C4.39543 0 3.5 0.89543 3.5 2C3.5 2.73914 3.87011 3.38763 4.42499 3.76646L4.42499 5.75C4.42499 6.0537 4.25433 6.33319 3.98422 6.47533L1.98422 7.47533C1.71411 7.61747 1.54345 7.89696 1.54345 8.20066L1.54345 10.2335C0.988575 10.6123 0.618463 11.2608 0.618463 12C0.618463 13.1046 1.5139 14 2.61847 14C3.72304 14 4.61847 13.1046 4.61847 12C4.61847 11.2608 4.24836 10.6123 3.69349 10.2335L3.69349 8.66603L5.25349 7.86603C5.79358 7.58176 6.18832 7.09172 6.34377 6.51063C6.84293 6.70348 7.40448 6.72107 7.91754 6.53813L9.30654 9.31613C9.00154 9.65413 8.81848 10.101 8.81848 10.5905C8.81848 11.6951 9.71391 12.5905 10.8185 12.5905C11.9231 12.5905 12.8185 11.6951 12.8185 10.5905C12.8185 9.48596 11.9231 8.59053 10.8185 8.59053C10.534 8.59053 10.2659 8.64958 10.0232 8.75563L8.63417 5.97763C9.00517 5.63463 9.23654 5.14313 9.23654 4.59053C9.23654 3.48596 8.34111 2.59053 7.23654 2.59053C6.13197 2.59053 5.23654 3.48596 5.23654 4.59053C5.23654 5.13513 5.46241 5.62363 5.82841 5.96663C5.73691 6.29663 5.52241 6.58163 5.22841 6.75863L5.57501 5.76646C6.12988 5.38763 6.5 4.73914 6.5 4C6.5 2.89543 5.60457 2 4.5 2C3.39543 2 2.5 2.89543 2.5 4C2.5 5.10457 3.39543 6 4.5 6Z" fill="currentColor"/>
+        </svg>
+        Field Mappings
+      </label>
       <button id="clear-mappings" class="btn-secondary" style="padding: 6px 12px; font-size: 12px;">Clear All</button>
     </div>
     
@@ -1192,7 +2188,13 @@
 
   <div class="section hidden" id="record-navigation">
     <div class="record-header">
-      <label>📄 Record Preview</label>
+      <label>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-right: 4px;">
+          <path d="M8.75 0H2.625C1.86561 0 1.25 0.61561 1.25 1.375V12.625C1.25 13.3844 1.86561 14 2.625 14H11.375C12.1344 14 12.75 13.3844 12.75 12.625V4.125L8.75 0Z" fill="currentColor" opacity="0.2"/>
+          <path d="M8.75 0V4.125H12.75M4.375 7.875H9.625M4.375 10.5H9.625" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Record Preview
+      </label>
       <div class="record-info">
         <span id="record-counter">Record 1 of 0</span>
       </div>
@@ -1214,85 +2216,76 @@
 </div>
 
 <!-- Settings View -->
-<div class="container view" id="settings-view" style="height: 100vh; overflow-y: auto; display: flex; flex-direction: column; padding: 12px;">
+<div class="container view" id="settings-view" style="height: 100vh; overflow-y: auto; display: none; flex-direction: column; padding: 12px;">
   <div style="margin-bottom: 16px;">
-    <h2 style="margin: 0 0 4px 0; font-size: 18px; font-weight: 600;">⚙️ Settings</h2>
-    <div class="subtitle" style="margin: 0;">Configure your Contentful connection</div>
+    <h2 style="margin: 0 0 4px 0; font-size: 18px; font-weight: 600;">Connect Your Contentful Account</h2>
   </div>
 
   <div class="section" style="flex: 1; overflow-y: auto;">
     <div style="display: grid; gap: 16px;">
     <div class="config-field">
-        <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">🔑 Space ID <span style="color: #f44336;">*</span></label>
+        <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">Space ID <span style="color: var(--red-500);">*</span></label>
         <input type="text" id="space-id" placeholder="Enter your Contentful Space ID" style="width: 100%; box-sizing: border-box;" />
     </div>
 
     <div class="config-field">
-        <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">🔒 CMA Token <span style="color: #f44336;">*</span></label>
+        <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">CMA Token <span style="color: var(--red-500);">*</span></label>
         <input type="password" id="cma-token" placeholder="Enter your CMA token" style="width: 100%; box-sizing: border-box;" />
         <div style="font-size: 10px; color: var(--figma-text-tertiary); margin-top: 4px;">Content Management API token</div>
     </div>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
     <div class="config-field">
-          <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">🌍 Environment</label>
+          <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">Environment</label>
           <input type="text" id="environment" placeholder="master" style="width: 100%; box-sizing: border-box;" />
     </div>
 
     <div class="config-field">
-          <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">📦 Content Type</label>
+          <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">Content Type</label>
           <input type="text" id="content-type" placeholder="translation" style="width: 100%; box-sizing: border-box;" />
         </div>
     </div>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
     <div class="config-field">
-          <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">🔑 Key Field</label>
+          <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">Key Field</label>
           <input type="text" id="key-field" placeholder="key" style="width: 100%; box-sizing: border-box;" />
     </div>
 
     <div class="config-field">
-          <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">💬 Value Field</label>
+          <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">Value Field</label>
           <input type="text" id="value-field" placeholder="value" style="width: 100%; box-sizing: border-box;" />
         </div>
     </div>
 
     <div class="config-field">
-        <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">🎯 Node Name Pattern (Regex)</label>
+        <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px;">Node Name Pattern (Regex)</label>
         <input type="text" id="node-pattern" placeholder="^jams_" style="width: 100%; box-sizing: border-box;" />
         <div style="font-size: 10px; color: var(--figma-text-tertiary); margin-top: 4px;">Only nodes matching this pattern will be loaded</div>
       </div>
     </div>
-    
-    <div class="config-actions" style="margin-top: 16px; display: flex; gap: 8px;">
-      <button class="btn-primary" id="save-config" style="flex: 1;">💾 Save & Validate</button>
-      <button class="btn-secondary" id="reset-config" style="flex: 0 0 auto;">Reset to Default</button>
-  </div>
 
-    <div class="preflight-container" id="preflight-container">
-      <div class="preflight-step" id="preflight-validate">
-        <div class="preflight-icon">⏳</div>
-        <div class="preflight-text">Validating configuration...</div>
-      </div>
-      <div class="preflight-step" id="preflight-locales">
-        <div class="preflight-icon">⏳</div>
-        <div class="preflight-text">Testing connection & fetching locales...</div>
-      </div>
-      <div class="preflight-step" id="preflight-content">
-        <div class="preflight-icon">⏳</div>
-        <div class="preflight-text">Verifying content type...</div>
-      </div>
-      <div class="preflight-step" id="preflight-save">
-        <div class="preflight-icon">⏳</div>
-        <div class="preflight-text">Saving configuration...</div>
-      </div>
+    <!-- Reset button -->
+    <div style="margin-top: 24px;">
+      <button class="btn-tertiary btn-reset-config" id="reset-config">Reset all fields to default</button>
     </div>
+
+    <!-- Action bar with navigation and save -->
+    <div class="config-actions" style="margin-top: 16px; display: flex; gap: 8px; justify-content: space-between;">
+      <button class="btn-secondary" id="back-to-main" style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; font-size: 13px;">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 13 L5 8 L10 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Back to keys
+      </button>
+      <button class="btn-primary" id="save-config" style="flex: 0 0 auto;">Save & Validate</button>
   </div>
 
-  <button class="btn-secondary" id="back-to-main" style="width: calc(100% - 24px); margin: 0 12px 12px 12px; flex-shrink: 0;">← Back to Translator</button>
+    <!-- Version -->
+    <div id="plugin-version" style="margin-top: 16px; text-align: center; font-size: 11px; color: var(--figma-text-tertiary);">
+      Version ...
+    </div>
 
-  <div class="status-container">
-    <div id="settings-status"></div>
   </div>
 </div>
 
@@ -1348,20 +2341,99 @@ applyFigmaTheme();
 
 // Watch for theme changes
 const observer = new MutationObserver(applyFigmaTheme);
-observer.observe(document.documentElement, { 
-  attributes: true, 
-  attributeFilter: ['style'] 
+observer.observe(document.documentElement, {
+  attributes: true,
+  attributeFilter: ['style']
 });
+
+// Loading overlay management
+let isInitialLoad = true;
+
+function setLoadingMessage(message) {
+  const loadingMessageEl = document.getElementById('loading-message');
+  if (loadingMessageEl) {
+    loadingMessageEl.textContent = message;
+  }
+}
+
+function hideLoadingOverlay() {
+  const loadingOverlay = document.getElementById('loading-overlay');
+  const tableSection = document.getElementById('items-table-section');
+
+  if (loadingOverlay) {
+    loadingOverlay.classList.add('hidden');
+  }
+  if (tableSection) {
+    tableSection.classList.remove('hidden');
+  }
+  isInitialLoad = false;
+}
+
+function showLoadingOverlay(message = 'Loading...') {
+  const loadingOverlay = document.getElementById('loading-overlay');
+  const tableSection = document.getElementById('items-table-section');
+
+  if (loadingOverlay) {
+    loadingOverlay.classList.remove('hidden');
+    setLoadingMessage(message);
+  }
+  if (tableSection) {
+    tableSection.classList.add('hidden');
+  }
+}
+
+// Show initial loading overlay
+showLoadingOverlay('Initializing...');
 
 // Request config and start auto-load on startup
 parent.postMessage({ pluginMessage: { type: 'init' } }, '*');
+
+// Auto-refresh system
+let autoRefreshInterval = null;
+const AUTO_REFRESH_INTERVAL = 30000; // 30 seconds
+
+function startAutoRefresh() {
+  if (autoRefreshInterval) {
+    clearInterval(autoRefreshInterval);
+  }
+
+  autoRefreshInterval = setInterval(() => {
+    if (config && isConfigComplete(config)) {
+      refreshData();
+    }
+  }, AUTO_REFRESH_INTERVAL);
+}
+
+function stopAutoRefresh() {
+  if (autoRefreshInterval) {
+    clearInterval(autoRefreshInterval);
+    autoRefreshInterval = null;
+  }
+}
+
+function refreshData() {
+  if (!config || !isConfigComplete(config)) {
+    return;
+  }
+
+  setWriteStatus('Refreshing...', 'loading');
+
+  try {
+    parent.postMessage({ pluginMessage: { type: 'get-translatable-nodes', config } }, '*');
+  } catch (error) {
+    console.error('Failed to refresh data:', error);
+    setWriteStatus('Refresh failed', 'error');
+  }
+}
+
+// Auto-refresh disabled to allow 5-minute cache to work effectively
+// startAutoRefresh();
 
 // View switching - wait for DOM to be ready
 window.addEventListener('DOMContentLoaded', () => {
   const settingsBtn = document.getElementById('settings-toggle-inline');
   if (settingsBtn) {
     settingsBtn.onclick = () => {
-      console.log('Settings button clicked');
       switchView('settings');
     };
   } else {
@@ -1374,47 +2446,50 @@ window.addEventListener('DOMContentLoaded', () => {
       switchView('write');
     };
   }
+
+  // Add validation listeners for required fields
+  const spaceIdInput = document.getElementById('space-id');
+  const cmaTokenInput = document.getElementById('cma-token');
+
+  if (spaceIdInput) {
+    spaceIdInput.addEventListener('input', validateRequiredFields);
+  }
+
+  if (cmaTokenInput) {
+    cmaTokenInput.addEventListener('input', validateRequiredFields);
+  }
+
+  // Always start in normal mode (don't request stored window size state)
+  // parent.postMessage({ pluginMessage: { type: 'get-window-size-state' } }, '*');
 });
 
 function switchView(viewName) {
-  console.log('switchView called with:', viewName);
-  
   const targetView = document.getElementById(`${viewName}-view`);
-  console.log('Target view element:', targetView);
-  
+
   if (!targetView) {
     console.error(`View "${viewName}-view" not found!`);
     return;
   }
-  
+
   // Remove active from all views
   document.querySelectorAll('.view').forEach(v => {
-    console.log('Removing active from:', v.id, v.classList.contains('active'));
     v.classList.remove('active');
     v.style.display = 'none'; // Force hide
   });
-  
+
   // Activate target view
   targetView.classList.add('active');
   targetView.style.display = 'block'; // Force show
-  console.log('Activated view:', targetView.id, targetView.classList.contains('active'));
   
   if (viewName === 'settings') {
     loadConfigIntoEditor();
-  } else {
-    // Hide preflight container when leaving settings
-    const preflightContainer = document.getElementById('preflight-container');
-    if (preflightContainer) {
-      preflightContainer.classList.remove('active');
-      resetPreflightSteps();
-    }
   }
 }
 
 // Settings functionality
 function loadConfigIntoEditor() {
   const configToLoad = config || defaultConfig;
-  
+
   document.getElementById('space-id').value = configToLoad.SPACE_ID || '';
   document.getElementById('environment').value = configToLoad.ENVIRONMENT || '';
   document.getElementById('cma-token').value = configToLoad.CMA_TOKEN || '';
@@ -1422,6 +2497,26 @@ function loadConfigIntoEditor() {
   document.getElementById('key-field').value = configToLoad.KEY_FIELD || '';
   document.getElementById('value-field').value = configToLoad.VALUE_FIELD || '';
   document.getElementById('node-pattern').value = configToLoad.NODE_NAME_PATTERN || '';
+
+  // Initial validation check
+  validateRequiredFields();
+}
+
+function validateRequiredFields() {
+  const spaceId = document.getElementById('space-id').value.trim();
+  const cmaToken = document.getElementById('cma-token').value.trim();
+  const saveButton = document.getElementById('save-config');
+
+  // Disable button if either required field is empty
+  if (!spaceId || !cmaToken) {
+    saveButton.disabled = true;
+    saveButton.style.opacity = '0.5';
+    saveButton.style.cursor = 'not-allowed';
+  } else {
+    saveButton.disabled = false;
+    saveButton.style.opacity = '1';
+    saveButton.style.cursor = 'pointer';
+  }
 }
 
 function getConfigFromFields() {
@@ -1438,31 +2533,288 @@ function getConfigFromFields() {
 
 document.getElementById('save-config').onclick = async () => {
   const newConfig = getConfigFromFields();
-  
-  // Start preflight checks
-  const preflightContainer = document.getElementById('preflight-container');
-  preflightContainer.classList.add('active');
-  
-  // Smooth scroll to preflight checks
-  setTimeout(() => {
-    preflightContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }, 100);
-  
+
+  // Show validation modal
+  showValidationModal();
+
   // Disable the save button
   document.getElementById('save-config').disabled = true;
-  
+
   // Run preflight checks step by step
   await runPreflightChecks(newConfig);
 };
 
-document.getElementById('reset-config').onclick = () => {
-  loadConfigIntoEditor();
-  setSettingsStatus('✨ Reset to default values', 'info');
-  
-  // Hide preflight if visible
-  document.getElementById('preflight-container').classList.remove('active');
-  resetPreflightSteps();
+// Show reset confirmation modal
+document.getElementById('reset-config').onclick = (e) => {
+  e.preventDefault();
+  showResetModal();
 };
+
+// Show reset modal
+function showResetModal() {
+  document.getElementById('reset-modal').classList.add('show');
+}
+
+// Hide reset modal
+function hideResetModal() {
+  document.getElementById('reset-modal').classList.remove('show');
+}
+
+// Confirm reset action
+function confirmReset() {
+  hideResetModal();
+  loadConfigIntoEditor();
+}
+
+// Conflict Resolution Modal Functions
+let currentConflictData = null;
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function showConflictModal(keyName, items, contentfulValue) {
+  currentConflictData = {
+    keyName: keyName,
+    items: items,
+    contentfulValue: contentfulValue
+  };
+
+  // Set key name and count
+  document.getElementById('conflict-key-name').textContent = keyName;
+
+  const uniqueCount = new Set(items.map(item => item.characters)).size;
+  document.getElementById('conflict-instance-count').textContent =
+    `${items.length} instances, ${uniqueCount} unique text ${uniqueCount === 1 ? 'variation' : 'variations'} found. Choose one to apply to all instances.`;
+
+  // Group items by unique text content
+  const uniqueVariants = new Map(); // Map<text, items[]>
+
+  items.forEach((item) => {
+    const text = item.characters;
+    if (!uniqueVariants.has(text)) {
+      uniqueVariants.set(text, []);
+    }
+    uniqueVariants.get(text).push(item);
+  });
+
+  // Build versions list - one card per unique text
+  const container = document.getElementById('conflict-versions-container');
+  container.innerHTML = '';
+
+  let variantIndex = 0;
+  uniqueVariants.forEach((itemsWithSameText, text) => {
+    const firstItem = itemsWithSameText[0];
+    const count = itemsWithSameText.length;
+
+    const versionDiv = document.createElement('div');
+    versionDiv.className = 'conflict-version';
+    versionDiv.setAttribute('data-version-index', variantIndex);
+    versionDiv.setAttribute('data-text-value', text);
+
+    // Escape the text for use in onclick attribute
+    const escapedText = escapeHtml(text).replace(/'/g, '&#39;');
+
+    versionDiv.innerHTML = `
+      <div class="conflict-version-text">${escapeHtml(text)}</div>
+      <div class="conflict-version-meta">${count > 1 ? `${count} instances with this text` : '1 instance'}</div>
+      <div class="conflict-version-actions">
+        <button class="btn-secondary btn-show-in-figma" onclick="event.stopPropagation(); showNodeInFigma('${firstItem.id}')">
+          Show in Figma
+        </button>
+        <button class="btn-secondary btn-use-this-version" onclick="event.stopPropagation(); useThisVersionByText('${escapedText}', this)">
+          Change All to This
+        </button>
+      </div>
+      <div class="conflict-version-error" style="display: none;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M8 4v5M8 11v1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span class="conflict-version-error-text"></span>
+      </div>
+    `;
+
+    container.appendChild(versionDiv);
+    variantIndex++;
+  });
+
+  // Show Contentful value if exists
+  const contentfulSection = document.getElementById('conflict-contentful-section');
+  if (contentfulValue) {
+    contentfulSection.style.display = 'block';
+    document.getElementById('conflict-contentful-value').textContent = contentfulValue;
+  } else {
+    contentfulSection.style.display = 'none';
+  }
+
+  // Show modal
+  document.getElementById('conflict-modal').classList.add('show');
+}
+
+function hideConflictModal() {
+  document.getElementById('conflict-modal').classList.remove('show');
+  currentConflictData = null;
+
+  // Clear all errors from version cards
+  document.querySelectorAll('.conflict-version-error').forEach(error => {
+    error.classList.remove('show');
+    error.style.display = 'none';
+  });
+}
+
+function showNodeInFigma(nodeId) {
+  parent.postMessage({
+    pluginMessage: {
+      type: 'select-node',
+      nodeId: nodeId
+    }
+  }, '*');
+}
+
+function useThisVersionByText(selectedText, buttonElement) {
+  if (!currentConflictData) return;
+
+  // Unescape HTML entities
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = selectedText;
+  const unescapedText = textarea.value;
+
+  // Find the index of an item with the selected text
+  const versionIndex = currentConflictData.items.findIndex(item => item.characters === unescapedText);
+
+  if (versionIndex === -1) {
+    console.error('Could not find item with selected text:', unescapedText);
+    return;
+  }
+
+  // Use the existing handleUpdateAllInFigma logic, passing the button element
+  handleUpdateAllInFigma(versionIndex, buttonElement);
+}
+
+function useThisVersion(versionIndex) {
+  if (!currentConflictData) return;
+  handleUpdateAllInFigma(versionIndex);
+}
+
+async function handleUpdateAllInFigma(versionIndex, buttonElement = null) {
+  if (!currentConflictData) return;
+
+  const selectedItem = currentConflictData.items[versionIndex];
+  const nodeIds = currentConflictData.items.map(item => item.id);
+
+  // Clear all previous errors from all version cards
+  document.querySelectorAll('.conflict-version-error').forEach(error => {
+    error.classList.remove('show');
+    error.style.display = 'none';
+  });
+
+  // Disable all "Use This Version" buttons
+  const allButtons = document.querySelectorAll('.btn-use-this-version');
+  allButtons.forEach(btn => btn.disabled = true);
+
+  setWriteStatus(`Updating ${nodeIds.length} instances in Figma...`, 'loading');
+
+  try {
+    // Send message to backend to update all nodes
+    parent.postMessage({
+      pluginMessage: {
+        type: 'update-multiple-nodes',
+        nodeIds: nodeIds,
+        newText: selectedItem.characters
+      }
+    }, '*');
+
+    // Wait for response
+    const response = await new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => reject(new Error('Timeout')), 10000);
+
+      const handler = (event) => {
+        if (event.data.pluginMessage?.type === 'update-multiple-nodes-result') {
+          clearTimeout(timeout);
+          window.removeEventListener('message', handler);
+          resolve(event.data.pluginMessage);
+        }
+      };
+
+      window.addEventListener('message', handler);
+    });
+
+    if (response.success) {
+      setWriteStatus(`Updated ${response.count} instances in Figma - all now have the same text`, 'success');
+
+      // Update local data
+      currentConflictData.items.forEach(item => {
+        item.characters = selectedItem.characters;
+      });
+
+      // Update textItems
+      textItems.forEach(item => {
+        if (nodeIds.includes(item.id)) {
+          item.characters = selectedItem.characters;
+        }
+      });
+
+      hideConflictModal();
+
+      // Re-render table - will now show save button since conflict is gone
+      setTimeout(() => {
+        renderItemsTable();
+      }, 100);
+    } else {
+      throw new Error(response.error || 'Failed to update nodes');
+    }
+  } catch (error) {
+    console.error('Error updating nodes:', error);
+
+    // Extract a clean error message
+    let errorMessage = error.message;
+
+    // If the error contains the key name prefix (e.g., "jend_home_button_learnMore: Missing font"),
+    // extract just the meaningful part after the colon
+    if (errorMessage.includes(':')) {
+      const parts = errorMessage.split(':');
+      if (parts.length >= 2) {
+        errorMessage = parts.slice(1).join(':').trim();
+      }
+    }
+
+    // Create a helpful, user-friendly error message
+    let userFriendlyMessage = errorMessage;
+    if (errorMessage.toLowerCase().includes('missing font')) {
+      userFriendlyMessage = `Action failed: The font used in this text is not installed on your system. Please install the required font to make changes.`;
+    } else if (errorMessage.toLowerCase().includes('permission')) {
+      userFriendlyMessage = `Action failed: You don't have permission to edit this text. ${errorMessage}`;
+    } else if (errorMessage.toLowerCase().includes('locked')) {
+      userFriendlyMessage = `Action failed: This text layer is locked. Please unlock it in Figma before making changes.`;
+    } else {
+      userFriendlyMessage = `Action failed: ${errorMessage}`;
+    }
+
+    // Show error in the footer
+    setWriteStatus(`Error: ${currentConflictData.keyName}: ${errorMessage}`, 'error');
+
+    // Show error directly under the clicked button if we have the button element
+    if (buttonElement) {
+      const versionCard = buttonElement.closest('.conflict-version');
+      if (versionCard) {
+        const errorElement = versionCard.querySelector('.conflict-version-error');
+        const errorText = versionCard.querySelector('.conflict-version-error-text');
+        if (errorElement && errorText) {
+          errorText.textContent = userFriendlyMessage;
+          errorElement.style.display = 'flex';
+          errorElement.classList.add('show');
+        }
+      }
+    }
+
+    // Re-enable buttons on error
+    const allButtons = document.querySelectorAll('.btn-use-this-version');
+    allButtons.forEach(btn => btn.disabled = false);
+  }
+}
 
 async function runPreflightChecks(newConfig) {
   const steps = [
@@ -1474,29 +2826,41 @@ async function runPreflightChecks(newConfig) {
   
   for (const step of steps) {
     const element = document.getElementById(step.id);
-    
+
     // Mark as checking
     element.classList.remove('success', 'error');
     element.classList.add('checking');
     const icon = element.querySelector('.preflight-icon');
-    while (icon.firstChild) {
-      icon.removeChild(icon.firstChild);
-    }
-    const spinner = document.createElement('span');
-    spinner.className = 'spinner';
-    icon.appendChild(spinner);
+    icon.innerHTML = `
+      <svg class="spinner" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="spinnerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:var(--figma-accent);stop-opacity:1" />
+            <stop offset="100%" style="stop-color:var(--figma-accent);stop-opacity:0.3" />
+          </linearGradient>
+        </defs>
+        <circle cx="12" cy="12" r="10" stroke="var(--figma-border)" stroke-width="3" opacity="0.2"/>
+        <circle cx="12" cy="12" r="10" stroke="url(#spinnerGradient)" stroke-width="3" stroke-linecap="round" stroke-dasharray="15 50"/>
+      </svg>
+    `;
     
     // Wait a bit so user can see the step
     await new Promise(resolve => setTimeout(resolve, step.delay));
     
     try {
       const result = await step.check();
-      
+
       if (result.success) {
         element.classList.remove('checking');
         element.classList.add('success');
-        element.querySelector('.preflight-icon').textContent = '✓';
-        
+
+        element.querySelector('.preflight-icon').innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" fill="var(--green-500)"/>
+            <path d="M8 12 L11 15 L16 9" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        `;
+
         if (result.message) {
           element.querySelector('.preflight-text').textContent = result.message;
         }
@@ -1506,38 +2870,39 @@ async function runPreflightChecks(newConfig) {
     } catch (error) {
       element.classList.remove('checking');
       element.classList.add('error');
-      element.querySelector('.preflight-icon').textContent = '✗';
+      element.querySelector('.preflight-icon').innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" fill="var(--red-500)"/>
+          <path d="M8 8 L16 16 M16 8 L8 16" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      `;
       element.querySelector('.preflight-text').textContent = error.message;
-      
-      setSettingsStatus('❌ Preflight check failed: ' + error.message, 'error');
+
       document.getElementById('save-config').disabled = false;
+
+      // Show error message in modal
+      const statusDiv = document.getElementById('validation-status');
+      statusDiv.style.display = 'block';
+      statusDiv.innerHTML = '<div style="color: var(--red-600); font-weight: 500; padding: 12px; background: var(--red-50); border-radius: 6px;">' + error.message + '</div>';
+
+      // Show close button
+      document.getElementById('validation-close-btn').style.display = 'flex';
+      document.getElementById('validation-footer').style.display = 'flex';
       return;
     }
   }
   
   // All checks passed!
-  setSettingsStatus('✅ Configuration saved successfully!', 'success');
   document.getElementById('save-config').disabled = false;
-  
-  setTimeout(() => {
-    switchView('main');
-    resetPreflightSteps();
-  }, 1500);
-}
 
-function resetPreflightSteps() {
-  const steps = ['preflight-validate', 'preflight-locales', 'preflight-content', 'preflight-save'];
-  steps.forEach(id => {
-    const element = document.getElementById(id);
-    element.classList.remove('checking', 'success', 'error');
-    element.querySelector('.preflight-icon').textContent = '⏳';
-  });
-  
-  // Reset text
-  document.getElementById('preflight-validate').querySelector('.preflight-text').textContent = 'Validating configuration...';
-  document.getElementById('preflight-locales').querySelector('.preflight-text').textContent = 'Testing connection & fetching locales...';
-  document.getElementById('preflight-content').querySelector('.preflight-text').textContent = 'Verifying content type...';
-  document.getElementById('preflight-save').querySelector('.preflight-text').textContent = 'Saving configuration...';
+  // Show success message in modal
+  const statusDiv = document.getElementById('validation-status');
+  statusDiv.style.display = 'block';
+  statusDiv.innerHTML = '<div style="color: var(--green-600); font-weight: 500; padding: 12px; background: var(--green-50); border-radius: 6px;">Configuration saved successfully!</div>';
+
+  // Show close button
+  document.getElementById('validation-close-btn').style.display = 'flex';
+  document.getElementById('validation-footer').style.display = 'flex';
 }
 
 function validateConfig(cfg) {
@@ -1559,7 +2924,7 @@ function validateConfig(cfg) {
       return;
     }
     
-    resolve({ success: true, message: 'All fields validated ✓' });
+    resolve({ success: true, message: 'All fields validated' });
   });
 }
 
@@ -1627,7 +2992,7 @@ function saveConfig(cfg) {
         isResolved = true;
         window.removeEventListener('message', messageHandler);
         config = event.data.pluginMessage.config;
-        resolve({ success: true, message: 'Configuration saved successfully ✓' });
+        resolve({ success: true, message: 'Configuration saved successfully' });
       } else if (event.data?.pluginMessage?.type === 'config-save-failed') {
         isResolved = true;
         window.removeEventListener('message', messageHandler);
@@ -1694,21 +3059,37 @@ document.getElementById('cancel').onclick = () => {
 
 let textItems = [];
 let contentfulItems = {};
+let currentFilter = 'all'; // 'all' or 'changes'
 
-document.getElementById('btn-load-items').onclick = async () => {
+let isCompact = false;
+const SIZES = {
+  normal: { width: 800, height: 500 },
+  compact: { width: 450, height: 600 }
+};
+
+document.getElementById('btn-load-items').onclick = async function() {
+  this.blur();
   if (!config) {
-    setWriteStatus('⚠️ Please configure Contentful connection first', 'error');
+    setWriteStatus('Please configure Contentful connection first', 'error');
     return;
   }
-  
-  console.log('🔄 Load button clicked - fetching fresh data from Figma and Contentful');
-  setWriteStatus('Loading text items...', 'loading');
-  
+
+  console.log('Load button clicked - fetching fresh data from Figma and Contentful');
+
+  // On initial load, use centered overlay; on manual sync, use footer status
+  if (isInitialLoad) {
+    setLoadingMessage('Loading text items...');
+  } else {
+    setWriteStatus('Loading text items...', 'loading');
+  }
+
   // Clear existing data to force fresh fetch
   textItems = [];
   contentfulItems = {};
-  
-  // Fetch text nodes from Figma
+
+  // Fetch text nodes from Figma (uses 30s cache) and fresh Contentful data (delta sync)
+  // Note: We don't use forceRefresh here because scanning all Figma nodes is slow (30s)
+  // The 30s node cache is acceptable for manual syncs
   parent.postMessage({ pluginMessage: { type: 'get-translatable-nodes', config } }, '*');
 };
 
@@ -1719,14 +3100,13 @@ function setWriteStatus(text, type = 'info') {
 }
 
 async function loadItemsAndCheckStatus(items) {
-  console.log('📝 Loaded', items.length, 'text items from Figma');
   textItems = items;
-  
+
   if (items.length === 0) {
     setWriteStatus('No translatable text items found', 'info');
     return;
   }
-  
+
   // Check for duplicate names
   const nameCount = {};
   const duplicates = [];
@@ -1736,199 +3116,1219 @@ async function loadItemsAndCheckStatus(items) {
       duplicates.push(item.name);
     }
   });
-  
+
   if (duplicates.length > 0) {
-    console.warn('⚠️ DUPLICATE NODE NAMES DETECTED:');
-    duplicates.forEach(name => {
-      console.warn(`  - "${name}" appears ${nameCount[name]} times`);
-      const dupeItems = items.filter(item => item.name === name);
-      dupeItems.forEach((item, idx) => {
-        console.warn(`    ${idx + 1}. ID: ${item.id}, Text: "${item.characters.substring(0, 50)}..."`);
-      });
-    });
-    setWriteStatus(`⚠️ Warning: ${duplicates.length} duplicate name(s) found - check console`, 'error');
+    console.warn(`DUPLICATE NODE NAMES DETECTED: ${duplicates.length} duplicate name(s) - ${duplicates.join(', ')}`);
+    // Note: Duplicate names are expected when you have multiple instances of the same text
+    // The warning is logged to console for debugging, but we don't show it in the UI
   }
-  
+
   // Always fetch fresh data from Contentful to get the latest state
-  console.log('🔄 Fetching fresh data from Contentful...');
-  setWriteStatus('Fetching from Contentful...', 'loading');
+  // On initial load, use centered overlay; on manual sync, use footer status
+  if (isInitialLoad) {
+    setLoadingMessage('Fetching from Contentful...');
+  } else {
+    setWriteStatus('Fetching from Contentful...', 'loading');
+  }
   parent.postMessage({ pluginMessage: { type: 'get-all-contentful-items', config } }, '*');
 }
 
-function renderItemsTable() {
-  try {
-    const tbody = document.getElementById('items-table-body');
-    if (!tbody) {
-      console.error('Table body element not found');
-      return;
-    }
-    
-    tbody.innerHTML = '';
-    
-    // Validate textItems array
-    if (!Array.isArray(textItems)) {
-      console.error('textItems is not an array');
-      setWriteStatus('Error: Invalid data structure', 'error');
-      return;
-    }
-    
-    // Get search filter
-    const searchInput = document.getElementById('search-input');
-    const searchTerm = (searchInput?.value || '').toLowerCase().trim();
-    
-    // Filter items based on search (search in both key name and text content)
-    const filteredItems = textItems.filter(item => {
-      if (!item || typeof item !== 'object') return false;
-      
-      const name = String(item.name || '').toLowerCase();
-      const characters = String(item.characters || '').toLowerCase();
-      
-      return name.includes(searchTerm) || characters.includes(searchTerm);
-    });
-    
-    filteredItems.forEach((item) => {
-      const originalIndex = textItems.findIndex(original => 
-        original && original.id === item.id
-      );
-      
-      if (originalIndex === -1) {
-        console.warn('Could not find original index for item:', item.id);
-        return; // Skip this item
-      }
+// Prevent concurrent renders
+let isRendering = false;
+
+// Render individual ungrouped items
+function renderIndividualItems(items) {
+  const tbody = document.getElementById('items-table-body');
+  const fragment = document.createDocumentFragment();
+
+  items.forEach((item) => {
+    const originalIndex = findItemIndexById(textItems, item.id);
+
+    if (originalIndex === -1) return;
+
     const tr = document.createElement('tr');
-    
-    // Add click handler to filter by this item
     tr.style.cursor = 'pointer';
-    tr.onclick = (e) => {
-      // Don't trigger if clicking a button
-      if (e.target.tagName === 'BUTTON') return;
-      
-      const searchInput = document.getElementById('search-input');
-      searchInput.value = item.name;
-      searchInput.dispatchEvent(new Event('input'));
-      searchInput.focus();
-    };
-    
-    // Key column
+
+    // Key column - just the key name (no count prefix)
     const keyTd = document.createElement('td');
-    const contentfulItem = contentfulItems[item.name];
-    
+    const keyName = item.name;
+
+    // Check if this item exists in Contentful
+    const contentfulItem = contentfulItems[keyName];
+
     if (contentfulItem && contentfulItem.id) {
-      // Create clickable link to Contentful
-      // Correct Contentful web app URL format with environment
       const link = document.createElement('a');
-      const contentfulUrl = `https://app.contentful.com/spaces/${encodeURIComponent(config.SPACE_ID)}/environments/${encodeURIComponent(config.ENVIRONMENT)}/entries/${encodeURIComponent(contentfulItem.id)}`;
-      
+      const contentfulUrl = buildContentfulUrl(config, contentfulItem.id);
       link.href = contentfulUrl;
       link.target = '_blank';
       link.rel = 'noopener noreferrer';
       link.className = 'contentful-link';
-      link.textContent = item.name;
-      link.title = 'Open in Contentful';
-      link.onclick = (e) => {
-        e.stopPropagation(); // Prevent row click handler
-      };
+      link.textContent = keyName;
+      link.onclick = (e) => e.stopPropagation();
+      link.dataset.keyName = keyName;
       keyTd.appendChild(link);
     } else {
-      // No link for new items
-      keyTd.textContent = item.name;
-      keyTd.style.fontWeight = '600';
+      // Wrap in span for consistency with grouped items
+      const keySpan = document.createElement('span');
+      keySpan.textContent = keyName;
+      keySpan.style.fontWeight = '600';
+      keySpan.dataset.keyName = keyName;
+      keyTd.appendChild(keySpan);
     }
-    
     tr.appendChild(keyTd);
-    
-    // Text column
+
+    // Text column - individual item's text
     const textTd = document.createElement('td');
     const textDiv = document.createElement('div');
     textDiv.className = 'text-preview';
     textDiv.textContent = item.characters;
-    textDiv.title = item.characters;
     textTd.appendChild(textDiv);
     tr.appendChild(textTd);
-    
-    // Status column
+
+    // Status column - check this specific item
     const statusTd = document.createElement('td');
+    statusTd.className = 'text-center';
+    const statusBadge = document.createElement('span');
+
+    if (!contentfulItem) {
+      statusBadge.className = 'status-badge not-exists';
+      statusBadge.innerHTML = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+      setTooltip(statusBadge, 'New - Does not exist in Contentful');
+    } else {
+      const isEqual = textsAreEqual(item.characters, contentfulItem.value);
+      const contentfulText = normalizeText(contentfulItem.value);
+      if (!isEqual) {
+        statusBadge.className = 'status-badge out-of-sync';
+        statusBadge.innerHTML = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4v5M8 11v1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+        setTooltip(statusBadge, `Contentful: "${contentfulText}"`, 'top', true);
+      } else {
+        statusBadge.className = 'status-badge synced';
+        statusBadge.innerHTML = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8 L7 12 L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        setTooltip(statusBadge, 'Synced - Matches Contentful');
+      }
+    }
+
+    statusTd.appendChild(statusBadge);
+    tr.appendChild(statusTd);
+
+    // Action column - Save/Update button + Link icon
+    const actionTd = document.createElement('td');
+    actionTd.className = 'text-center';
+
+    const buttonContainer = createFlexContainer();
+
+    // Check if needs update
+    const needsUpdate = !contentfulItem || !textsAreEqual(item.characters, contentfulItem.value);
+
+    if (needsUpdate) {
+      const saveBtn = document.createElement('button');
+      saveBtn.className = 'btn-save-item-icon';
+      saveBtn.innerHTML = contentfulItem
+        ? '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 14V2M8 2L4 6M8 2L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        : '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2V14M2 8H14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+      setTooltip(saveBtn, contentfulItem ? 'Update in Contentful' : 'Create in Contentful');
+      saveBtn.onclick = () => saveItemToContentful(item, originalIndex);
+      buttonContainer.appendChild(saveBtn);
+    }
+
+    // Always show link icon for individual items
+    const linkBtn = document.createElement('button');
+    linkBtn.className = 'btn-link-to-figma';
+    linkBtn.innerHTML = '<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
+    setTooltip(linkBtn, 'Show in Figma');
+    linkBtn.onclick = (e) => {
+      e.stopPropagation();
+      showNodeInFigma(item.id);
+    };
+    buttonContainer.appendChild(linkBtn);
+
+    actionTd.appendChild(buttonContainer);
+    tr.appendChild(actionTd);
+
+    fragment.appendChild(tr);
+  });
+
+  tbody.innerHTML = '';
+  tbody.appendChild(fragment);
+
+  // Apply tooltips after elements are in DOM and layout is complete
+  // Use double requestAnimationFrame to ensure multi-line layout is finalized
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      tbody.querySelectorAll('a[data-key-name], span[data-key-name]').forEach(element => {
+        const keyName = element.dataset.keyName;
+        if (isTextTruncated(element)) {
+          element.setAttribute('data-tooltip-key', '');
+          setTooltip(element, keyName);
+        }
+      });
+
+      tbody.querySelectorAll('.text-preview').forEach(element => {
+        if (isTextTruncated(element)) {
+          setTooltip(element, element.textContent);
+        }
+      });
+    });
+  });
+}
+
+// Progressive rendering configuration
+const PROGRESSIVE_BATCH_SIZE = 25; // Render 25 grouped keys at a time
+const PROGRESSIVE_THRESHOLD = 100; // Only use progressive rendering if more than 100 keys
+
+// Render grouped items (smart progressive rendering)
+async function renderGroupedItemsProgressive(filteredItems) {
+  const tbody = document.getElementById('items-table-body');
+  tbody.innerHTML = ''; // Clear table
+
+  // Group items by key (name)
+  const groupedItems = {};
+  filteredItems.forEach((item) => {
+    if (!groupedItems[item.name]) {
+      groupedItems[item.name] = [];
+    }
+    groupedItems[item.name].push(item);
+  });
+
+  const keys = Object.keys(groupedItems);
+  const totalKeys = keys.length;
+
+  // For small datasets, render all at once (faster)
+  if (totalKeys <= PROGRESSIVE_THRESHOLD) {
+    // Only show rendering status on manual sync (not initial load with overlay)
+    if (!isInitialLoad) {
+      setWriteStatus('Rendering...', 'loading');
+    }
+    const fragment = document.createDocumentFragment();
+
+    keys.forEach(keyName => {
+      const items = groupedItems[keyName];
+      const row = createGroupedRow(keyName, items);
+      if (row) fragment.appendChild(row);
+    });
+
+    tbody.appendChild(fragment);
+  } else {
+    // For large datasets, render progressively
+    for (let i = 0; i < keys.length; i += PROGRESSIVE_BATCH_SIZE) {
+      const batchKeys = keys.slice(i, i + PROGRESSIVE_BATCH_SIZE);
+      const fragment = document.createDocumentFragment();
+
+      // Update status - only on manual sync
+      if (!isInitialLoad) {
+        const progress = Math.min(i + PROGRESSIVE_BATCH_SIZE, totalKeys);
+        setWriteStatus(`Rendering... (${progress}/${totalKeys} keys)`, 'loading');
+      }
+
+      // Render this batch
+      batchKeys.forEach(keyName => {
+        const items = groupedItems[keyName];
+        const row = createGroupedRow(keyName, items);
+        if (row) fragment.appendChild(row);
+      });
+
+      tbody.appendChild(fragment);
+
+      // Yield to browser to keep UI responsive
+      await new Promise(resolve => setTimeout(resolve, 0));
+    }
+  }
+
+  // Apply tooltips after all rendering is complete
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      tbody.querySelectorAll('a[data-key-name], span[data-key-name]').forEach(element => {
+        const keyName = element.dataset.keyName;
+        if (isTextTruncated(element)) {
+          element.setAttribute('data-tooltip-key', '');
+          setTooltip(element, keyName);
+        }
+      });
+
+      tbody.querySelectorAll('.text-preview').forEach(element => {
+        if (isTextTruncated(element)) {
+          setTooltip(element, element.textContent);
+        }
+      });
+
+      // Check if scrollbar is visible and update class
+      updateScrollbarClass();
+    });
+  });
+}
+
+// Create a single grouped row (extracted from renderGroupedItems)
+function createGroupedRow(keyName, items) {
+  const item = items[0]; // Use first item for display
+  const count = items.length;
+
+  const originalIndex = findItemIndexById(textItems, item.id);
+  if (originalIndex === -1) return null;
+
+  // Detect if there are conflicting text values
+  const uniqueTexts = [...new Set(items.map(i => i.characters))];
+  const hasConflict = count > 1 && uniqueTexts.length > 1;
+
+  const tr = document.createElement('tr');
+
+  // Add click handler to filter by this item
+  tr.style.cursor = 'pointer';
+  tr.onclick = (e) => {
+    // Don't trigger if clicking a button, svg, or inside action/status cells
+    if (e.target.tagName === 'BUTTON' ||
+        e.target.tagName === 'SVG' ||
+        e.target.tagName === 'PATH' ||
+        e.target.closest('button') ||
+        e.target.tagName === 'A') {
+      return;
+    }
+
+    // Filter by this key
+    const searchInput = document.getElementById('search-input');
+    searchInput.value = keyName;
+    searchInput.dispatchEvent(new Event('input'));
+    searchInput.focus();
+  };
+
+  // Key column
+  const keyTd = document.createElement('td');
+  const contentfulItem = contentfulItems[keyName];
+
+  // Display name with count and conflict warning
+  let displayName = count > 1 ? `(${count}) ${keyName}` : keyName;
+
+  // Add warning icon if there's a conflict
+  if (hasConflict) {
+    const warningSvg = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; margin-right: 4px; vertical-align: text-bottom;"><path d="M8 1 L15 14 L1 14 Z" fill="var(--red-500)" stroke="var(--red-500)" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6 v3 M8 11 v1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>';
+    displayName = `${warningSvg}${displayName}`;
+  }
+
+  if (contentfulItem && contentfulItem.id) {
+    // Create clickable link to Contentful
+    const link = document.createElement('a');
+    const contentfulUrl = buildContentfulUrl(config, contentfulItem.id);
+
+    link.href = contentfulUrl;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.className = 'contentful-link';
+    link.innerHTML = displayName;
+    link.onclick = (e) => {
+      e.stopPropagation(); // Prevent row click handler
+    };
+    link.dataset.keyName = keyName;
+    keyTd.appendChild(link);
+  } else {
+    // No link for new items - wrap in span
+    const keySpan = document.createElement('span');
+    keySpan.innerHTML = displayName;
+    keySpan.style.fontWeight = '600';
+    keySpan.dataset.keyName = keyName;
+    keyTd.appendChild(keySpan);
+  }
+
+  tr.appendChild(keyTd);
+
+  // Text column - show all unique text values
+  const textTd = document.createElement('td');
+  const textDiv = document.createElement('div');
+  textDiv.className = 'text-preview';
+  const textContent = uniqueTexts.join(' | ');
+  textDiv.textContent = textContent;
+  textTd.appendChild(textDiv);
+  tr.appendChild(textTd);
+
+  // Status column - check all items in the group
+  const statusTd = document.createElement('td');
+  statusTd.className = 'text-center';
+  const statusBadge = document.createElement('span');
+  statusBadge.className = 'status-badge checking';
+  statusBadge.id = `status-${originalIndex}`;
+
+  if (!contentfulItem) {
+    statusBadge.className = 'status-badge not-exists';
+    statusBadge.innerHTML = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+    setTooltip(statusBadge, 'New - Does not exist in Contentful');
+  } else {
+    // Check if any item in the group is out of sync
+    let allSynced = true;
+
+    for (const itm of items) {
+      const isEqual = textsAreEqual(itm.characters, contentfulItem.value);
+      if (!isEqual) {
+        allSynced = false;
+        break; // Early exit when we find first mismatch
+      }
+    }
+
+    const contentfulText = normalizeText(contentfulItem.value);
+
+    if (!allSynced) {
+      statusBadge.className = 'status-badge out-of-sync';
+      statusBadge.innerHTML = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4v5M8 11v1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+      setTooltip(statusBadge, `Contentful: "${contentfulText}"`, 'top', true);
+    } else {
+      statusBadge.className = 'status-badge synced';
+      statusBadge.innerHTML = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8 L7 12 L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      setTooltip(statusBadge, 'Synced - Matches Contentful');
+    }
+  }
+
+  statusTd.appendChild(statusBadge);
+  tr.appendChild(statusTd);
+
+  // Action column
+  const actionTd = document.createElement('td');
+  actionTd.className = 'text-center';
+
+  if (hasConflict) {
+    // Use flex container for consistent alignment
+    const buttonContainer = createFlexContainer();
+
+    // Show "Resolve Conflict" button
+    const resolveBtn = document.createElement('button');
+    resolveBtn.className = 'btn-save-item-icon';
+    setTooltip(resolveBtn, `Resolve ${uniqueTexts.length} conflicting text variations`);
+
+    // Warning triangle icon
+    resolveBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 1 L15 14 L1 14 Z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6 v3 M8 11 v1" stroke="var(--figma-accent)" stroke-width="1.5" stroke-linecap="round"/></svg>';
+    resolveBtn.onclick = (e) => {
+      e.stopPropagation();
+      showConflictModal(keyName, items, contentfulItem ? contentfulItem.value : null);
+    };
+    buttonContainer.appendChild(resolveBtn);
+    actionTd.appendChild(buttonContainer);
+  } else {
+    // Check if any item in the group needs update
+    let needsUpdate = !contentfulItem;
+    if (!needsUpdate) {
+      for (const itm of items) {
+        if (!textsAreEqual(itm.characters, contentfulItem.value)) {
+          needsUpdate = true;
+          break;
+        }
+      }
+    }
+
+    const buttonContainer = createFlexContainer();
+
+    // Save/Update button
+    if (needsUpdate) {
+      const saveBtn = document.createElement('button');
+      saveBtn.className = 'btn-save-item-icon';
+      saveBtn.innerHTML = contentfulItem
+        ? '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 14V2M8 2L4 6M8 2L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        : '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2V14M2 8H14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+      setTooltip(saveBtn, contentfulItem ? 'Update in Contentful' : 'Create in Contentful');
+      saveBtn.onclick = () => saveItemToContentful(item, originalIndex);
+      buttonContainer.appendChild(saveBtn);
+    }
+
+    // Link icon for single items (non-merged)
+    if (count === 1) {
+      const linkBtn = document.createElement('button');
+      linkBtn.className = 'btn-link-to-figma';
+      linkBtn.innerHTML = '<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
+      setTooltip(linkBtn, 'Show in Figma');
+      linkBtn.onclick = (e) => {
+        e.stopPropagation();
+        showNodeInFigma(item.id);
+      };
+      buttonContainer.appendChild(linkBtn);
+    }
+
+    actionTd.appendChild(buttonContainer);
+  }
+
+  tr.appendChild(actionTd);
+  return tr;
+}
+
+// Render grouped items (legacy synchronous version - keep for compatibility)
+function renderGroupedItems(filteredItems) {
+  const tbody = document.getElementById('items-table-body');
+
+  // Group items by key (name)
+  const groupedItems = {};
+  filteredItems.forEach((item) => {
+    if (!groupedItems[item.name]) {
+      groupedItems[item.name] = [];
+    }
+    groupedItems[item.name].push(item);
+  });
+
+  // Use DocumentFragment for batch DOM insertion (much faster)
+  const fragment = document.createDocumentFragment();
+  const keys = Object.keys(groupedItems);
+
+  // Render grouped items
+  keys.forEach((keyName) => {
+      const items = groupedItems[keyName];
+      const item = items[0]; // Use first item for display
+      const count = items.length;
+
+      const originalIndex = findItemIndexById(textItems, item.id);
+
+      if (originalIndex === -1) {
+        return; // Skip this item
+      }
+    // Detect if there are conflicting text values
+    const uniqueTexts = [...new Set(items.map(i => i.characters))];
+    const hasConflict = count > 1 && uniqueTexts.length > 1;
+
+    const tr = document.createElement('tr');
+
+    // Add click handler to filter by this item
+    tr.style.cursor = 'pointer';
+    tr.onclick = (e) => {
+      // Don't trigger if clicking a button, svg, or inside action/status cells
+      if (e.target.tagName === 'BUTTON' ||
+          e.target.tagName === 'SVG' ||
+          e.target.tagName === 'PATH' ||
+          e.target.closest('button') ||
+          e.target.tagName === 'A') {
+        return;
+      }
+
+      // Filter by this key
+      const searchInput = document.getElementById('search-input');
+      searchInput.value = keyName;
+      searchInput.dispatchEvent(new Event('input'));
+      searchInput.focus();
+    };
+
+    // Key column
+    const keyTd = document.createElement('td');
+    const contentfulItem = contentfulItems[keyName];
+
+    // Display name with count and conflict warning
+    let displayName = count > 1 ? `(${count}) ${keyName}` : keyName;
+
+    // Add warning icon if there's a conflict
+    if (hasConflict) {
+      const warningSvg = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; margin-right: 4px; vertical-align: text-bottom;"><path d="M8 1 L15 14 L1 14 Z" fill="var(--red-500)" stroke="var(--red-500)" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6 v3 M8 11 v1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>';
+      displayName = `${warningSvg}${displayName}`;
+    }
+
+    if (contentfulItem && contentfulItem.id) {
+      // Create clickable link to Contentful
+      const link = document.createElement('a');
+      const contentfulUrl = buildContentfulUrl(config, contentfulItem.id);
+
+      link.href = contentfulUrl;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.className = 'contentful-link';
+      link.innerHTML = displayName;
+      link.onclick = (e) => {
+        e.stopPropagation(); // Prevent row click handler
+      };
+      link.dataset.keyName = keyName;
+      keyTd.appendChild(link);
+    } else {
+      // No link for new items - wrap in span
+      const keySpan = document.createElement('span');
+      keySpan.innerHTML = displayName;
+      keySpan.style.fontWeight = '600';
+      keySpan.dataset.keyName = keyName;
+      keyTd.appendChild(keySpan);
+    }
+
+    tr.appendChild(keyTd);
+
+    // Text column - show all unique text values
+    const textTd = document.createElement('td');
+    const textDiv = document.createElement('div');
+    textDiv.className = 'text-preview';
+    const textContent = uniqueTexts.join(' | ');
+    textDiv.textContent = textContent;
+    textTd.appendChild(textDiv);
+    tr.appendChild(textTd);
+
+    // Status column - check all items in the group
+    const statusTd = document.createElement('td');
+    statusTd.className = 'text-center';
     const statusBadge = document.createElement('span');
     statusBadge.className = 'status-badge checking';
     statusBadge.id = `status-${originalIndex}`;
+
     if (!contentfulItem) {
       statusBadge.className = 'status-badge not-exists';
-      statusBadge.textContent = '+';
-      statusBadge.title = 'New - Does not exist in Contentful';
+      statusBadge.innerHTML = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+      setTooltip(statusBadge, 'New - Does not exist in Contentful');
     } else {
-      // Bulletproof comparison with normalization
-      const figmaText = normalizeText(item.characters);
-      const contentfulText = normalizeText(contentfulItem.value);
-      const isEqual = textsAreEqual(item.characters, contentfulItem.value);
-      
-      console.log(`Comparing "${item.name}":`);
-      console.log('  Figma Raw:', `"${item.characters}"`);
-      console.log('  Figma Normalized:', `"${figmaText}"`);
-      console.log('  Contentful Raw:', `"${contentfulItem.value}"`);
-      console.log('  Contentful Normalized:', `"${contentfulText}"`);
-      console.log('  Equal:', isEqual);
-      console.log('  Lengths:', { figma: figmaText.length, contentful: contentfulText.length });
-      if (!isEqual) {
-        console.log('  Figma Char Codes:', Array.from(figmaText).map(c => c.charCodeAt(0)));
-        console.log('  Contentful Char Codes:', Array.from(contentfulText).map(c => c.charCodeAt(0)));
+      // Check if any item in the group is out of sync
+      let allSynced = true;
+
+      for (const itm of items) {
+        const isEqual = textsAreEqual(itm.characters, contentfulItem.value);
+        if (!isEqual) {
+          allSynced = false;
+          break; // Early exit when we find first mismatch
+        }
       }
-      
-      if (!isEqual) {
+
+      const contentfulText = normalizeText(contentfulItem.value);
+
+      if (!allSynced) {
         statusBadge.className = 'status-badge out-of-sync';
-        statusBadge.textContent = '!';
-        statusBadge.title = `Contentful: "${contentfulText}"`;
+        statusBadge.innerHTML = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 4v5M8 11v1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+        setTooltip(statusBadge, `Contentful: "${contentfulText}"`, 'top', true);
       } else {
         statusBadge.className = 'status-badge synced';
-        statusBadge.textContent = '✓';
-        statusBadge.title = 'Synced - Matches Contentful';
+        statusBadge.innerHTML = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8 L7 12 L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        setTooltip(statusBadge, 'Synced - Matches Contentful');
       }
     }
-    
+
     statusTd.appendChild(statusBadge);
     tr.appendChild(statusTd);
-    
+
     // Action column
     const actionTd = document.createElement('td');
-    
-    const needsUpdate = !contentfulItem || !textsAreEqual(item.characters, contentfulItem.value);
-    
-    if (needsUpdate) {
-      const saveBtn = document.createElement('button');
-      saveBtn.className = 'btn-save-item';
-      saveBtn.textContent = contentfulItem ? 'Update' : 'Create';
-      saveBtn.onclick = () => saveItemToContentful(item, originalIndex);
-      actionTd.appendChild(saveBtn);
+    actionTd.className = 'text-center';
+
+    if (hasConflict) {
+      // Use flex container for consistent alignment
+      const buttonContainer = createFlexContainer();
+
+      // Show "Resolve Conflict" button
+      const resolveBtn = document.createElement('button');
+      resolveBtn.className = 'btn-save-item-icon';
+      setTooltip(resolveBtn, `Resolve ${uniqueTexts.length} conflicting text variations`);
+
+      // Warning triangle icon
+      resolveBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 1 L15 14 L1 14 Z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6 v3 M8 11 v1" stroke="var(--figma-accent)" stroke-width="1.5" stroke-linecap="round"/></svg>';
+      resolveBtn.onclick = (e) => {
+        e.stopPropagation();
+        showConflictModal(keyName, items, contentfulItem ? contentfulItem.value : null);
+      };
+      buttonContainer.appendChild(resolveBtn);
+      actionTd.appendChild(buttonContainer);
+    } else {
+      // Check if any item in the group needs update
+      let needsUpdate = !contentfulItem;
+      if (!needsUpdate) {
+        for (const itm of items) {
+          if (!textsAreEqual(itm.characters, contentfulItem.value)) {
+            needsUpdate = true;
+            break;
+          }
+        }
+      }
+
+      const buttonContainer = createFlexContainer();
+
+      // Save/Update button
+      if (needsUpdate) {
+        const saveBtn = document.createElement('button');
+        saveBtn.className = 'btn-save-item-icon';
+        saveBtn.innerHTML = contentfulItem
+          ? '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 14V2M8 2L4 6M8 2L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+          : '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2V14M2 8H14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+        setTooltip(saveBtn, contentfulItem ? 'Update in Contentful' : 'Create in Contentful');
+        saveBtn.onclick = () => saveItemToContentful(item, originalIndex);
+        buttonContainer.appendChild(saveBtn);
+      }
+
+      // Link icon for single items (non-merged)
+      if (count === 1) {
+        const linkBtn = document.createElement('button');
+        linkBtn.className = 'btn-link-to-figma';
+        linkBtn.innerHTML = '<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
+        setTooltip(linkBtn, 'Show in Figma');
+        linkBtn.onclick = (e) => {
+          e.stopPropagation();
+          showNodeInFigma(item.id);
+        };
+        buttonContainer.appendChild(linkBtn);
+      }
+
+      actionTd.appendChild(buttonContainer);
     }
-    
+
     tr.appendChild(actionTd);
-      tbody.appendChild(tr);
+      fragment.appendChild(tr);
     });
-    
+
+  // Batch DOM update - clear table and append all rows at once
+  tbody.innerHTML = '';
+  tbody.appendChild(fragment);
+
+  // Apply tooltips after elements are in DOM and layout is complete
+  // Use double requestAnimationFrame to ensure multi-line layout is finalized
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      tbody.querySelectorAll('a[data-key-name], span[data-key-name]').forEach(element => {
+        const keyName = element.dataset.keyName;
+        if (isTextTruncated(element)) {
+          element.setAttribute('data-tooltip-key', '');
+          setTooltip(element, keyName);
+        }
+      });
+
+      tbody.querySelectorAll('.text-preview').forEach(element => {
+        if (isTextTruncated(element)) {
+          setTooltip(element, element.textContent);
+        }
+      });
+
+      // Check if scrollbar is visible and update class
+      updateScrollbarClass();
+    });
+  });
+}
+
+async function renderItemsTable() {
+  // Prevent concurrent renders
+  if (isRendering) {
+    return;
+  }
+
+  try {
+    isRendering = true;
+    const tbody = document.getElementById('items-table-body');
+    if (!tbody) {
+      console.error('Table body element not found');
+      isRendering = false;
+      return;
+    }
+
+    // Validate textItems array
+    if (!Array.isArray(textItems)) {
+      console.error('textItems is not an array');
+      setWriteStatus('Error: Invalid data structure', 'error');
+      isRendering = false;
+      return;
+    }
+
+    setWriteStatus('Preparing data...', 'loading');
+
+    // Get search filter
+    const searchInput = document.getElementById('search-input');
+    const searchTerm = (searchInput?.value || '').toLowerCase().trim();
+
+    // Filter items based on search (search in both key name and text content)
+    const filteredItems = textItems.filter(item => {
+      if (!item || typeof item !== 'object') return false;
+
+      const name = String(item.name || '').toLowerCase();
+      const characters = String(item.characters || '').toLowerCase();
+
+      // First apply search filter
+      const matchesSearch = name.includes(searchTerm) || characters.includes(searchTerm);
+      if (!matchesSearch) return false;
+
+      // Then apply change filter if active
+      if (currentFilter === 'changes') {
+        const contentfulItem = contentfulItems[item.name];
+        // Show if new (doesn't exist) or changed (exists but different)
+        if (!contentfulItem) {
+          return true; // New item
+        }
+        const isEqual = textsAreEqual(item.characters, contentfulItem.value);
+        return !isEqual; // Changed item
+      }
+
+      return true; // Show all
+    });
+
+    // Check if we're filtering by a specific key
+    const isFilteringByKey = searchTerm && filteredItems.length > 0 &&
+      filteredItems.every(item => item.name.toLowerCase() === searchTerm);
+
+    if (isFilteringByKey) {
+      // Render individual ungrouped rows (synchronous)
+      renderIndividualItems(filteredItems);
+    } else {
+      // Render grouped rows (progressive)
+      await renderGroupedItemsProgressive(filteredItems);
+    }
+
     const tableSection = document.getElementById('items-table-section');
     if (tableSection) {
       tableSection.classList.remove('hidden');
     }
-    setWriteStatus('✓ Ready', 'success');
+
+    // Calculate count for status message
+    const displayCount = isFilteringByKey
+      ? filteredItems.length
+      : Object.keys(filteredItems.reduce((acc, item) => { acc[item.name] = true; return acc; }, {})).length;
+    const countLabel = isFilteringByKey ? 'items' : 'keys';
+
+    setWriteStatus(`Ready (${displayCount} ${countLabel})`, 'success');
+
+    // Refresh tooltips after table is fully rendered
+    requestAnimationFrame(() => {
+      refreshTruncatedTooltips();
+    });
+
+    isRendering = false;
   } catch (error) {
     console.error('Error rendering items table:', error);
     setWriteStatus('Error displaying items', 'error');
+    isRendering = false;
   }
 }
 
+// Debounce render to prevent excessive re-renders
+let renderDebounceTimer = null;
+
+function debouncedRenderItemsTable() {
+  if (renderDebounceTimer) {
+    clearTimeout(renderDebounceTimer);
+  }
+  renderDebounceTimer = setTimeout(() => {
+    renderItemsTable();
+  }, 150); // 150ms debounce
+}
+
 // Search functionality
-document.getElementById('search-input').addEventListener('input', () => {
-  renderItemsTable();
+const searchInput = document.getElementById('search-input');
+const searchClearBtn = document.getElementById('search-clear-btn');
+
+searchInput.addEventListener('input', () => {
+  // Toggle clear button visibility
+  if (searchInput.value.trim()) {
+    searchClearBtn.classList.add('visible');
+  } else {
+    searchClearBtn.classList.remove('visible');
+  }
+  debouncedRenderItemsTable();
 });
 
-// Bulletproof text normalization and comparison
+searchClearBtn.addEventListener('click', () => {
+  searchInput.value = '';
+  searchClearBtn.classList.remove('visible');
+  searchInput.focus();
+  debouncedRenderItemsTable();
+});
+
+// Filter toggle functionality
+const filterToggle = document.getElementById('filter-toggle');
+
+if (filterToggle) {
+  filterToggle.onclick = () => {
+    // Toggle between 'all' and 'changes'
+    currentFilter = currentFilter === 'all' ? 'changes' : 'all';
+
+    // Update button appearance and icon
+    if (currentFilter === 'changes') {
+      filterToggle.classList.add('active');
+      filterToggle.setAttribute('data-tooltip', 'Show all items');
+      filterToggle.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 2L8 7V14L8 7L13 2H3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="currentColor" fill-opacity="0.3"/></svg>';
+    } else {
+      filterToggle.classList.remove('active');
+      filterToggle.setAttribute('data-tooltip', 'Show changes only');
+      filterToggle.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 2L8 7V14L8 7L13 2H3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>';
+    }
+
+    renderItemsTable();
+  };
+}
+
+// Window resize toggle functionality
+const btnResize = document.getElementById('btn-resize');
+if (btnResize) {
+  btnResize.onclick = () => {
+    isCompact = !isCompact;
+    const size = isCompact ? SIZES.compact : SIZES.normal;
+
+    // Toggle compact mode class on body (if needed for CSS)
+    if (isCompact) {
+      document.body.classList.add('compact-mode');
+      // Change to expand icon (arrows pointing outward)
+      btnResize.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 10v4h4M14 6V2h-4M2 14l4-4M14 2l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      setTooltip(btnResize, 'Expand window');
+    } else {
+      document.body.classList.remove('compact-mode');
+      // Change to compress icon (arrows pointing inward)
+      btnResize.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 2v4h4M6 14v-4H2M10 6l4-4M6 10l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      setTooltip(btnResize, 'Compact window');
+    }
+
+    // Send resize message to backend (backend will store the state)
+    parent.postMessage({ pluginMessage: { type: 'resize-window', width: size.width, height: size.height } }, '*');
+
+    // Refresh tooltips and check scrollbar after layout changes
+    setTimeout(() => {
+      refreshTruncatedTooltips();
+      updateScrollbarClass();
+    }, 100);
+  };
+} else {
+  console.error('btn-resize button not found!');
+}
+
+// ============================================================
+// UTILITY FUNCTIONS
+// ============================================================
+
+/**
+ * Check if table container has scrollbar and update body class
+ */
+function updateScrollbarClass() {
+  const tableContainer = document.querySelector('.table-container');
+  if (tableContainer) {
+    const hasScrollbar = tableContainer.scrollHeight > tableContainer.clientHeight;
+    if (hasScrollbar) {
+      document.body.classList.add('has-scrollbar');
+    } else {
+      document.body.classList.remove('has-scrollbar');
+    }
+  }
+}
+
+/**
+ * Build Contentful entry URL
+ */
+function buildContentfulUrl(config, entryId) {
+  const { SPACE_ID, ENVIRONMENT } = config;
+  return `https://app.contentful.com/spaces/${encodeURIComponent(SPACE_ID)}/environments/${encodeURIComponent(ENVIRONMENT)}/entries/${encodeURIComponent(entryId)}`;
+}
+
+/**
+ * Create flex container element
+ */
+function createFlexContainer() {
+  const container = document.createElement('div');
+  container.className = 'flex-container';
+  return container;
+}
+
+/**
+ * Find original item index by ID
+ */
+function findItemIndexById(items, id) {
+  return items.findIndex(item => item && item.id === id);
+}
+
+/**
+ * Check if items have text conflicts
+ */
+function hasTextConflict(items) {
+  if (items.length <= 1) return false;
+  const uniqueTexts = [...new Set(items.map(item => item.characters))];
+  return uniqueTexts.length > 1;
+}
+
+/**
+ * Create spinner SVG
+ */
+function createSpinnerSvg() {
+  return `
+    <svg class="spinner" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="spinnerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:var(--figma-accent);stop-opacity:1" />
+          <stop offset="100%" style="stop-color:var(--figma-accent);stop-opacity:0.3" />
+        </linearGradient>
+      </defs>
+      <circle cx="12" cy="12" r="10" stroke="var(--figma-border)" stroke-width="3" opacity="0.2"/>
+      <circle cx="12" cy="12" r="10" stroke="url(#spinnerGradient)" stroke-width="3" stroke-linecap="round" stroke-dasharray="15 50"/>
+    </svg>
+  `;
+}
+
+/**
+ * Update stats display (Total, New, Changed counts)
+ */
+function updateStats() {
+  let total = textItems.length;
+  let newCount = 0;
+  let changedCount = 0;
+
+  textItems.forEach(item => {
+    const contentfulItem = contentfulItems[item.name];
+    if (!contentfulItem) {
+      newCount++;
+    } else {
+      const isEqual = textsAreEqual(item.characters, contentfulItem.value);
+      if (!isEqual) {
+        changedCount++;
+      }
+    }
+  });
+
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-new').textContent = newCount;
+  document.getElementById('stat-changed').textContent = changedCount;
+}
+
+/**
+ * Set tooltip for an element
+ * @param {HTMLElement} element - Element to add tooltip to
+ * @param {string} text - Tooltip text
+ * @param {string} position - Position: 'top' (default) or 'bottom'
+ * @param {boolean} multiline - Allow multiline text wrapping
+ */
+function setTooltip(element, text, position = 'top', multiline = false) {
+  if (!element || !text) return;
+
+  element.setAttribute('data-tooltip', text);
+
+  if (position !== 'top') {
+    element.setAttribute('data-tooltip-pos', position);
+  }
+
+  if (multiline) {
+    element.setAttribute('data-tooltip-multiline', '');
+  }
+}
+
+/**
+ * Remove tooltip from an element
+ */
+function removeTooltip(element) {
+  if (!element) return;
+  element.removeAttribute('data-tooltip');
+  element.removeAttribute('data-tooltip-pos');
+  element.removeAttribute('data-tooltip-multiline');
+}
+
+/**
+ * Update tooltip text
+ */
+function updateTooltip(element, newText) {
+  if (!element) return;
+  if (newText) {
+    element.setAttribute('data-tooltip', newText);
+  } else {
+    removeTooltip(element);
+  }
+}
+
+/**
+ * Check if element's text is truncated
+ * Handles both horizontal truncation and line-clamp vertical truncation
+ */
+function isTextTruncated(element) {
+  if (!element) return false;
+
+  // Check for horizontal overflow
+  if (element.scrollWidth > element.clientWidth) {
+    return true;
+  }
+
+  // Check for vertical overflow (line-clamp truncation)
+  if (element.scrollHeight > element.clientHeight) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
+ * Set tooltip only if text is truncated
+ */
+function setTooltipIfTruncated(element, text) {
+  if (!element || !text) return;
+
+  // Wait for element to be fully rendered and dimensions calculated
+  // Use double requestAnimationFrame to ensure layout is complete
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      if (isTextTruncated(element)) {
+        setTooltip(element, text);
+      } else {
+        removeTooltip(element);
+      }
+    });
+  });
+}
+
+/**
+ * Re-evaluate all truncated text and key tooltips
+ * Useful when layout changes (e.g., compact mode toggle)
+ */
+function refreshTruncatedTooltips() {
+  // Find all text-preview elements
+  const textElements = document.querySelectorAll('.text-preview');
+  // Select all links and spans in first column (key column)
+  const keyElements = document.querySelectorAll('td:first-child a.contentful-link, td:first-child span');
+
+  // Process text elements
+  textElements.forEach(element => {
+    const text = element.textContent;
+    if (text) {
+      if (isTextTruncated(element)) {
+        setTooltip(element, text);
+      } else {
+        removeTooltip(element);
+      }
+    }
+  });
+
+  // Process key elements
+  keyElements.forEach(element => {
+    const keyName = element.dataset.keyName;
+    if (keyName) {
+      if (isTextTruncated(element)) {
+        element.setAttribute('data-tooltip-key', '');
+        setTooltip(element, keyName);
+      } else {
+        removeTooltip(element);
+      }
+    }
+  });
+}
+
+/**
+ * Position tooltip dynamically using fixed positioning
+ * This ensures tooltips always appear above everything and don't get cut off
+ */
+function positionTooltip(element) {
+  if (!element || !element.hasAttribute('data-tooltip')) return;
+
+  const rect = element.getBoundingClientRect();
+  const tooltipText = element.getAttribute('data-tooltip');
+  const padding = 10;
+  const arrowSize = 6;
+
+  // Create temporary element to measure tooltip width
+  // Match the actual tooltip CSS styles exactly
+  const tempTooltip = document.createElement('div');
+  const isMultiline = element.hasAttribute('data-tooltip-multiline');
+  const maxWidth = isMultiline ? '200px' : '300px';
+  tempTooltip.style.cssText = `position:fixed;visibility:hidden;padding:6px 10px;font-size:11px;font-weight:500;line-height:1.4;white-space:normal;max-width:${maxWidth};border-radius:6px;`;
+  tempTooltip.textContent = tooltipText;
+  document.body.appendChild(tempTooltip);
+  const tooltipWidth = tempTooltip.offsetWidth;
+  const tooltipHeight = tempTooltip.offsetHeight;
+  document.body.removeChild(tempTooltip);
+
+  // Check if tooltip should appear below element
+  const position = element.getAttribute('data-tooltip-pos') || 'top';
+
+  // Calculate ideal centered position
+  let tooltipLeft = rect.left + (rect.width / 2) - (tooltipWidth / 2);
+  let tooltipTop;
+  let arrowTop;
+
+  if (position === 'bottom') {
+    // Position below element
+    tooltipTop = rect.bottom + (arrowSize * 2);
+    arrowTop = rect.bottom;
+  } else {
+    // Position above element (default)
+    tooltipTop = rect.top - tooltipHeight - (arrowSize * 2);
+    arrowTop = tooltipTop + tooltipHeight;
+  }
+
+  // Adjust if would overflow left edge
+  if (tooltipLeft < padding) {
+    tooltipLeft = padding;
+  }
+
+  // Adjust if would overflow right edge
+  if (tooltipLeft + tooltipWidth > window.innerWidth - padding) {
+    tooltipLeft = window.innerWidth - tooltipWidth - padding;
+  }
+
+  // Calculate arrow position (centered on element horizontally)
+  let arrowLeft = rect.left + (rect.width / 2) - arrowSize;
+
+  // Apply positions via CSS custom properties
+  element.style.setProperty('--tooltip-left', `${tooltipLeft}px`);
+  element.style.setProperty('--tooltip-top', `${tooltipTop}px`);
+  element.style.setProperty('--arrow-left', `${arrowLeft}px`);
+  element.style.setProperty('--arrow-top', `${arrowTop}px`);
+}
+
+// Track currently visible tooltip to prevent sticking
+let currentTooltipElement = null;
+
+// Hide tooltips immediately when clicking anywhere
+document.addEventListener('click', (e) => {
+  if (currentTooltipElement) {
+    currentTooltipElement.classList.remove('tooltip-visible');
+    currentTooltipElement = null;
+  }
+}, true);
+
+// Add tooltip positioning on hover for all tooltip elements
+// Use event delegation on document
+document.addEventListener('mouseover', (e) => {
+
+  // Check if the target itself or any parent has data-tooltip
+  let tooltipElement = e.target;
+
+  // Walk up the DOM tree to find tooltip element
+  while (tooltipElement && tooltipElement !== document.body) {
+    if (tooltipElement.hasAttribute && tooltipElement.hasAttribute('data-tooltip')) {
+      // Remove previous tooltip if different element
+      if (currentTooltipElement && currentTooltipElement !== tooltipElement) {
+        currentTooltipElement.classList.remove('tooltip-visible');
+      }
+
+      // Add class to make tooltip visible (for elements with child elements like SVGs)
+      tooltipElement.classList.add('tooltip-visible');
+      currentTooltipElement = tooltipElement;
+
+      // Use requestAnimationFrame to ensure element is rendered
+      requestAnimationFrame(() => positionTooltip(tooltipElement));
+      break;
+    }
+    tooltipElement = tooltipElement.parentElement;
+  }
+}, true); // Use capture phase to catch events early
+
+// Remove tooltip visibility class on mouseout
+document.addEventListener('mouseout', (e) => {
+  // Only process if we have a current tooltip
+  if (!currentTooltipElement) return;
+
+  let tooltipElement = e.target;
+
+  // Walk up the DOM tree to find tooltip element
+  while (tooltipElement && tooltipElement !== document.body) {
+    if (tooltipElement.hasAttribute && tooltipElement.hasAttribute('data-tooltip')) {
+      // Check if this is the current tooltip element
+      if (tooltipElement === currentTooltipElement) {
+        tooltipElement.classList.remove('tooltip-visible');
+        currentTooltipElement = null;
+      }
+      break;
+    }
+    tooltipElement = tooltipElement.parentElement;
+  }
+}, true); // Use capture phase
+
+// Step 10b: Memoization cache for text normalization
+const normalizeCache = new Map();
+let normalizeCacheCounter = 0;
+const CACHE_CHECK_INTERVAL = 1000; // Only check cache size every 1000 calls
+
+// Bulletproof text normalization and comparison with memoization
 function normalizeText(text) {
   if (!text) return '';
-  return text
+
+  // Check cache first
+  if (normalizeCache.has(text)) {
+    return normalizeCache.get(text);
+  }
+
+  // Perform normalization
+  const normalized = text
     .trim()                           // Remove leading/trailing whitespace
     .replace(/\s+/g, ' ')             // Normalize multiple spaces to single space
     .replace(/\u00A0/g, ' ')          // Replace non-breaking spaces with regular spaces
     .replace(/[\u200B-\u200D\uFEFF]/g, '') // Remove zero-width characters
     .normalize('NFC');                // Unicode normalization (canonical composition)
+
+  // Store in cache
+  normalizeCache.set(text, normalized);
+
+  // Only check cache size periodically to avoid performance impact
+  normalizeCacheCounter++;
+  if (normalizeCacheCounter >= CACHE_CHECK_INTERVAL) {
+    normalizeCacheCounter = 0;
+    if (normalizeCache.size > 5000) {
+      normalizeCache.clear();
+    }
+  }
+
+  return normalized;
 }
 
 function textsAreEqual(text1, text2) {
@@ -1939,15 +4339,15 @@ function textsAreEqual(text1, text2) {
 
 function saveItemToContentful(item, index) {
   const statusBadge = document.getElementById(`status-${index}`);
-  statusBadge.className = 'status-badge checking';
-  statusBadge.textContent = '⏳';
+  statusBadge.className = 'spinner';
+  statusBadge.innerHTML = '';
   statusBadge.title = 'Saving...';
-  
+
   const isUpdate = !!contentfulItems[item.name];
   const entryId = isUpdate ? contentfulItems[item.name].id : null;
-  
-  parent.postMessage({ 
-    pluginMessage: { 
+
+  parent.postMessage({
+    pluginMessage: {
       type: 'save-contentful-item',
       config,
       item: {
@@ -1956,22 +4356,15 @@ function saveItemToContentful(item, index) {
         entryId: entryId,
         isUpdate: isUpdate
       }
-    } 
+    }
   }, '*');
 }
 
 function updateItemStatus(key, success, errorMsg, errorDetails) {
-  console.log('=== updateItemStatus called ===');
-  console.log('Key:', key);
-  console.log('Success:', success);
-  console.log('Error:', errorMsg);
-  console.log('Error Details:', errorDetails);
-  
   if (success) {
-    console.log('✓ Save successful, refreshing from Contentful...');
-    
+
     // Instead of updating cache manually, re-fetch from Contentful to get the REAL state
-    setWriteStatus(`✓ ${key} saved, refreshing...`, 'success');
+    setWriteStatus(`${key} saved, refreshing...`, 'success');
     parent.postMessage({ pluginMessage: { type: 'get-all-contentful-items', config } }, '*');
   } else {
     // On error, update status badge and show detailed error modal
@@ -1980,13 +4373,13 @@ function updateItemStatus(key, success, errorMsg, errorDetails) {
       const statusBadge = document.getElementById(`status-${index}`);
       if (statusBadge) {
         statusBadge.className = 'status-badge out-of-sync';
-        statusBadge.textContent = '✗';
+        statusBadge.innerHTML = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3L13 13M13 3L3 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
         statusBadge.title = `Error: ${errorMsg}`;
       }
     }
     
     // Show brief error in status bar
-    setWriteStatus(`❌ Failed: ${errorMsg}`, 'error');
+    setWriteStatus(`Failed: ${errorMsg}`, 'error');
     
     // Show detailed error modal if we have details
     if (errorDetails) {
@@ -2018,22 +4411,38 @@ window.onmessage = (event) => {
       return;
     }
     config = msg.config;
+
+    // Update version display if provided
+    if (msg.version) {
+      const versionEl = document.getElementById('plugin-version');
+      if (versionEl) {
+        versionEl.textContent = `Version ${msg.version}`;
+      }
+    }
     
     // Check if configuration is complete (has Space ID and CMA Token)
     if (!isConfigComplete(config)) {
       // Show onboarding/settings screen
       switchView('settings');
-      setSettingsStatus('👋 Welcome! Please configure your Contentful connection to get started.', 'info');
+      setSettingsStatus('Welcome! Please configure your Contentful connection to get started.', 'info');
+      document.getElementById('stat-total').textContent = '0';
+      document.getElementById('stat-new').textContent = '0';
+      document.getElementById('stat-changed').textContent = '0';
       return;
     }
     
     // Config is complete - automatically load text items
-    setWriteStatus('Loading text items...', 'loading');
-    
+    // Use loading overlay for initial load
+    if (isInitialLoad) {
+      setLoadingMessage('Loading text items...');
+    } else {
+      setWriteStatus('Loading text items...', 'loading');
+    }
+
     // Clear existing data to force fresh fetch
     textItems = [];
     contentfulItems = {};
-    
+
     // Automatically fetch text nodes from Figma
     parent.postMessage({ pluginMessage: { type: 'get-translatable-nodes', config } }, '*');
   }
@@ -2060,7 +4469,7 @@ window.onmessage = (event) => {
         }
       }
       updateLocaleCount(msg.locales.length);
-      setStatus(`🎉 Ready! ${msg.locales.length} language(s) available`, 'success');
+      setStatus(`Ready! ${msg.locales.length} language(s) available`, 'success');
       disableUI(false);
     } else {
       setStatus('Invalid locales data received', 'error');
@@ -2070,9 +4479,9 @@ window.onmessage = (event) => {
   if (msg.type === 'translation-applied') {
     const count = parseInt(msg.count, 10);
     if (!isNaN(count) && count >= 0) {
-      setStatus(`✨ Success! Updated ${count} text node(s)`, 'success');
+      setStatus(`Success! Updated ${count} text node(s)`, 'success');
       disableUI(false);
-      
+
       // Celebrate with a brief delay then show ready state
       setTimeout(() => {
         setStatus(`Ready to translate`, 'info');
@@ -2082,23 +4491,18 @@ window.onmessage = (event) => {
   
   if (msg.type === 'error') {
     const errorMsg = sanitizeString(msg.message || 'Unknown error occurred');
-    setStatus('⚠️ ' + errorMsg, 'error');
+    setStatus(errorMsg, 'error');
     disableUI(false);
   }
   
   // Settings responses
   if (msg.type === 'config-saved') {
     config = msg.config;
-    setSettingsStatus('✅ Config saved successfully!', 'success');
-    setTimeout(() => {
-      switchView('main');
-      // Auto-reload locales with new config
-      parent.postMessage({ pluginMessage: { type: 'load-locales', config } }, '*');
-    }, 1500);
+    // Note: Individual handlers in saveConfig() promise already handle this
   }
-  
+
   if (msg.type === 'config-save-failed') {
-    setSettingsStatus('❌ Save failed: ' + sanitizeString(msg.message), 'error');
+    // Note: Individual handlers in saveConfig() promise already handle this
   }
 }
 
@@ -2582,13 +4986,10 @@ function createCombinedRecords(recordsByType) {
 }
 
 // Message handler additions for content preview
-const originalOnMessage = window.onmessage;
-window.onmessage = (event) => {
-  // Call original handler first
-  if (originalOnMessage) {
-    originalOnMessage(event);
-  }
-  
+// NOTE: The main handler at line 3937 already processes all messages.
+// This section only handles additional preview-specific messages.
+// DO NOT call the original handler here or messages will be processed twice!
+window.addEventListener('message', (event) => {
   if (!event || !event.data || !event.data.pluginMessage) return;
   const msg = event.data.pluginMessage;
   
@@ -2628,10 +5029,30 @@ window.onmessage = (event) => {
     });
   }
   
+  // Removed: window-size-state handler - always start in normal mode
+  // if (msg.type === 'window-size-state') {
+  //   console.log('Received window size state:', msg);
+  //   const savedIsCompact = msg.isCompact || false;
+  //   isCompact = savedIsCompact;
+  //
+  //   const btnResize = document.getElementById('btn-resize');
+  //   if (savedIsCompact) {
+  //     document.body.classList.add('compact-mode');
+  //     if (btnResize) {
+  //       btnResize.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 10v4h4M14 6V2h-4M2 14l4-4M14 2l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  //       setTooltip(btnResize, 'Expand window');
+  //     }
+  //     parent.postMessage({ pluginMessage: { type: 'resize-window', width: SIZES.compact.width, height: SIZES.compact.height } }, '*');
+  //   } else {
+  //     // Normal size (already set in figma.showUI, but send message anyway to be consistent)
+  //     parent.postMessage({ pluginMessage: { type: 'resize-window', width: SIZES.normal.width, height: SIZES.normal.height } }, '*');
+  //   }
+  // }
+
   if (msg.type === 'records-loaded') {
     records = msg.records || [];
     currentRecordIndex = 0;
-    
+
     if (records.length > 0) {
       document.getElementById('record-navigation').classList.remove('hidden');
       displayCurrentRecord();
@@ -2669,35 +5090,52 @@ window.onmessage = (event) => {
   if (msg.type === 'translatable-nodes-loaded') {
     loadItemsAndCheckStatus(msg.nodes || []);
   }
-  
+
   if (msg.type === 'contentful-items-loaded') {
-    console.log('📥 Contentful items loaded from server:', Object.keys(msg.items || {}).length, 'items');
     contentfulItems = msg.items || {};
-    
-    // Log what we got from Contentful for debugging
-    Object.keys(contentfulItems).forEach(key => {
-      console.log(`  - ${key}: "${contentfulItems[key].value.substring(0, 50)}..." (ID: ${contentfulItems[key].id})`);
-    });
-    
+
     renderItemsTable();
-    setWriteStatus('✓ Ready', 'success');
+    updateStats();
+
+    // Hide loading overlay on initial load, show table
+    if (isInitialLoad) {
+      hideLoadingOverlay();
+
+      // Signal to backend that UI initialization is complete
+      // This enables selection tracking without performance impact
+      parent.postMessage({ pluginMessage: { type: 'plugin-ready' } }, '*');
+    }
+
+    // Update footer status - count unique keys
+    const groupedItems = {};
+    textItems.forEach((item) => {
+      if (!groupedItems[item.name]) {
+        groupedItems[item.name] = [];
+      }
+      groupedItems[item.name].push(item);
+    });
+    const uniqueKeys = Object.keys(groupedItems).length;
+    setWriteStatus(`Ready (${uniqueKeys} keys)`, 'success');
   }
   
   if (msg.type === 'item-saved') {
-    console.log('Received item-saved message:', msg);
     updateItemStatus(msg.key, msg.success, msg.error, msg.errorDetails);
   }
-  
+
   // Handle text node selection in Figma canvas
   if (msg.type === 'text-node-selected') {
     const searchInput = document.getElementById('search-input');
     if (searchInput && msg.nodeName) {
-      console.log('📌 Text node selected in Figma:', msg.nodeName);
       searchInput.value = msg.nodeName;
       searchInput.dispatchEvent(new Event('input'));
     }
   }
-};
+
+  // Handle auto-refresh trigger from backend
+  if (msg.type === 'auto-refresh-trigger') {
+    refreshData();
+  }
+});
 
 // Error Modal Functions
 function showErrorModal(title, message, details) {
@@ -2721,10 +5159,10 @@ function copyErrorToClipboard() {
   
   navigator.clipboard.writeText(errorReport).then(() => {
     const btn = document.getElementById('btn-copy-error');
-    const originalText = btn.textContent;
-    btn.textContent = '✓ Copied!';
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-right: 4px;"><path d="M10.8 2.74286L4.8 8.74286L1.71429 5.65714L2.74286 4.62857L4.8 6.68571L9.77143 1.71429L10.8 2.74286Z" fill="currentColor"/></svg> Copied!';
     setTimeout(() => {
-      btn.textContent = originalText;
+      btn.innerHTML = originalText;
     }, 2000);
   }).catch(() => {
     // Fallback for older browsers
@@ -2734,6 +5172,59 @@ function copyErrorToClipboard() {
     textarea.select();
     document.execCommand('copy');
     document.body.removeChild(textarea);
+  });
+}
+
+// Validation Modal Functions
+function showValidationModal() {
+  document.getElementById('validation-modal').classList.add('show');
+  // Hide close button during validation
+  document.getElementById('validation-close-btn').style.display = 'none';
+  document.getElementById('validation-footer').style.display = 'none';
+  document.getElementById('validation-status').style.display = 'none';
+
+  // Create the preflight steps
+  createPreflightSteps();
+}
+
+function hideValidationModal() {
+  document.getElementById('validation-modal').classList.remove('show');
+  document.getElementById('validation-steps-container').innerHTML = '';
+  document.getElementById('validation-status').style.display = 'none';
+  document.getElementById('validation-status').innerHTML = '';
+}
+
+function createPreflightSteps() {
+  const steps = [
+    { id: 'preflight-validate', text: 'Validating configuration...' },
+    { id: 'preflight-locales', text: 'Testing connection & fetching locales...' },
+    { id: 'preflight-content', text: 'Verifying content type...' },
+    { id: 'preflight-save', text: 'Saving configuration...' }
+  ];
+
+  const container = document.getElementById('validation-steps-container');
+  container.innerHTML = '';
+
+  steps.forEach(step => {
+    const stepDiv = document.createElement('div');
+    stepDiv.className = 'preflight-step';
+    stepDiv.id = step.id;
+    stepDiv.innerHTML = `
+      <div class="preflight-icon">
+        <svg class="spinner" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="spinnerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:var(--figma-accent);stop-opacity:1" />
+              <stop offset="100%" style="stop-color:var(--figma-accent);stop-opacity:0.3" />
+            </linearGradient>
+          </defs>
+          <circle cx="12" cy="12" r="10" stroke="var(--figma-border)" stroke-width="3" opacity="0.2"/>
+          <circle cx="12" cy="12" r="10" stroke="url(#spinnerGradient)" stroke-width="3" stroke-linecap="round" stroke-dasharray="15 50"/>
+        </svg>
+      </div>
+      <div class="preflight-text">${step.text}</div>
+    `;
+    container.appendChild(stepDiv);
   });
 }
 
@@ -2751,8 +5242,87 @@ function copyErrorToClipboard() {
       <div class="error-details" id="error-modal-details"></div>
     </div>
     <div class="error-modal-footer">
-      <button class="btn-copy-error" id="btn-copy-error" onclick="copyErrorToClipboard()">📋 Copy Error Details</button>
+      <button class="btn-copy-error" id="btn-copy-error" onclick="copyErrorToClipboard()">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-right: 4px;">
+          <path d="M9.6 0H2.4C1.74 0 1.2 0.54 1.2 1.2V8.4H2.4V1.2H9.6V0ZM11.4 2.4H4.8C4.14 2.4 3.6 2.94 3.6 3.6V10.8C3.6 11.46 4.14 12 4.8 12H11.4C12.06 12 12.6 11.46 12.6 10.8V3.6C12.6 2.94 12.06 2.4 11.4 2.4ZM11.4 10.8H4.8V3.6H11.4V10.8Z" fill="currentColor"/>
+        </svg>
+        Copy Error Details
+      </button>
       <button class="btn-close-modal" onclick="hideErrorModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reset Confirmation Modal -->
+<div id="reset-modal" class="reset-modal">
+  <div class="reset-modal-content">
+    <div class="reset-modal-header">
+      <div class="reset-modal-title">Reset All Fields?</div>
+      <button class="reset-modal-close" onclick="hideResetModal()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 4 L12 12 M12 4 L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="reset-modal-body">
+      <p>Are you sure you want to reset all fields to their default values?</p>
+      <p style="color: var(--figma-text-secondary); margin-top: 8px;">Any unsaved changes will be lost.</p>
+    </div>
+    <div class="reset-modal-footer">
+      <button class="btn-secondary" onclick="hideResetModal()">Cancel</button>
+      <button class="btn-danger" onclick="confirmReset()">Reset to Default</button>
+    </div>
+  </div>
+</div>
+
+<!-- Validation Modal -->
+<div id="validation-modal" class="validation-modal">
+  <div class="validation-modal-content">
+    <div class="validation-modal-header">
+      <div class="validation-modal-title">Validating Configuration</div>
+      <button class="validation-modal-close" onclick="hideValidationModal()" id="validation-close-btn" style="display: none;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 4 L12 12 M12 4 L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="validation-modal-body">
+      <div id="validation-steps-container"></div>
+      <div id="validation-status" style="margin-top: 16px; display: none;"></div>
+    </div>
+    <div class="validation-modal-footer" id="validation-footer" style="display: none;">
+      <button class="btn-primary" onclick="hideValidationModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Conflict Resolution Modal -->
+<div id="conflict-modal" class="conflict-modal">
+  <div class="conflict-modal-content">
+    <div class="conflict-modal-header">
+      <div class="conflict-modal-title">
+        Resolve Conflict
+      </div>
+      <button class="conflict-modal-close" onclick="hideConflictModal()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 4 L12 12 M12 4 L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="conflict-modal-body">
+      <div class="conflict-key-name"><span id="conflict-key-name"></span></div>
+      <div class="conflict-instance-count" id="conflict-instance-count"></div>
+
+      <div class="conflict-contentful-section" id="conflict-contentful-section">
+        <div class="conflict-contentful-label">Current value in Contentful</div>
+        <div class="conflict-contentful-text" id="conflict-contentful-value"></div>
+      </div>
+
+      <div class="conflict-versions-label">Text variations in Figma</div>
+      <div id="conflict-versions-container"></div>
+    </div>
+    <div class="conflict-modal-footer">
+      <button class="btn-tertiary btn-cancel-conflict" onclick="hideConflictModal()">Cancel</button>
     </div>
   </div>
 </div>

@@ -3,9 +3,16 @@
     "target": "es6",
     "lib": ["es6"],
     "strict": true,
+    "rootDir": ".",
+    "outDir": "./dist-package",
+
+    "module": "es6",
+    "moduleResolution": "node",
+
     "typeRoots": [
       "./node_modules/@types",
       "./node_modules/@figma"
     ]
-  }
+  },
+  "files": ["./code.ts"]
 }
