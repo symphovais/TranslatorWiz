@@ -5,10 +5,16 @@
   "description": "Your Figma Plugin",
   "main": "code.js",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "node scripts/build.js",
+    "build:prod": "node scripts/build.js --production",
+    "build:legacy": "tsc -p tsconfig.json",
+    "watch": "node scripts/build.js --watch",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "lint": "eslint --ext .ts,.tsx --ignore-pattern node_modules .",
     "lint:fix": "eslint --ext .ts,.tsx --ignore-pattern node_modules --fix .",
-    "watch": "npm run build -- --watch",
+    "typecheck": "tsc --noEmit",
     "package": "powershell -ExecutionPolicy Bypass -File ./package-plugin.ps1",
     "package:bash": "bash ./package-plugin.sh"
   },
@@ -17,9 +23,14 @@
   "devDependencies": {
     "@figma/eslint-plugin-figma-plugins": "*",
     "@figma/plugin-typings": "^1.121.0",
+    "@types/jest": "^30.0.0",
     "@typescript-eslint/eslint-plugin": "^6.12.0",
     "@typescript-eslint/parser": "^6.12.0",
+    "esbuild": "^0.27.2",
     "eslint": "^8.54.0",
+    "figma-api-stub": "^0.0.57",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.6",
     "typescript": "^5.3.2"
   },
   "eslintConfig": {
