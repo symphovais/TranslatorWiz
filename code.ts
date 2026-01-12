@@ -241,34 +241,6 @@ function enableSelectionTracking() {
   isSelectionTrackingEnabled = true;
 }
 
-// Document change auto-refresh disabled to prevent unwanted refreshes when adding elements
-// Users can manually refresh using the refresh button if needed
-/*
-let lastRefreshTrigger = 0;
-const REFRESH_THROTTLE = 5000; // 5 seconds minimum between triggers
-
-figma.on('documentchange', () => {
-  try {
-    const now = Date.now();
-
-    // Throttle: only trigger if 5 seconds have passed since last trigger
-    if (now - lastRefreshTrigger < REFRESH_THROTTLE) {
-      return;
-    }
-
-    lastRefreshTrigger = now;
-
-    // Notify UI to refresh data
-    figma.ui.postMessage({
-      type: 'auto-refresh-trigger'
-    });
-  } catch (error) {
-    console.error('Document change handler error:', error);
-    // Don't crash the plugin
-  }
-});
-*/
-
 // Track last message to prevent duplicate processing within short time window
 let lastMessageType: string | null = null;
 let lastMessageTime: number = 0;
@@ -659,22 +631,18 @@ figma.ui.onmessage = async (msg: UIMessage) => {
 
     if (msg.type === 'get-window-size-state') {
       const isCompact = await figma.clientStorage.getAsync('window-size-compact');
-      console.log('Retrieved window size state:', isCompact);
       figma.ui.postMessage({ type: 'window-size-state', isCompact: isCompact || false });
       return;
     }
 
     if (msg.type === 'resize-window') {
-      console.log('Resize window message received:', msg.width, msg.height, 'isCompact:', msg.isCompact);
       if (msg.width && msg.height) {
         try {
           figma.ui.resize(msg.width, msg.height);
-          console.log('Window resized successfully to:', msg.width, 'x', msg.height);
 
           // Store the compact state
           if (msg.isCompact !== undefined) {
             await figma.clientStorage.setAsync('window-size-compact', msg.isCompact);
-            console.log('Stored window-size-compact:', msg.isCompact);
           }
         } catch (error) {
           console.error('Failed to resize window:', error);
