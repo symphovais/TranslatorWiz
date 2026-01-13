@@ -8,3 +8,5 @@ dist/
 dist-package/
 code.js
 .claude/
+tmpclaude-*
+coverage/
