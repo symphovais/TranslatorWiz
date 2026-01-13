@@ -1,16 +1,15 @@
 # ConteFi
 
-A Figma plugin that integrates with Contentful CMS for managing translations and content.
+A Figma plugin that integrates with Contentful CMS for managing content between Figma and Contentful.
 
 ## Features
 
-- **Apply Translations** - Pull translations from Contentful and apply them to Figma text nodes based on locale
-- **Preview Content** - Preview content from any Contentful content type directly in Figma
-- **Write Content** - Push content back to Contentful from Figma designs
+- **Write Mode** - Push content from Figma text nodes to Contentful. Syncs keys between Figma and Contentful, showing status (new/changed/synced) for each entry.
+- **Content Preview** - Map Contentful records to Figma nodes and preview content from any content type.
 
 ## How It Works
 
-The plugin identifies text nodes in your Figma document using a configurable naming pattern (default: `^jams_`). When you apply translations, it matches these nodes with entries from your Contentful space and updates the text content.
+The plugin identifies text nodes in your Figma document using a configurable naming pattern (default: `^jams_`). It syncs these with entries in your Contentful space, allowing you to push updates or preview mapped content.
 
 ## Installation
 
