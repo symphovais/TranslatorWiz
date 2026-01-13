@@ -11,19 +11,20 @@ if (Test-Path $distFolder) {
 }
 New-Item -ItemType Directory -Path $distFolder | Out-Null
 
-# Build the plugin
-Write-Host "`n2. Building TypeScript..." -ForegroundColor Yellow
-npm run build
+# Build the plugin (production)
+Write-Host "`n2. Building for production..." -ForegroundColor Yellow
+npm run build:prod
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Build failed!" -ForegroundColor Red
     exit 1
 }
 
-# Copy required files
+# Copy required files from dist folder (production build output)
 Write-Host "`n3. Copying files..." -ForegroundColor Yellow
-Copy-Item "manifest.json" -Destination $distFolder
-Copy-Item "ui.html" -Destination $distFolder
+Copy-Item "dist\manifest.json" -Destination $distFolder
+Copy-Item "dist\ui.html" -Destination $distFolder
+Copy-Item "dist\code.js" -Destination $distFolder
 Copy-Item "DISTRIBUTION.md" -Destination "$distFolder\README.md"
 
 # Copy icon files if they exist

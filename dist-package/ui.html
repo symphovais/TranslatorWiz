@@ -284,29 +284,7 @@
     display: flex;
     gap: 8px;
   }
-  
-  #apply-translation {
-    background: var(--blue-500);
-    color: white;
-    flex: 1;
-  }
 
-  #apply-translation:hover:not(:disabled) {
-    background: var(--blue-700);
-  }
-  
-  #cancel {
-    background: var(--figma-bg);
-    color: var(--figma-text-tertiary);
-    flex: 0 0 auto;
-    padding: 10px 16px;
-    transition: all 0.3s ease;
-  }
-  
-  #cancel:hover {
-    background: var(--figma-border);
-  }
-  
   .status-container {
     position: relative;
     min-height: 0;
@@ -385,11 +363,7 @@
   .hidden {
     display: none !important;
   }
-  
-  .locale-option {
-    padding: 8px;
-  }
-  
+
   .refresh-icon {
     display: inline-block;
     transition: transform 0.3s;
@@ -2094,53 +2068,6 @@
   </div>
 </div>
 
-<!-- Read Mode View -->
-<div class="container view" id="read-view">
-  <h2>
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-right: 4px;">
-      <path d="M10 0L12.245 6.90983L19.5106 6.90983L13.6328 11.1803L15.8779 18.0902L10 13.8197L4.12215 18.0902L6.36729 11.1803L0.489435 6.90983L7.755 6.90983L10 0Z" fill="currentColor"/>
-    </svg>
-    ConteFi
-  </h2>
-  <div class="subtitle">Contentful-powered translation magic</div>
-
-  <div class="stats">
-    <div class="stat-card">
-      <span class="stat-number" id="node-count">-</span>
-      <span class="stat-label">Text Nodes</span>
-    </div>
-    <div class="stat-card">
-      <span class="stat-number" id="locale-count">-</span>
-      <span class="stat-label">Languages</span>
-    </div>
-  </div>
-
-  <div class="section">
-    <label>
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-right: 4px;">
-        <path d="M7 0C3.13401 0 0 3.13401 0 7C0 10.866 3.13401 14 7 14C10.866 14 14 10.866 14 7C14 3.13401 10.866 0 7 0ZM11.5513 4.2H9.60315C9.36519 3.21207 8.99645 2.27614 8.51367 1.43004C9.89895 1.87982 11.0315 2.88889 11.5513 4.2ZM7 1.4245C7.63492 2.33333 8.12188 3.33403 8.4224 4.2H5.5776C5.87812 3.33403 6.36508 2.33333 7 1.4245ZM1.53242 8.4C1.43403 8.01287 1.4 7.61736 1.4 7C1.4 6.38264 1.43403 5.98713 1.53242 5.6H3.80091C3.75849 5.99551 3.73333 6.39102 3.73333 7C3.73333 7.60898 3.75849 8.00449 3.80091 8.4H1.53242ZM2.44869 9.8H4.39685C4.63481 10.7879 5.00355 11.7239 5.48633 12.57C4.10105 12.1202 2.96849 11.1111 2.44869 9.8ZM4.39685 4.2H2.44869C2.96849 2.88889 4.10105 1.87982 5.48633 1.43004C5.00355 2.27614 4.63481 3.21207 4.39685 4.2ZM7 12.5755C6.36508 11.6667 5.87812 10.666 5.5776 9.8H8.4224C8.12188 10.666 7.63492 11.6667 7 12.5755ZM8.6968 8.4H5.3032C5.25239 8.00449 5.23333 7.60898 5.23333 7C5.23333 6.39102 5.25239 5.99551 5.3032 5.6H8.6968C8.74761 5.99551 8.76667 6.39102 8.76667 7C8.76667 7.60898 8.74761 8.00449 8.6968 8.4ZM8.51367 12.57C8.99645 11.7239 9.36519 10.7879 9.60315 9.8H11.5513C11.0315 11.1111 9.89895 12.1202 8.51367 12.57ZM10.1991 8.4C10.2415 8.00449 10.2667 7.60898 10.2667 7C10.2667 6.39102 10.2415 5.99551 10.1991 5.6H12.4676C12.566 5.98713 12.6 6.38264 12.6 7C12.6 7.61736 12.566 8.01287 12.4676 8.4H10.1991Z" fill="currentColor"/>
-      </svg>
-      Select Language
-    </label>
-    <select id="locale" disabled>
-      <option value="">Loading locales...</option>
-    </select>
-  </div>
-
-  <div class="section">
-    <div class="button-group">
-      <button id="apply-translation" disabled>
-        <span>Apply Translation</span>
-      </button>
-      <button id="cancel">Close</button>
-    </div>
-  </div>
-
-  <div class="status-container">
-    <div id="status"></div>
-  </div>
-</div>
-
 <!-- Content Preview View -->
 <div class="container view" id="preview-view">
   <h2>
@@ -2480,9 +2407,18 @@ function switchView(viewName) {
   // Activate target view
   targetView.classList.add('active');
   targetView.style.display = 'block'; // Force show
-  
+
   if (viewName === 'settings') {
     loadConfigIntoEditor();
+  }
+
+  // Auto-load data when switching to write view if config is complete and data hasn't been loaded
+  if (viewName === 'write' && isConfigComplete(config) && isInitialLoad) {
+    // Update loading message and trigger data load
+    setLoadingMessage('Loading text items...');
+    textItems = [];
+    contentfulItems = {};
+    parent.postMessage({ pluginMessage: { type: 'get-translatable-nodes', config } }, '*');
   }
 }
 
@@ -3034,27 +2970,6 @@ function setSettingsStatus(text, type = 'info') {
   }
 }
 
-document.getElementById('apply-translation').onclick = () => {
-  const localeSelect = document.getElementById('locale');
-  const locale = localeSelect.value;
-  if (!locale) {
-    setStatus('Please select a language first', 'error');
-    return;
-  }
-  if (!config) {
-    setStatus('Configuration not loaded', 'error');
-    return;
-  }
-  
-  setStatus('Applying translations...', 'loading');
-  disableUI(true);
-  parent.postMessage({ pluginMessage: { type: 'apply-translation', config, locale } }, '*');
-}
-
-document.getElementById('cancel').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*');
-}
-
 // ========== Write Mode Functionality ==========
 
 let textItems = [];
@@ -3104,6 +3019,10 @@ async function loadItemsAndCheckStatus(items) {
 
   if (items.length === 0) {
     setWriteStatus('No translatable text items found', 'info');
+    // Hide loading overlay even when no items found to prevent getting stuck
+    if (isInitialLoad) {
+      hideLoadingOverlay();
+    }
     return;
   }
 
@@ -3368,6 +3287,9 @@ function createGroupedRow(keyName, items) {
   // Detect if there are conflicting text values
   const uniqueTexts = [...new Set(items.map(i => i.characters))];
   const hasConflict = count > 1 && uniqueTexts.length > 1;
+
+  // Debug logging - always log for troubleshooting
+  console.log(`createGroupedRow: "${keyName}" => ${count} nodes, ${uniqueTexts.length} unique texts, hasConflict=${hasConflict}`);
 
   const tr = document.createElement('tr');
 
@@ -3837,11 +3759,20 @@ async function renderItemsTable() {
     const isFilteringByKey = searchTerm && filteredItems.length > 0 &&
       filteredItems.every(item => item.name.toLowerCase() === searchTerm);
 
+    console.log('RENDER DEBUG:', {
+      searchTerm,
+      isFilteringByKey,
+      totalItems: filteredItems.length,
+      uniqueKeys: [...new Set(filteredItems.map(i => i.name))].length
+    });
+
     if (isFilteringByKey) {
       // Render individual ungrouped rows (synchronous)
+      console.log('Using: renderIndividualItems');
       renderIndividualItems(filteredItems);
     } else {
       // Render grouped rows (progressive)
+      console.log('Using: renderGroupedItemsProgressive');
       await renderGroupedItemsProgressive(filteredItems);
     }
 
@@ -4392,11 +4323,6 @@ function updateItemStatus(key, success, errorMsg, errorDetails) {
   }
 }
 
-document.getElementById('locale').onchange = () => {
-  const btn = document.getElementById('apply-translation');
-  btn.disabled = false;
-}
-
 window.onmessage = (event) => {
   // Security: validate message source and structure
   if (!event || !event.data || !event.data.pluginMessage) return;
@@ -4407,7 +4333,7 @@ window.onmessage = (event) => {
   if (msg.type === 'config-loaded') {
     // Validate config structure
     if (!msg.config || typeof msg.config !== 'object') {
-      setStatus('Invalid configuration received', 'error');
+      console.error('Invalid configuration received');
       return;
     }
     config = msg.config;
@@ -4447,54 +4373,13 @@ window.onmessage = (event) => {
     parent.postMessage({ pluginMessage: { type: 'get-translatable-nodes', config } }, '*');
   }
   
-  if (msg.type === 'node-count') {
-    const count = parseInt(msg.count, 10);
-    if (!isNaN(count) && count >= 0) {
-      updateNodeCount(count);
-    }
-  }
-  
-  if (msg.type === 'locales-loaded') {
-    const select = document.getElementById('locale');
-    select.innerHTML = '<option value="">Choose a language...</option>';
-    select.disabled = false;
-    
-    if (Array.isArray(msg.locales)) {
-      for (const loc of msg.locales) {
-        if (loc && loc.code && loc.name) {
-          const opt = document.createElement('option');
-          opt.value = sanitizeString(loc.code);
-          opt.textContent = `${sanitizeString(loc.name)} (${sanitizeString(loc.code)})`;
-          select.appendChild(opt);
-        }
-      }
-      updateLocaleCount(msg.locales.length);
-      setStatus(`Ready! ${msg.locales.length} language(s) available`, 'success');
-      disableUI(false);
-    } else {
-      setStatus('Invalid locales data received', 'error');
-    }
-  }
-  
-  if (msg.type === 'translation-applied') {
-    const count = parseInt(msg.count, 10);
-    if (!isNaN(count) && count >= 0) {
-      setStatus(`Success! Updated ${count} text node(s)`, 'success');
-      disableUI(false);
-
-      // Celebrate with a brief delay then show ready state
-      setTimeout(() => {
-        setStatus(`Ready to translate`, 'info');
-      }, 2000);
-    }
-  }
-  
   if (msg.type === 'error') {
     const errorMsg = sanitizeString(msg.message || 'Unknown error occurred');
-    setStatus(errorMsg, 'error');
-    disableUI(false);
+    console.error('Plugin error:', errorMsg);
+    // Show error in write mode status if available
+    setWriteStatus(errorMsg, 'error');
   }
-  
+
   // Settings responses
   if (msg.type === 'config-saved') {
     config = msg.config;
@@ -4512,52 +4397,6 @@ function sanitizeString(str) {
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML.substring(0, 500);
-}
-
-function setStatus(text, type = 'info') {
-  const status = document.getElementById('status');
-  status.className = type;
-  
-  // Clear previous content
-  while (status.firstChild) {
-    status.removeChild(status.firstChild);
-  }
-  
-  if (type === 'loading') {
-    const spinner = document.createElement('span');
-    spinner.className = 'spinner';
-    const textSpan = document.createElement('span');
-    textSpan.textContent = text;
-    status.appendChild(spinner);
-    status.appendChild(textSpan);
-  } else {
-    status.textContent = text;
-  }
-}
-
-function updateNodeCount(count) {
-  const el = document.getElementById('node-count');
-  el.textContent = count;
-  el.style.animation = 'none';
-  setTimeout(() => el.style.animation = 'success 0.4s ease-out', 10);
-}
-
-function updateLocaleCount(count) {
-  const el = document.getElementById('locale-count');
-  el.textContent = count;
-  el.style.animation = 'none';
-  setTimeout(() => el.style.animation = 'success 0.4s ease-out', 10);
-}
-
-function disableUI(disabled) {
-  const btn = document.getElementById('apply-translation');
-  const select = document.getElementById('locale');
-  
-  if (disabled) {
-    btn.disabled = true;
-  } else {
-    btn.disabled = !select.value;
-  }
 }
 
 // ========== Content Preview Mode ==========

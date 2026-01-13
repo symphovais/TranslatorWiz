@@ -3,10 +3,13 @@
 *.log.*
 node_modules
 
+# Build artifacts
 out/
 dist/
-dist-package/
-code.js
+/code.js
+*.zip
+
+# Development
 .claude/
 tmpclaude-*
 coverage/

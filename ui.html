@@ -2407,9 +2407,18 @@ function switchView(viewName) {
   // Activate target view
   targetView.classList.add('active');
   targetView.style.display = 'block'; // Force show
-  
+
   if (viewName === 'settings') {
     loadConfigIntoEditor();
+  }
+
+  // Auto-load data when switching to write view if config is complete and data hasn't been loaded
+  if (viewName === 'write' && isConfigComplete(config) && isInitialLoad) {
+    // Update loading message and trigger data load
+    setLoadingMessage('Loading text items...');
+    textItems = [];
+    contentfulItems = {};
+    parent.postMessage({ pluginMessage: { type: 'get-translatable-nodes', config } }, '*');
   }
 }
 
@@ -3010,6 +3019,10 @@ async function loadItemsAndCheckStatus(items) {
 
   if (items.length === 0) {
     setWriteStatus('No translatable text items found', 'info');
+    // Hide loading overlay even when no items found to prevent getting stuck
+    if (isInitialLoad) {
+      hideLoadingOverlay();
+    }
     return;
   }
 

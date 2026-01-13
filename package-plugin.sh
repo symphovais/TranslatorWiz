@@ -11,21 +11,22 @@ DIST_FOLDER="dist-package"
 rm -rf "$DIST_FOLDER"
 mkdir -p "$DIST_FOLDER"
 
-# Build the plugin
+# Build the plugin (production)
 echo ""
-echo "2. Building TypeScript..."
-npm run build
+echo "2. Building for production..."
+npm run build:prod
 
 if [ $? -ne 0 ]; then
     echo "❌ Build failed!"
     exit 1
 fi
 
-# Copy required files
+# Copy required files from dist folder (production build output)
 echo ""
 echo "3. Copying files..."
-cp manifest.json "$DIST_FOLDER/"
-cp ui.html "$DIST_FOLDER/"
+cp dist/manifest.json "$DIST_FOLDER/"
+cp dist/ui.html "$DIST_FOLDER/"
+cp dist/code.js "$DIST_FOLDER/"
 cp DISTRIBUTION.md "$DIST_FOLDER/README.md"
 
 # Copy icon files if they exist

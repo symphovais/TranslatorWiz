@@ -4,6 +4,8 @@ module.exports = {
   testEnvironment: 'node',
   roots: ['<rootDir>/tests'],
   testMatch: ['**/*.test.ts'],
+  // Exclude UI tests which require jsdom environment - run with `npm run test:ui`
+  testPathIgnorePatterns: ['/node_modules/', 'ui-behavior.test.ts'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1'
   },
