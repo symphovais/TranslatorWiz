@@ -1,7 +1,7 @@
 {
   "name": "ConteFi",
   "version": "2.0.0",
-  "_comment": "When updating version, also update PLUGIN_VERSION constant in code.ts",
+  "_comment": "When updating version, also update PLUGIN_VERSION constant in src/constants.ts",
   "description": "Your Figma Plugin",
   "main": "code.js",
   "scripts": {

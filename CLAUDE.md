@@ -34,12 +34,31 @@ npm run package:bash     # Bash (Mac/Linux)
 
 This is a Figma plugin with a sandbox architecture - the plugin runs in two separate contexts:
 
-### Main Thread (`code.ts` → `code.js`)
+### Main Thread (`src/index.ts` → `dist/code.js`)
 - Runs in Figma's main thread sandbox with access to the Figma API
 - Handles all Figma document operations (reading/writing text nodes, selection tracking)
 - Communicates with UI via `figma.ui.postMessage()` and `figma.ui.onmessage`
 - Makes Contentful API calls (network access restricted to `api.contentful.com`)
 - Stores config in `figma.clientStorage` (persisted per-user)
+
+#### Modular Structure
+```
+src/
+├── index.ts              # Entry point, UI initialization, selection tracking
+├── constants.ts          # Plugin version and constants
+├── handlers/             # Message handlers
+│   ├── index.ts          # Main message router
+│   ├── config.handler.ts # Config save/load
+│   ├── content.handler.ts# Content type fetching
+│   ├── ui.handler.ts     # UI interactions
+│   └── write.handler.ts  # Write to Contentful
+├── services/             # Business logic
+│   ├── config.service.ts # Config validation/storage
+│   ├── contentful.service.ts # Contentful API calls
+│   ├── network.service.ts# Fetch with timeout
+│   └── node.service.ts   # Figma node operations
+└── types/                # TypeScript interfaces
+```
 
 ### UI Thread (`ui.html`)
 - Runs in an iframe with standard web APIs
@@ -66,7 +85,7 @@ The plugin uses a message-passing pattern between threads. Key message types:
 
 Version is maintained in two places that must stay in sync:
 1. `package.json` - `"version": "X.X.X"`
-2. `code.ts` - `const PLUGIN_VERSION = "X.X.X";`
+2. `src/constants.ts` - `export const PLUGIN_VERSION = "X.X.X";`
 
 ## Plugin Distribution
 

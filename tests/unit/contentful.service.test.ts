@@ -428,15 +428,13 @@ describe('ContentfulService', () => {
   });
 
   describe('saveItemToContentful', () => {
-    it('should create a new entry successfully', async () => {
+    it('should create a new entry as draft without publishing', async () => {
       const createResponse = {
         sys: { id: 'new-entry', version: 1 }
       };
-      const publishResponse = { sys: { id: 'new-entry', version: 2 } };
 
       (global.fetch as jest.Mock)
-        .mockResolvedValueOnce(createMockResponse(createResponse)) // create
-        .mockResolvedValueOnce(createMockResponse(publishResponse)); // publish
+        .mockResolvedValueOnce(createMockResponse(createResponse)); // create only
 
       const result = await saveItemToContentful(validConfig, {
         key: 'new_key',
@@ -444,11 +442,11 @@ describe('ContentfulService', () => {
       });
 
       expect(result.success).toBe(true);
-      expect(global.fetch).toHaveBeenCalledTimes(2);
+      // Should only call create, NOT publish
+      expect(global.fetch).toHaveBeenCalledTimes(1);
 
       // Verify create call
-      expect(global.fetch).toHaveBeenNthCalledWith(
-        1,
+      expect(global.fetch).toHaveBeenCalledWith(
         expect.stringContaining('/entries'),
         expect.objectContaining({
           method: 'POST',
@@ -457,17 +455,21 @@ describe('ContentfulService', () => {
           })
         })
       );
+
+      // Verify publish endpoint was NOT called
+      expect(global.fetch).not.toHaveBeenCalledWith(
+        expect.stringContaining('/published'),
+        expect.anything()
+      );
     });
 
-    it('should update an existing entry successfully', async () => {
+    it('should update an existing entry as draft without publishing', async () => {
       const getResponse = { sys: { id: 'existing-entry', version: 5 } };
       const updateResponse = { sys: { id: 'existing-entry', version: 6 } };
-      const publishResponse = { sys: { id: 'existing-entry', version: 7 } };
 
       (global.fetch as jest.Mock)
         .mockResolvedValueOnce(createMockResponse(getResponse)) // get current version
-        .mockResolvedValueOnce(createMockResponse(updateResponse)) // update
-        .mockResolvedValueOnce(createMockResponse(publishResponse)); // publish
+        .mockResolvedValueOnce(createMockResponse(updateResponse)); // update only
 
       const result = await saveItemToContentful(validConfig, {
         key: 'existing_key',
@@ -477,7 +479,8 @@ describe('ContentfulService', () => {
       });
 
       expect(result.success).toBe(true);
-      expect(global.fetch).toHaveBeenCalledTimes(3);
+      // Should only call get + update, NOT publish
+      expect(global.fetch).toHaveBeenCalledTimes(2);
 
       // Verify update call has version header
       expect(global.fetch).toHaveBeenNthCalledWith(
@@ -489,6 +492,12 @@ describe('ContentfulService', () => {
             'X-Contentful-Version': '5'
           })
         })
+      );
+
+      // Verify publish endpoint was NOT called
+      expect(global.fetch).not.toHaveBeenCalledWith(
+        expect.stringContaining('/published'),
+        expect.anything()
       );
     });
 
@@ -503,23 +512,6 @@ describe('ContentfulService', () => {
       expect(result.success).toBe(false);
       expect(result.error).toContain('Create failed');
       expect(result.errorDetails?.operation).toBe('create');
-    });
-
-    it('should return error when publish fails after create', async () => {
-      const createResponse = { sys: { id: 'new-entry', version: 1 } };
-
-      (global.fetch as jest.Mock)
-        .mockResolvedValueOnce(createMockResponse(createResponse)) // create succeeds
-        .mockResolvedValueOnce(createMockResponse({}, false, 500)); // publish fails
-
-      const result = await saveItemToContentful(validConfig, {
-        key: 'new_key',
-        value: 'New Value'
-      });
-
-      expect(result.success).toBe(false);
-      expect(result.error).toContain('publish failed');
-      expect(result.errorDetails?.operation).toBe('publish-new');
     });
 
     it('should return error when fetching entry for update fails', async () => {

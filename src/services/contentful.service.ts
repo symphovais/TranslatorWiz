@@ -418,27 +418,7 @@ export async function saveItemToContentful(config: ContentfulConfig, item: Conte
         };
       }
 
-      // Publish the updated entry
-      const updatedEntry = await updateResponse.json();
-      const publishUrl = `${url}/published`;
-      const publishResponse = await fetchWithTimeout(publishUrl, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${config.CMA_TOKEN}`,
-          'X-Contentful-Version': updatedEntry.sys.version.toString()
-        }
-      }, API_TIMEOUT);
-
-      if (!publishResponse.ok) {
-        const errorText = await publishResponse.text();
-        console.error('[Contentful] Publish failed:', errorText);
-        return {
-          success: false,
-          error: `Publish failed (${publishResponse.status})`,
-          errorDetails: { status: publishResponse.status, response: errorText, operation: 'publish', entryId: item.entryId }
-        };
-      }
-
+      // Entry saved as draft - publishing happens in Contentful
       return { success: true };
     } else {
       // Create new entry
@@ -469,27 +449,7 @@ export async function saveItemToContentful(config: ContentfulConfig, item: Conte
         };
       }
 
-      // Publish the new entry
-      const newEntry = await createResponse.json();
-      const publishUrl = `https://api.contentful.com/spaces/${spaceId}/environments/${environment}/entries/${newEntry.sys.id}/published`;
-      const publishResponse = await fetchWithTimeout(publishUrl, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${config.CMA_TOKEN}`,
-          'X-Contentful-Version': newEntry.sys.version.toString()
-        }
-      }, API_TIMEOUT);
-
-      if (!publishResponse.ok) {
-        const errorText = await publishResponse.text();
-        console.error('[Contentful] Publish after create failed:', errorText);
-        return {
-          success: false,
-          error: `Created but publish failed (${publishResponse.status})`,
-          errorDetails: { status: publishResponse.status, response: errorText, operation: 'publish-new', entryId: newEntry.sys.id }
-        };
-      }
-
+      // Entry created as draft - publishing happens in Contentful
       return { success: true };
     }
   } catch (error) {

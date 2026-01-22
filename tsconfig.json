@@ -19,5 +19,5 @@
     ]
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "tests", "code.ts"]
+  "exclude": ["node_modules", "tests"]
 }
